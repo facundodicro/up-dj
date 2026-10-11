@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Disc3, Plus } from 'lucide-react'
+import DonateButton from '../components/DonateButton'
 import EventCard from '../components/EventCard'
 import SmokeBackground from '../components/SmokeBackground'
 import { useLang } from '../context/LanguageContext'
@@ -36,20 +37,14 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
 
   return (
     <main className="mx-auto max-w-5xl px-4 pb-44 pt-24">
-      {/* Hero nocturno */}
-      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-night-alt px-6 py-12 text-center sm:py-16">
+      {/* Hero nocturno compacto */}
+      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-night-alt px-6 py-8 text-center sm:py-10">
         <SmokeBackground density="hero" />
         <div className="relative">
-          <p className="logo-neon font-display text-6xl font-black tracking-tight sm:text-7xl">
-            up!
-          </p>
-          <h1 className="mx-auto mt-4 max-w-xl font-display text-2xl font-black text-ink sm:text-3xl">
-            {t('home.heroTitle')}
-          </h1>
-          <p className="mx-auto mt-2 max-w-md text-sm text-muted sm:text-base">
+          <p className="mx-auto max-w-md text-sm text-muted sm:text-base">
             {t('home.heroSub')}
           </p>
-          <div className="mt-6">
+          <div className="mt-5">
             {user ? (
               <button
                 onClick={onProfileClick}
@@ -66,6 +61,9 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
                 {t('home.createProfile')}
               </button>
             )}
+          </div>
+          <div className="mt-5 flex justify-end">
+            <DonateButton />
           </div>
           {isDemoMode && (
             <p className="mx-auto mt-4 max-w-md text-xs text-muted/80">{t('home.demo')}</p>
