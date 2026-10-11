@@ -1,0 +1,121 @@
+import { useState } from 'react'
+import { Play, Pause, Disc3, MessageCircle } from 'lucide-react'
+import { usePlayer } from '../context/PlayerContext'
+import { useLang } from '../context/LanguageContext'
+import { formatDate } from '../lib/format'
+
+/** Tarjeta de un evento en el feed: foto, play, DJ, descripción y WhatsApp. */
+export default function EventCard({ event }) {
+  const { track, isPlaying, playTrack } = usePlayer()
+  const { t, lang } = useLang()
+  const [expanded, setExpanded] = useState(false)
+
+  const isCurrent = track?.id === event.id
+  const playing = isCurrent && isPlaying
+  const dj = event.dj || { username: t('card.djFallback'), avatar_url: null, whatsapp: '' }
+  const initial = (dj.username || 'D').trim().charAt(0).toUpperCase()
+
+  const handlePlay = () => {
+    playTrack({
+      id: event.id,
+      title: event.title,
+      djName: dj.username,
+      djAvatar: dj.avatar_url,
+      audioUrl: event.audio_url,
+    })
+  }
+
+  const waNumber = (dj.whatsapp || '').replace(/\D/g, '')
+  const waText = encodeURIComponent(t('card.waMessage'))
+  const waUrl = waNumber ? `https://wa.me/${waNumber}?text=${waText}` : null
+
+  const longDesc = (event.description || '').length > 140
+  const desc = expanded || !longDesc ? event.description : `${event.description.slice(0, 140)}…`
+
+  return (
+    <article className="overflow-hidden rounded-2xl border border-white/10 bg-night-card transition duration-200 hover:border-white/20 hover:shadow-[0_8px_40px_rgba(139,92,246,0.12)]">
+      <div className="relative aspect-[16/10] bg-night-alt">
+        {event.photo_url ? (
+          <img
+            src={event.photo_url}
+            alt={event.title}
+            loading="lazy"
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#241b4d] via-[#141422] to-[#0e1e3a]">
+            <Disc3 size={64} className="text-up/50" strokeWidth={1.4} />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+        <button
+          onClick={handlePlay}
+          aria-label={t(playing ? 'card.pauseTitle' : 'card.playTitle', { title: event.title })}
+          className={`absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#00E065] text-night transition duration-200 hover:scale-110 ${
+            playing
+              ? 'shadow-[0_0_36px_rgba(0,224,101,0.75)]'
+              : 'shadow-[0_0_26px_rgba(0,224,101,0.5)] hover:shadow-[0_0_36px_rgba(0,224,101,0.7)]'
+          }`}
+        >
+          {playing ? (
+            <Pause size={26} fill="currentColor" />
+          ) : (
+            <Play size={26} fill="currentColor" className="ml-1" />
+          )}
+        </button>
+      </div>
+
+      <div className="p-5">
+        <h3 className="font-display text-lg font-extrabold leading-snug text-ink">
+          {event.title}
+        </h3>
+
+        <div className="mt-2.5 flex items-center gap-2.5">
+          {dj.avatar_url ? (
+            <img
+              src={dj.avatar_url}
+              alt=""
+              className="h-7 w-7 rounded-full border border-white/10 object-cover"
+            />
+          ) : (
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-up/20 font-display text-sm font-extrabold text-up-light">
+              {initial}
+            </span>
+          )}
+          <span className="text-sm font-bold text-muted">{dj.username}</span>
+        </div>
+
+        {event.description && (
+          <p className="mt-3 text-sm leading-relaxed text-muted">
+            {desc}{' '}
+            {longDesc && (
+              <button
+                onClick={() => setExpanded((v) => !v)}
+                className="font-extrabold text-up-light transition hover:text-ink"
+              >
+                {expanded ? t('card.less') : t('card.more')}
+              </button>
+            )}
+          </p>
+        )}
+
+        <div className="mt-4 flex items-center justify-between">
+          <span className="text-xs font-semibold text-muted/70">{formatDate(event.created_at, lang)}</span>
+          {waUrl ? (
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-full border border-[#00E065]/40 px-4 py-2 text-sm font-extrabold text-[#00E065] transition hover:bg-[#00E065]/10 hover:shadow-[0_0_18px_rgba(0,224,101,0.25)]"
+            >
+              <MessageCircle size={16} />
+              {t('card.whatsapp')}
+            </a>
+          ) : (
+            <span className="text-xs text-muted/50">{t('card.noContact')}</span>
+          )}
+        </div>
+      </div>
+    </article>
+  )
+}

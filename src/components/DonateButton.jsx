@@ -1,0 +1,28 @@
+import { useState } from 'react'
+import { Heart } from 'lucide-react'
+import DonateModal from './DonateModal'
+import { useLang } from '../context/LanguageContext'
+
+/**
+ * Botón "Donar": abre el modal de donación (Mercado Pago + PayPal + WhatsApp).
+ * La configuración vive en src/lib/config.js (DONATE_MP_ALIAS,
+ * DONATE_WHATSAPP, DONATE_PAYPAL_URL/EMAIL) o en variables VITE_*.
+ */
+export default function DonateButton({ className = '' }) {
+  const { t } = useLang()
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={`inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3.5 py-2 text-sm font-extrabold text-ink transition hover:border-[#00e065]/60 hover:text-[#00e065] hover:shadow-[0_0_18px_rgba(0,224,101,0.35)] ${className}`}
+      >
+        <Heart size={15} className="text-[#00e065]" fill="currentColor" aria-hidden="true" />
+        {t('donate.label')}
+      </button>
+      <DonateModal open={open} onClose={() => setOpen(false)} />
+    </>
+  )
+}
