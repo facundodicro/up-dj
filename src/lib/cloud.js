@@ -92,7 +92,7 @@ export function onAuthChange(cb) {
 
 export async function signUp(email, password) {
   validateCredentials(email, password)
-  const { data, error } = await supabase.auth.signUp({ email: email.trim() })
+  const { data, error } = await supabase.auth.signUp({ email: email.trim(), password })
   if (error) throw new Error(friendlyAuthError(error))
   // El trigger handle_new_user crea la fila en profiles automáticamente.
   return {
