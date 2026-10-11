@@ -41,7 +41,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
       <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-night-alt px-6 py-8 text-center sm:py-10">
         <SmokeBackground density="hero" />
         <div className="relative">
-          <p className="mx-auto max-w-md text-sm text-muted sm:text-base">
+          <p className="mx-auto max-w-md text-base font-medium text-muted sm:text-lg">
             {t('home.heroSub')}
           </p>
           <div className="mt-5">
