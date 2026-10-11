@@ -5,6 +5,7 @@ import { useLang } from '../context/LanguageContext'
 import { formatBytes } from '../lib/format'
 import { toast } from '../lib/toast'
 
+
 /** Formulario para publicar un evento: audio del set + descripción + foto. */
 export default function EventForm({ userId, onCreated, onCancel }) {
   const { t, lang } = useLang()
@@ -52,13 +53,38 @@ export default function EventForm({ userId, onCreated, onCancel }) {
     setUploading(true)
     setProgress(0)
     try {
+      // Los sets suelen superar los 50 MB: se comprimen solos en el navegador.
+      // Import dinámico: lamejs solo se descarga cuando hace falta comprimir.
+      const { needsCompression, compressAudio } = await import('../lib/compressAudio')
+      let fileToUpload = audioFile
+      const compressed = needsCompression(audioFile)
+      if (compressed) {
+        try {
+          fileToUpload = await compressAudio(audioFile, (p) => {
+            setProgress(p * 0.5)
+            setStatus(`${t('event.compressing')} ${Math.round(p * 100)}%`)
+          })
+        } catch (err) {
+          if (err?.message === 'compress-decode' || err?.message === 'compress-unsupported') {
+            setError(t('event.compressFailed'))
+          } else if (err?.message === 'compress-too-big') {
+            setError(t('event.setTooLong'))
+          } else {
+            setError(err?.message || t('event.publishError'))
+          }
+          return
+        }
+      }
       setStatus(t('event.uploadingAudio'))
+      const base = compressed ? 0.5 : 0
+      const span = compressed ? 0.5 : 1
       await data.createEvent(
         userId,
-        { title, description, audioFile, photoFile },
+        { title, description, audioFile: fileToUpload, photoFile },
         (p) => {
-          setProgress(p)
-          setStatus(p < 0.85 || !photoFile ? t('event.uploadingAudio') : t('event.uploadingPhoto'))
+          const overall = base + p * span
+          setProgress(overall)
+          setStatus(overall < base + span * 0.85 || !photoFile ? t('event.uploadingAudio') : t('event.uploadingPhoto'))
         },
       )
       toast(t('event.published'), 'success')
