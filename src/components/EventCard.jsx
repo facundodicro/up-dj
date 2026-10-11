@@ -33,7 +33,7 @@ export default function EventCard({ event }) {
   const desc = expanded || !longDesc ? event.description : `${event.description.slice(0, 140)}…`
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-white/10 bg-night-card transition duration-200 hover:border-white/20 hover:shadow-[0_8px_40px_rgba(139,92,246,0.12)]">
+    <article className="overflow-hidden rounded-2xl border border-black/10 bg-night-card transition duration-200 hover:border-black/15 hover:shadow-[0_8px_40px_rgba(139,92,246,0.12)]">
       <div className="relative aspect-[16/10] bg-night-alt">
         {event.photo_url ? (
           <img
@@ -43,7 +43,7 @@ export default function EventCard({ event }) {
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#241b4d] via-[#141422] to-[#0e1e3a]">
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#EDE9FE] via-[#F5F3FF] to-[#DBEAFE]">
             <Disc3 size={64} className="text-up/50" strokeWidth={1.4} />
           </div>
         )}
@@ -75,7 +75,7 @@ export default function EventCard({ event }) {
             <img
               src={dj.avatar_url}
               alt=""
-              className="h-7 w-7 rounded-full border border-white/10 object-cover"
+              className="h-7 w-7 rounded-full border border-black/10 object-cover"
             />
           ) : (
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-up/20 font-display text-sm font-extrabold text-up-light">
