@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Play, Pause, Disc3, MessageCircle } from 'lucide-react'
 import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
-import { formatDate } from '../lib/format'
+import { formatDate, buildWaUrl } from '../lib/format'
 
 /** Tarjeta de un evento en el feed: foto, play, DJ, descripción y WhatsApp. */
 export default function EventCard({ event }) {
@@ -25,9 +25,7 @@ export default function EventCard({ event }) {
     })
   }
 
-  const waNumber = (dj.whatsapp || '').replace(/\D/g, '')
-  const waText = encodeURIComponent(t('card.waMessage'))
-  const waUrl = waNumber ? `https://wa.me/${waNumber}?text=${waText}` : null
+  const waUrl = buildWaUrl(dj.whatsapp, t('card.waMessage'))
 
   const longDesc = (event.description || '').length > 140
   const desc = expanded || !longDesc ? event.description : `${event.description.slice(0, 140)}…`
