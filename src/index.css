@@ -82,3 +82,27 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #34344e;
 }
+
+/* ---- Héroe 3D: textos de los paneles ---- */
+.sw-neon {
+  color: #00e065;
+  text-shadow: 0 0 24px rgba(0, 224, 101, 0.9), 0 0 80px rgba(0, 224, 101, 0.4);
+}
+.sw-viol {
+  color: #8b5cf6;
+  text-shadow: 0 0 24px rgba(139, 92, 246, 0.9), 0 0 80px rgba(139, 92, 246, 0.4);
+}
+@keyframes sw-bob {
+  0%, 100% { transform: rotate(45deg) translate(0, 0); }
+  50% { transform: rotate(45deg) translate(6px, 6px); }
+}
+.sw-chev {
+  display: block;
+  margin: 8px auto 0;
+  width: 22px;
+  height: 22px;
+  border-right: 2px solid #00e065;
+  border-bottom: 2px solid #00e065;
+  transform: rotate(45deg);
+  animation: sw-bob 1.6s ease-in-out infinite;
+}
