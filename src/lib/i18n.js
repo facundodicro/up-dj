@@ -143,6 +143,7 @@ const STRINGS = {
     'home.beFirst': 'Ser el primero',
 
     'app.tagline': 'La pista donde viven los sets.',
+    'footer.privacy': 'Privacidad',
 
     'install.label': 'Instalar app',
     'install.manual':
@@ -292,6 +293,7 @@ const STRINGS = {
     'home.beFirst': 'Be the first',
 
     'app.tagline': 'The dancefloor where sets live.',
+    'footer.privacy': 'Privacy',
 
     'install.label': 'Install app',
     'install.manual':
