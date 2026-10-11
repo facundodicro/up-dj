@@ -5,7 +5,7 @@ import EventForm from './EventForm'
 import { useAuth } from '../hooks/useAuth'
 import { useLang } from '../context/LanguageContext'
 import * as data from '../lib/data'
-import { formatDate, normalizeWhatsapp } from '../lib/format'
+import { formatDate } from '../lib/format'
 import { toast } from '../lib/toast'
 
 /**
@@ -197,10 +197,10 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
             </label>
             <input
               id="pf-wa"
-              type="tel"
-              inputMode="numeric"
+              type="text"
+              inputMode="text"
               value={whatsapp}
-              onChange={(e) => setWhatsapp(normalizeWhatsapp(e.target.value))}
+              onChange={(e) => setWhatsapp(e.target.value.replace(/[^a-zA-Z0-9@_.\s+()-]/g, '').slice(0, 32))}
               placeholder={t('profile.whatsappPh')}
               className="w-full rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
             />
