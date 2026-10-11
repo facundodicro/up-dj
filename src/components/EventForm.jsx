@@ -6,14 +6,18 @@ import { formatBytes } from '../lib/format'
 import { toast } from '../lib/toast'
 
 
-/** Formulario para publicar un evento: audio del set + descripción + foto. */
-export default function EventForm({ userId, onCreated, onCancel }) {
+/** Formulario para publicar un evento: audio del set + descripción + foto.
+ * Con `editingEvent` funciona en modo edición: cambia título, descripción y
+ * foto de un set ya publicado (el audio no se puede cambiar). */
+export default function EventForm({ userId, editingEvent, onCreated, onUpdated, onCancel }) {
   const { t, lang } = useLang()
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
+  const isEditing = !!editingEvent
+  const [title, setTitle] = useState(editingEvent?.title || '')
+  const [description, setDescription] = useState(editingEvent?.description || '')
   const [audioFile, setAudioFile] = useState(null)
   const [photoFile, setPhotoFile] = useState(null)
-  const [photoPreview, setPhotoPreview] = useState(null)
+  const [photoPreview, setPhotoPreview] = useState(editingEvent?.photo_url || null)
+  const [removePhoto, setRemovePhoto] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [status, setStatus] = useState('')
@@ -33,19 +37,56 @@ export default function EventForm({ userId, onCreated, onCancel }) {
     if (f) {
       setPhotoFile(f)
       setPhotoPreview(URL.createObjectURL(f))
+      setRemovePhoto(false)
     }
   }
 
   const clearPhoto = () => {
-    setPhotoFile(null)
-    if (photoPreview?.startsWith('blob:')) URL.revokeObjectURL(photoPreview)
-    setPhotoPreview(null)
+    if (photoFile) {
+      // Se descarta la foto nueva recién elegida y vuelve la publicada (si había).
+      setPhotoFile(null)
+      if (photoPreview?.startsWith('blob:')) URL.revokeObjectURL(photoPreview)
+      setPhotoPreview(editingEvent?.photo_url || null)
+      setRemovePhoto(false)
+    } else {
+      // Se quita la foto publicada: se marca para borrarla al guardar.
+      setRemovePhoto(true)
+      setPhotoPreview(null)
+    }
     if (photoRef.current) photoRef.current.value = ''
+  }
+
+  const submitEdit = async () => {
+    setUploading(true)
+    setProgress(0)
+    try {
+      setStatus(t('event.uploadingPhoto'))
+      await data.updateEvent(
+        userId,
+        editingEvent.id,
+        { title, description, photoFile, removePhoto },
+        (p) => {
+          setProgress(p)
+          setStatus(t('event.uploadingPhoto'))
+        },
+      )
+      toast(t('event.updated'), 'success')
+      onUpdated?.()
+    } catch (err) {
+      setError(err?.message || t('event.updateError'))
+    } finally {
+      setUploading(false)
+      setStatus('')
+    }
   }
 
   const submit = async (e) => {
     e.preventDefault()
     setError('')
+    if (isEditing) {
+      await submitEdit()
+      return
+    }
     if (!audioFile) {
       setError(t('event.needAudio'))
       return
@@ -101,6 +142,9 @@ export default function EventForm({ userId, onCreated, onCancel }) {
 
   return (
     <form onSubmit={submit} className="space-y-4 rounded-2xl border border-black/10 bg-night p-4">
+      {isEditing && (
+        <h4 className="font-display text-base font-black text-ink">{t('event.editTitle')}</h4>
+      )}
       <div>
         <label htmlFor="ev-title" className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted">
           {t('event.title')} {optional}
@@ -117,6 +161,7 @@ export default function EventForm({ userId, onCreated, onCancel }) {
         />
       </div>
 
+      {!isEditing && (
       <div>
         <span className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted">
           {t('event.audio')}
@@ -143,6 +188,7 @@ export default function EventForm({ userId, onCreated, onCancel }) {
           )}
         </button>
       </div>
+      )}
 
       <div>
         <label htmlFor="ev-desc" className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted">
@@ -218,7 +264,7 @@ export default function EventForm({ userId, onCreated, onCancel }) {
           className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-ink transition hover:bg-up-dark disabled:opacity-60"
         >
           {uploading && <Loader2 size={17} className="animate-spin" />}
-          {uploading ? t('event.publishing') : t('event.save')}
+          {uploading ? t(isEditing ? 'event.updating' : 'event.publishing') : t(isEditing ? 'event.saveChanges' : 'event.save')}
         </button>
         {onCancel && (
           <button
