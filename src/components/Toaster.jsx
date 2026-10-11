@@ -18,8 +18,8 @@ export default function Toaster() {
   }, [])
 
   const styles = {
-    success: 'border-emerald-400/30 bg-[#0d1f16]',
-    error: 'border-red-500/30 bg-[#200d0d]',
+    success: 'border-emerald-400/40 bg-white',
+    error: 'border-red-400/40 bg-white',
     info: 'border-up/30 bg-night-card',
   }
   const icons = {
