@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Disc3, Plus } from 'lucide-react'
 import DonateButton from '../components/DonateButton'
 import EventCard from '../components/EventCard'
@@ -6,6 +6,18 @@ import SmokeBackground from '../components/SmokeBackground'
 import { useLang } from '../context/LanguageContext'
 import * as data from '../lib/data'
 import { isDemoMode } from '../lib/data'
+
+const ScrollWorldHero = lazy(() => import('../components/ScrollWorldHero'))
+
+/** Héroe 3D mientras three.js se descarga. */
+function HeroFallback() {
+  return (
+    <section className="relative overflow-hidden border-b border-white/10 bg-night-alt px-6 py-16 text-center">
+      <p className="logo-neon font-display text-5xl font-black">up!</p>
+      <p className="mx-auto mt-3 max-w-md animate-pulse text-sm text-muted">Cargando mundo 3D…</p>
+    </section>
+  )
+}
 
 /** Página principal: hero nocturno + feed de eventos. */
 export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
@@ -36,41 +48,16 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
   }, [feedKey])
 
   return (
-    <main className="mx-auto max-w-5xl px-4 pb-44 pt-24">
-      {/* Hero nocturno compacto */}
-      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-night-alt px-6 py-8 text-center sm:py-10">
-        <SmokeBackground density="hero" />
-        <div className="relative">
-          <p className="mx-auto max-w-md text-base font-medium text-muted sm:text-lg">
-            {t('home.heroSub')}
-          </p>
-          <div className="mt-5">
-            {user ? (
-              <button
-                onClick={onProfileClick}
-                className="inline-flex items-center gap-2 rounded-full bg-up px-6 py-3 text-sm font-extrabold text-white shadow-[0_0_28px_rgba(139,92,246,0.5)] transition hover:bg-up-dark hover:shadow-[0_0_36px_rgba(139,92,246,0.65)]"
-              >
-                <Plus size={17} />
-                {t('home.uploadSet')}
-              </button>
-            ) : (
-              <button
-                onClick={() => onAuthClick('register')}
-                className="inline-flex items-center gap-2 rounded-full bg-up px-6 py-3 text-sm font-extrabold text-white shadow-[0_0_28px_rgba(139,92,246,0.5)] transition hover:bg-up-dark hover:shadow-[0_0_36px_rgba(139,92,246,0.65)]"
-              >
-                {t('home.createProfile')}
-              </button>
-            )}
-          </div>
-          <div className="mt-5 flex justify-end">
-            <DonateButton />
-          </div>
-          {isDemoMode && (
-            <p className="mx-auto mt-4 max-w-md text-xs text-muted/80">{t('home.demo')}</p>
-          )}
-        </div>
-      </section>
-
+    <>
+      {/* Héroe 3D: mundo neón navegable con scroll (carga diferida) */}
+      <Suspense fallback={<HeroFallback />}>
+        <ScrollWorldHero
+          user={user}
+          onUploadClick={onProfileClick}
+          onRegisterClick={() => onAuthClick('register')}
+        />
+      </Suspense>
+      <main className="mx-auto max-w-5xl px-4 pb-44">
       {/* Feed */}
       <section className="mt-10" aria-label="Sets publicados">
         <h2 className="font-display text-lg font-black text-ink">{t('home.latest')}</h2>
@@ -128,6 +115,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
           </div>
         )}
       </section>
-    </main>
+      </main>
+    </>
   )
 }
