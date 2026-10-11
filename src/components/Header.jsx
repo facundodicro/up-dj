@@ -30,7 +30,7 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
   const initial = (profile?.username || user?.email || '?').trim().charAt(0).toUpperCase()
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-night/85 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-black/10 bg-night/85 backdrop-blur-md">
       <div className="relative mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <div className="flex items-center">
           <InstallButton />
@@ -39,9 +39,9 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
         <button
           onClick={onLogoClick}
           aria-label={t('header.home')}
-          className="logo-neon absolute left-1/2 -translate-x-1/2 font-display text-[34px] font-black leading-none tracking-tight transition-transform duration-200 hover:scale-105"
+          className="absolute left-1/2 -translate-x-1/2 font-display text-[34px] font-black leading-none tracking-tight text-ink transition-transform duration-200 hover:scale-105"
         >
-          up!
+          up<span className="text-[#00E065]">!</span>
         </button>
 
         <div className="flex items-center gap-2">
@@ -50,12 +50,12 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
               onClick={() => setLangOpen((v) => !v)}
               aria-label={t('header.language')}
               aria-expanded={langOpen}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-night-card text-muted transition hover:border-up/70 hover:text-ink"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-night-card text-muted transition hover:border-up/70 hover:text-ink"
             >
               <Globe size={18} />
             </button>
             {langOpen && (
-              <div className="absolute right-0 mt-2 w-44 overflow-hidden rounded-xl border border-white/10 bg-night-card py-1.5 shadow-2xl shadow-black/60">
+              <div className="absolute right-0 mt-2 w-44 overflow-hidden rounded-xl border border-black/10 bg-night-card py-1.5 shadow-2xl shadow-black/60">
                 {SUPPORTED_LANGS.map((l) => (
                   <button
                     key={l}
@@ -63,7 +63,7 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
                       setLang(l)
                       setLangOpen(false)
                     }}
-                    className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm font-bold text-ink transition hover:bg-white/5"
+                    className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm font-bold text-ink transition hover:bg-black/5"
                   >
                     {LANG_LABELS[l]}
                     {lang === l && <Check size={16} className="text-[#00e065]" />}
@@ -78,7 +78,7 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
               <button
                 onClick={onProfileClick}
                 aria-label={t('header.openProfile')}
-                className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-night-card transition hover:border-up/70 hover:shadow-[0_0_16px_rgba(139,92,246,0.35)]"
+                className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-night-card transition hover:border-up/70 hover:shadow-[0_0_16px_rgba(139,92,246,0.35)]"
               >
                 {profile?.avatar_url ? (
                   <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
@@ -93,20 +93,20 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-label={t('header.account')}
                 aria-expanded={menuOpen}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-night-card text-muted transition hover:border-up/70 hover:text-ink"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-night-card text-muted transition hover:border-up/70 hover:text-ink"
               >
                 <User size={20} />
               </button>
             )}
 
             {menuOpen && !user && (
-              <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-night-card py-1.5 shadow-2xl shadow-black/60">
+              <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-black/10 bg-night-card py-1.5 shadow-2xl shadow-black/60">
                 <button
                   onClick={() => {
                     setMenuOpen(false)
                     onAuthClick('register')
                   }}
-                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-ink transition hover:bg-white/5"
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-ink transition hover:bg-black/5"
                 >
                   <UserPlus size={17} className="text-up-light" />
                   {t('header.createProfile')}
@@ -116,7 +116,7 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
                     setMenuOpen(false)
                     onAuthClick('login')
                   }}
-                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-ink transition hover:bg-white/5"
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-bold text-ink transition hover:bg-black/5"
                 >
                   <LogIn size={17} className="text-up-light" />
                   {t('header.login')}
