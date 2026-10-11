@@ -566,7 +566,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
                 </p>
                 <h1
                   className="mx-auto mt-4 max-w-2xl font-display text-[clamp(30px,6vw,64px)] font-black leading-[1.1] tracking-tight text-white"
-                  style={{ textShadow: '0 4px 40px rgba(0,0,0,.9)' }}
+                  style={{ textShadow: '0 2px 18px rgba(0,0,0,.95), 0 0 60px rgba(0,0,0,.8)' }}
                 >
                   {t('home.heroSub')}
                 </h1>
