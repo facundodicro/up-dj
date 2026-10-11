@@ -38,21 +38,17 @@ export function formatBytes(bytes, lang) {
 }
 
 /**
- * Limpia el contacto de WhatsApp: acepta número (solo dígitos) o apodo
- * de WhatsApp (letras, números, guiones bajos y puntos, sin @).
+ * Limpia el contacto de WhatsApp: solo dígitos (número con código de país
+ * y área, sin "+" ni espacios). Los apodos de WhatsApp todavía no funcionan
+ * como links wa.me (la función está en despliegue gradual), así que por ahora
+ * solo se aceptan números.
  */
 export function sanitizeWhatsapp(value) {
-  const raw = String(value || '').trim()
-  if (!raw) return ''
-  if (/[a-zA-Z]/.test(raw)) {
-    return raw.replace(/^@+/, '').replace(/[^a-zA-Z0-9_.]/g, '').slice(0, 30)
-  }
-  return raw.replace(/\D/g, '').slice(0, 20)
+  return String(value || '').replace(/\D/g, '').slice(0, 20)
 }
 
 /**
- * Construye el link de contacto de WhatsApp: wa.me/<número> o
- * wa.me/<apodo> cuando es un username de WhatsApp.
+ * Construye el link de contacto de WhatsApp: wa.me/<número>.
  */
 export function buildWaUrl(whatsapp, message = '') {
   const target = sanitizeWhatsapp(whatsapp)

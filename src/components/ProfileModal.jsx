@@ -200,7 +200,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               type="text"
               inputMode="text"
               value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value.replace(/[^a-zA-Z0-9@_.\s+()-]/g, '').slice(0, 32))}
+              onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, '').slice(0, 20))}
               placeholder={t('profile.whatsappPh')}
               className="w-full rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
             />
