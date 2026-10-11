@@ -102,11 +102,14 @@ function Shell() {
         {/* Compensa la altura de la barra flotante */}
         {track && <div className="h-[104px]" aria-hidden="true" />}
 
-        <footer className="border-t border-white/10 py-8 text-center">
-          <p className="logo-neon font-display text-2xl font-black">up!</p>
+        <footer className="border-t border-black/10 py-8 text-center">
+          <p className="font-display text-2xl font-black tracking-tight">
+            <span className="text-ink">up</span>
+            <span className="text-[#00C75C]">!</span>
+          </p>
           <p className="mt-1 text-xs text-muted">{t('app.tagline')}</p>
           <p className="mt-3 text-xs">
-            <Link to="/privacidad" className="text-muted underline-offset-4 hover:text-white hover:underline">
+            <Link to="/privacidad" className="text-muted underline-offset-4 hover:text-ink hover:underline">
               {t('footer.privacy')}
             </Link>
           </p>
