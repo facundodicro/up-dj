@@ -23,4 +23,9 @@ export const getProfile = (...args) => db.getProfile(...args)
 export const saveProfile = (...args) => db.saveProfile(...args)
 export const listEvents = (...args) => db.listEvents(...args)
 export const createEvent = (...args) => db.createEvent(...args)
+export const updateEvent = (...args) => {
+  if (typeof db.updateEvent !== 'function')
+    throw new Error('Editar no está disponible en modo demo')
+  return db.updateEvent(...args)
+}
 export const deleteEvent = (...args) => db.deleteEvent(...args)
