@@ -4,7 +4,7 @@
  * para poder mostrar progreso real de subida.
  */
 import { supabase } from './supabase'
-import { normalizeWhatsapp } from './format'
+import { sanitizeWhatsapp } from './format'
 import { t } from './i18n'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
@@ -140,7 +140,7 @@ export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, 
     id: uid,
     username: (username || '').trim().slice(0, 40) || 'DJ',
     bio: (bio || '').trim().slice(0, 300),
-    whatsapp: normalizeWhatsapp(whatsapp).slice(0, 20),
+    whatsapp: sanitizeWhatsapp(whatsapp),
     updated_at: new Date().toISOString(),
   }
   if (avatar_url) patch.avatar_url = avatar_url
