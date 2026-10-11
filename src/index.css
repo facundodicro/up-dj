@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-night font-sans text-ink antialiased;
+}
+
+::selection {
+  background: rgba(139, 92, 246, 0.45);
+}
+
+/* ---- Logo neón: verde luminoso estilo cartel de boliche ---- */
+.logo-neon {
+  color: #00e065;
+  text-shadow:
+    0 0 10px rgba(0, 224, 101, 0.65),
+    0 0 34px rgba(0, 224, 101, 0.28),
+    0 0 72px rgba(0, 224, 101, 0.14);
+}
+
+/* ---- Humo de boliche: manchas radiales que derivan lento ----
+   Solo se animan transform/opacity para no castigar el mobile. */
+@keyframes smoke-drift-a {
+  from {
+    transform: translate3d(-5%, -3%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(6%, 5%, 0) scale(1.18);
+  }
+}
+
+@keyframes smoke-drift-b {
+  from {
+    transform: translate3d(4%, 5%, 0) scale(1.12);
+  }
+  to {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+  }
+}
+
+.smoke-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.smoke-a {
+  animation: smoke-drift-a 26s ease-in-out infinite alternate;
+}
+
+.smoke-b {
+  animation: smoke-drift-b 32s ease-in-out infinite alternate;
+}
+
+/* Respeto a quienes prefieren sin movimiento: el humo queda fijo. */
+@media (prefers-reduced-motion: reduce) {
+  .smoke-a,
+  .smoke-b {
+    animation: none;
+  }
+}
+
+/* ---- Scrollbar oscuro ---- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a14;
+}
+::-webkit-scrollbar-thumb {
+  background: #26263a;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #34344e;
+}

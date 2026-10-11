@@ -1,0 +1,139 @@
+import { useCallback, useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { AuthProvider, useAuth } from './hooks/useAuth'
+import { PlayerProvider, usePlayer } from './context/PlayerContext'
+import { LanguageProvider, useLang } from './context/LanguageContext'
+import Header from './components/Header'
+import AuthModal from './components/AuthModal'
+import ProfileModal from './components/ProfileModal'
+import PlayerBar from './components/PlayerBar'
+import Toaster from './components/Toaster'
+import SmokeBackground from './components/SmokeBackground'
+import DonateButton from './components/DonateButton'
+import Home from './pages/Home'
+import * as data from './lib/data'
+
+function Shell() {
+  const { user, loading } = useAuth()
+  const { track } = usePlayer()
+  const { t } = useLang()
+  const [profile, setProfile] = useState(null)
+  const [authModal, setAuthModal] = useState({ open: false, tab: 'login' })
+  const [profileOpen, setProfileOpen] = useState(false)
+  const [feedKey, setFeedKey] = useState(0)
+
+  useEffect(() => {
+    if (!user) {
+      setProfile(null)
+      return
+    }
+    let alive = true
+    data
+      .getProfile(user.id)
+      .then((p) => {
+        if (alive) setProfile(p)
+      })
+      .catch(() => {
+        if (alive) setProfile(null)
+      })
+    return () => {
+      alive = false
+    }
+  }, [user])
+
+  const openAuth = useCallback((tab = 'login') => setAuthModal({ open: true, tab }), [])
+  const openProfile = useCallback(() => setProfileOpen(true), [])
+  const refreshFeed = useCallback(() => setFeedKey((k) => k + 1), [])
+  const scrollTop = useCallback(() => window.scrollTo({ top: 0, behavior: 'smooth' }), [])
+
+  return (
+    <div className="min-h-screen">
+      {/* Humo ambiente general, muy tenue */}
+      <div className="fixed inset-0 z-0">
+        <SmokeBackground density="ambient" />
+      </div>
+
+      <div className="relative z-10">
+        <Header
+          user={user}
+          profile={profile}
+          onAuthClick={openAuth}
+          onProfileClick={openProfile}
+          onLogoClick={scrollTop}
+        />
+
+        {!loading && (
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  user={user}
+                  feedKey={feedKey}
+                  onAuthClick={openAuth}
+                  onProfileClick={openProfile}
+                />
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <Home
+                  user={user}
+                  feedKey={feedKey}
+                  onAuthClick={openAuth}
+                  onProfileClick={openProfile}
+                />
+              }
+            />
+          </Routes>
+        )}
+
+        {/* Compensa la altura de la barra flotante */}
+        {track && <div className="h-[104px]" aria-hidden="true" />}
+
+        <footer className="border-t border-white/10 py-8 text-center">
+          <p className="logo-neon font-display text-2xl font-black">up!</p>
+          <p className="mt-1 text-xs text-muted">{t('app.tagline')}</p>
+          <div className="mt-4">
+            <DonateButton />
+          </div>
+        </footer>
+      </div>
+
+      <PlayerBar />
+      <Toaster />
+
+      <AuthModal
+        open={authModal.open}
+        initialTab={authModal.tab}
+        onClose={() => setAuthModal((s) => ({ ...s, open: false }))}
+      />
+
+      {user && (
+        <ProfileModal
+          open={profileOpen}
+          user={user}
+          profile={profile}
+          onClose={() => setProfileOpen(false)}
+          onSaved={(p) => setProfile(p)}
+          onEventsChanged={refreshFeed}
+        />
+      )}
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AuthProvider>
+        <PlayerProvider>
+          <BrowserRouter>
+            <Shell />
+          </BrowserRouter>
+        </PlayerProvider>
+      </AuthProvider>
+    </LanguageProvider>
+  )
+}
