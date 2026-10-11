@@ -76,8 +76,8 @@ export default function Privacy() {
   const sections = lang === 'en' ? EN : ES
   return (
     <main className="mx-auto max-w-2xl px-4 pb-44 pt-24">
-      <section className="rounded-3xl border border-white/10 bg-night-alt px-6 py-8 sm:px-10 sm:py-10">
-        <h1 className="font-display text-2xl font-black text-white sm:text-3xl">
+      <section className="rounded-3xl border border-black/10 bg-night-alt px-6 py-8 sm:px-10 sm:py-10">
+        <h1 className="font-display text-2xl font-black text-ink sm:text-3xl">
           {lang === 'en' ? 'Privacy Policy' : 'Política de Privacidad'}
         </h1>
         <p className="mt-2 text-xs text-muted">
@@ -86,7 +86,7 @@ export default function Privacy() {
         <div className="mt-6 space-y-6">
           {sections.map((s) => (
             <div key={s.h}>
-              <h2 className="text-base font-bold text-white">{s.h}</h2>
+              <h2 className="text-base font-bold text-ink">{s.h}</h2>
               <p className="mt-1 text-sm leading-relaxed text-muted">{s.p}</p>
             </div>
           ))}
