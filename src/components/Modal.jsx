@@ -21,7 +21,7 @@ export default function Modal({ open, onClose, children, maxWidth = 'max-w-md', 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex justify-center sm:items-center sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-label={label}
@@ -32,7 +32,7 @@ export default function Modal({ open, onClose, children, maxWidth = 'max-w-md', 
         className="absolute inset-0 cursor-default bg-black/70 backdrop-blur-sm"
       />
       <div
-        className={`relative max-h-[92vh] w-full ${maxWidth} overflow-y-auto rounded-2xl border border-white/10 bg-night-card shadow-2xl shadow-black/60`}
+        className={`relative h-full w-full ${maxWidth} overflow-y-auto bg-night-card sm:h-auto sm:max-h-[92vh] sm:rounded-2xl sm:border sm:border-white/10 sm:shadow-2xl sm:shadow-black/60`}
       >
         <button
           onClick={onClose}
