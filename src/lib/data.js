@@ -1,0 +1,23 @@
+/**
+ * Capa de datos unificada: si hay credenciales de Supabase usa la nube,
+ * si no, corre en modo demo local. Los componentes solo hablan con este módulo.
+ */
+import { isSupabaseConfigured } from './supabase'
+import * as demoDb from './demo'
+import * as cloudDb from './cloud'
+
+const db = isSupabaseConfigured ? cloudDb : demoDb
+
+/** true cuando la app corre en modo demo (sin Supabase configurado) */
+export const isDemoMode = !isSupabaseConfigured
+
+export const getSessionUser = (...args) => db.getSessionUser(...args)
+export const onAuthChange = (...args) => db.onAuthChange(...args)
+export const signUp = (...args) => db.signUp(...args)
+export const signIn = (...args) => db.signIn(...args)
+export const signOut = (...args) => db.signOut(...args)
+export const getProfile = (...args) => db.getProfile(...args)
+export const saveProfile = (...args) => db.saveProfile(...args)
+export const listEvents = (...args) => db.listEvents(...args)
+export const createEvent = (...args) => db.createEvent(...args)
+export const deleteEvent = (...args) => db.deleteEvent(...args)
