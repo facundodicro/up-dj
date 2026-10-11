@@ -17,7 +17,7 @@ export default function SmokeBackground({ density = 'ambient' }) {
           left: '-12vmax',
           top: '-14vmax',
           background: '#8B5CF6',
-          opacity: hero ? 0.22 : 0.09,
+          opacity: hero ? 0.1 : 0.04,
         }}
       />
       <div
@@ -28,7 +28,7 @@ export default function SmokeBackground({ density = 'ambient' }) {
           right: '-10vmax',
           bottom: '-12vmax',
           background: '#3B82F6',
-          opacity: hero ? 0.18 : 0.07,
+          opacity: hero ? 0.08 : 0.03,
         }}
       />
       <div
@@ -39,7 +39,7 @@ export default function SmokeBackground({ density = 'ambient' }) {
           left: '38%',
           top: '28%',
           background: '#7C3AED',
-          opacity: hero ? 0.12 : 0.05,
+          opacity: hero ? 0.06 : 0.02,
           animationDelay: '-12s',
         }}
       />
