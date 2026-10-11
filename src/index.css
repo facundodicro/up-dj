@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
@@ -67,20 +67,20 @@ body {
   }
 }
 
-/* ---- Scrollbar oscuro ---- */
+/* ---- Scrollbar claro ---- */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a14;
+  background: #f0f0f2;
 }
 ::-webkit-scrollbar-thumb {
-  background: #26263a;
+  background: #d4d4d8;
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #34344e;
+  background: #b9b9c2;
 }
 
 /* ---- Héroe 3D: textos de los paneles ---- */
