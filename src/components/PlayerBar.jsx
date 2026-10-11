@@ -25,7 +25,7 @@ export default function PlayerBar() {
   const initial = (track.djName || 'D').trim().charAt(0).toUpperCase()
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-night-card/95 shadow-[0_-8px_40px_rgba(0,0,0,0.55)] backdrop-blur-md">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-night-card/95 shadow-[0_-8px_40px_rgba(0,0,0,0.55)] backdrop-blur-md">
       {/* Progreso clickeable */}
       <div
         ref={barRef}
@@ -40,7 +40,7 @@ export default function PlayerBar() {
           if (e.key === 'ArrowRight') seek(fraction + 0.02)
           if (e.key === 'ArrowLeft') seek(fraction - 0.02)
         }}
-        className="group h-2.5 cursor-pointer bg-white/10"
+        className="group h-2.5 cursor-pointer bg-black/5"
       >
         <div
           className="h-full bg-gradient-to-r from-up to-neon shadow-[0_0_14px_rgba(139,92,246,0.8)] transition-[width] duration-150 group-hover:brightness-125"
@@ -70,7 +70,7 @@ export default function PlayerBar() {
           <img
             src={track.djAvatar}
             alt=""
-            className="hidden h-9 w-9 shrink-0 rounded-full border border-white/10 object-cover sm:block"
+            className="hidden h-9 w-9 shrink-0 rounded-full border border-black/10 object-cover sm:block"
           />
         ) : (
           <span className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-up/20 font-display text-sm font-extrabold text-up-light sm:flex">
@@ -85,7 +85,7 @@ export default function PlayerBar() {
         <button
           onClick={close}
           aria-label={t('player.close')}
-          className="shrink-0 rounded-full p-2 text-muted transition hover:bg-white/10 hover:text-ink"
+          className="shrink-0 rounded-full p-2 text-muted transition hover:bg-black/5 hover:text-ink"
         >
           <X size={18} />
         </button>
