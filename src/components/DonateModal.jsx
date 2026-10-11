@@ -54,7 +54,7 @@ export default function DonateModal({ open, onClose }) {
 
         <div className="mt-6 space-y-4">
           {showMercadoPago && (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="rounded-2xl border border-black/10 bg-black/[0.03] p-5">
               <div className="flex items-center gap-2">
                 <Wallet size={19} className="text-[#00e065]" />
                 <h3 className="font-display font-extrabold text-ink">{t('donate.mpTitle')}</h3>
@@ -66,7 +66,7 @@ export default function DonateModal({ open, onClose }) {
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-extrabold text-white transition ${
+                  className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-extrabold text-ink transition ${
                     copied
                       ? 'bg-[#00e065] text-black'
                       : 'bg-up hover:bg-up-dark shadow-[0_0_18px_rgba(139,92,246,0.45)]'
@@ -85,7 +85,7 @@ export default function DonateModal({ open, onClose }) {
               href={paypalDonateUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-neon/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+              className="flex items-center gap-4 rounded-2xl border border-black/10 bg-black/[0.03] p-5 transition hover:border-neon/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neon/15">
                 <Globe size={19} className="text-neon-light" />
@@ -105,7 +105,7 @@ export default function DonateModal({ open, onClose }) {
             href={donateLink(t('donate.waThanks'))}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-3.5 font-extrabold text-white transition hover:brightness-110"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-3.5 font-extrabold text-ink transition hover:brightness-110"
           >
             <MessageCircle size={19} />
             {t('donate.whatsapp')}
