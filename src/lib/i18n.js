@@ -129,7 +129,7 @@ const STRINGS = {
     'donate.waThanks': 'Hola, quiero agradecer a Up!',
 
     'home.heroTitle': 'Sets de DJs, directo a tus oídos',
-    'home.heroSub': 'Descubrí sesiones nuevas, seguí a tus DJs y escribiles por WhatsApp.',
+    'home.heroSub': 'Descubrí sesiones nuevas y seguí a tus DJs favoritos.',
     'home.uploadSet': 'Subir mi set',
     'home.createProfile': 'Crear mi perfil de DJ',
     'home.demo':
@@ -278,7 +278,7 @@ const STRINGS = {
     'donate.waThanks': 'Hi, I want to thank Up!',
 
     'home.heroTitle': 'DJ sets, straight to your ears',
-    'home.heroSub': 'Discover new sessions, follow your DJs and message them on WhatsApp.',
+    'home.heroSub': 'Discover new sessions and follow your favorite DJs.',
     'home.uploadSet': 'Upload my set',
     'home.createProfile': 'Create my DJ profile',
     'home.demo':
