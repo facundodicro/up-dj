@@ -59,7 +59,7 @@ export default function InstallButton() {
       onClick={handleClick}
       aria-label={t('install.label')}
       title={t('install.label')}
-      className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-night-card text-muted transition hover:border-[#00e065]/60 hover:text-[#00e065] hover:shadow-[0_0_16px_rgba(0,224,101,0.3)]"
+      className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-night-card text-muted transition hover:border-[#00e065]/60 hover:text-[#00e065] hover:shadow-[0_0_16px_rgba(0,224,101,0.3)]"
     >
       <Download size={18} />
     </button>
