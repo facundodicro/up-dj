@@ -225,6 +225,63 @@ function pathFromPublicUrl(url, bucket) {
   }
 }
 
+/**
+ * Actualiza un evento ya publicado: título, descripción y foto.
+ * El audio no se puede cambiar (se publica un set nuevo para eso).
+ */
+export async function updateEvent(
+  uid,
+  id,
+  { title, description, photoFile, removePhoto },
+  onProgress,
+) {
+  const { data: ev, error: fetchError } = await supabase
+    .from('events')
+    .select('photo_url')
+    .eq('id', id)
+    .eq('user_id', uid)
+    .maybeSingle()
+  if (fetchError || !ev) throw new Error(t('demo.eventNotFound'))
+
+  let photo_url = ev.photo_url ?? null
+  if (photoFile) {
+    if (!photoFile.type.startsWith('image/')) throw new Error(t('demo.photoNotImage'))
+    if (photoFile.size > MAX_IMAGE_BYTES) throw new Error(t('demo.photoTooBig'))
+    const photoPath = `${uid}/${crypto.randomUUID()}-${safeName(photoFile.name)}`
+    photo_url = await uploadWithProgress('event-photos', photoPath, photoFile, onProgress)
+    // Borra la foto anterior (best-effort)
+    const oldPath = ev.photo_url ? pathFromPublicUrl(ev.photo_url, 'event-photos') : null
+    if (oldPath) {
+      try {
+        await supabase.storage.from('event-photos').remove([oldPath])
+      } catch {
+        /* sigue igual */
+      }
+    }
+  } else if (removePhoto && ev.photo_url) {
+    const oldPath = pathFromPublicUrl(ev.photo_url, 'event-photos')
+    if (oldPath) {
+      try {
+        await supabase.storage.from('event-photos').remove([oldPath])
+      } catch {
+        /* sigue igual */
+      }
+    }
+    photo_url = null
+  }
+
+  const { error } = await supabase
+    .from('events')
+    .update({
+      title: (title || '').trim(),
+      description: (description || '').trim(),
+      photo_url,
+    })
+    .eq('id', id)
+    .eq('user_id', uid)
+  if (error) throw new Error(t('event.publishError'))
+}
+
 export async function deleteEvent(uid, id) {
   const { data: ev, error: fetchError } = await supabase
     .from('events')
