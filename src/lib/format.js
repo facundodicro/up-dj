@@ -37,7 +37,26 @@ export function formatBytes(bytes, lang) {
   return `${v.toFixed(1).replace('.', decimal)} ${units[u]}`
 }
 
-/** Deja solo dígitos (para WhatsApp). */
-export function normalizeWhatsapp(value) {
-  return String(value || '').replace(/\D/g, '')
+/**
+ * Limpia el contacto de WhatsApp: acepta número (solo dígitos) o apodo
+ * de WhatsApp (letras, números, guiones bajos y puntos, sin @).
+ */
+export function sanitizeWhatsapp(value) {
+  const raw = String(value || '').trim()
+  if (!raw) return ''
+  if (/[a-zA-Z]/.test(raw)) {
+    return raw.replace(/^@+/, '').replace(/[^a-zA-Z0-9_.]/g, '').slice(0, 30)
+  }
+  return raw.replace(/\D/g, '').slice(0, 20)
+}
+
+/**
+ * Construye el link de contacto de WhatsApp: wa.me/<número> o
+ * wa.me/<apodo> cuando es un username de WhatsApp.
+ */
+export function buildWaUrl(whatsapp, message = '') {
+  const target = sanitizeWhatsapp(whatsapp)
+  if (!target) return null
+  const base = `https://wa.me/${target}`
+  return message ? `${base}?text=${encodeURIComponent(message)}` : base
 }
