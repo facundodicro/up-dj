@@ -12,8 +12,10 @@ const ScrollWorldHero = lazy(() => import('../components/ScrollWorldHero'))
 /** Héroe 3D mientras three.js se descarga. */
 function HeroFallback() {
   return (
-    <section className="relative overflow-hidden border-b border-white/10 bg-night-alt px-6 py-16 text-center">
-      <p className="logo-neon font-display text-5xl font-black">up!</p>
+    <section className="relative overflow-hidden border-b border-black/10 bg-night-alt px-6 py-16 text-center">
+      <p className="font-display text-5xl font-black text-ink">
+        up<span className="text-[#00E065]">!</span>
+      </p>
       <p className="mx-auto mt-3 max-w-md animate-pulse text-sm text-muted">Cargando mundo 3D…</p>
     </section>
   )
@@ -67,12 +69,12 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
             {[0, 1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-night-card"
+                className="animate-pulse overflow-hidden rounded-2xl border border-black/10 bg-night-card"
               >
-                <div className="aspect-[16/10] bg-white/5" />
+                <div className="aspect-[16/10] bg-black/5" />
                 <div className="space-y-3 p-5">
-                  <div className="h-4 w-2/3 rounded bg-white/10" />
-                  <div className="h-3 w-1/3 rounded bg-white/10" />
+                  <div className="h-4 w-2/3 rounded bg-black/5" />
+                  <div className="h-3 w-1/3 rounded bg-black/5" />
                 </div>
               </div>
             ))}
@@ -86,7 +88,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
         )}
 
         {!loading && !error && events.length === 0 && (
-          <div className="relative mt-4 overflow-hidden rounded-3xl border border-white/10 bg-night-alt px-6 py-14 text-center">
+          <div className="relative mt-4 overflow-hidden rounded-3xl border border-black/10 bg-night-alt px-6 py-14 text-center">
             <SmokeBackground density="hero" />
             <div className="relative">
               <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-up/25 to-neon/25 shadow-[0_0_40px_rgba(139,92,246,0.35)]">
@@ -98,7 +100,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
               <p className="mx-auto mt-2 max-w-sm text-sm text-muted">{t('home.emptySub')}</p>
               <button
                 onClick={() => (user ? onProfileClick() : onAuthClick('register'))}
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-up px-6 py-3 text-sm font-extrabold text-white shadow-[0_0_28px_rgba(139,92,246,0.5)] transition hover:bg-up-dark"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-up px-6 py-3 text-sm font-extrabold text-ink shadow-[0_0_28px_rgba(139,92,246,0.5)] transition hover:bg-up-dark"
               >
                 <Plus size={17} />
                 {user ? t('home.publishFirst') : t('home.beFirst')}
