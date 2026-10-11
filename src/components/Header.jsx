@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { User, UserPlus, LogIn, Globe, Check } from 'lucide-react'
-import DonateButton from './DonateButton'
 import InstallButton from './InstallButton'
 import { useLang } from '../context/LanguageContext'
 import { SUPPORTED_LANGS } from '../lib/i18n'
@@ -46,8 +45,6 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
         </button>
 
         <div className="flex items-center gap-2">
-          <DonateButton />
-
           <div className="relative" ref={langRef}>
             <button
               onClick={() => setLangOpen((v) => !v)}
