@@ -119,7 +119,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
         setInfo('')
       }}
       className={`flex-1 rounded-lg px-3 py-2 text-sm font-extrabold transition ${
-        tab === key ? 'bg-up text-white shadow-[0_0_18px_rgba(139,92,246,0.45)]' : 'text-muted hover:text-ink'
+        tab === key ? 'bg-up text-ink shadow-[0_0_18px_rgba(139,92,246,0.45)]' : 'text-muted hover:text-ink'
       }`}
     >
       {label}
@@ -127,13 +127,15 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
   )
 
   const inputCls =
-    'w-full rounded-xl border border-white/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.2)]'
+    'w-full rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.2)]'
   const labelCls = 'mb-1 block text-xs font-bold uppercase tracking-wide text-muted'
 
   return (
     <Modal open={open} onClose={onClose} label={t('auth.title')}>
       <div className="p-6 pt-8">
-        <p className="logo-neon text-center font-display text-4xl font-black">up!</p>
+        <p className="text-center font-display text-4xl font-black text-ink">
+          up<span className="text-[#00E065]">!</span>
+        </p>
 
         {tab === 'recovery' ? (
           <>
@@ -177,7 +179,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-white transition hover:bg-up-dark disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-ink transition hover:bg-up-dark disabled:opacity-60"
               >
                 {loading && <Loader2 size={17} className="animate-spin" />}
                 {t('auth.savePassword')}
@@ -216,7 +218,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-white transition hover:bg-up-dark disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-ink transition hover:bg-up-dark disabled:opacity-60"
               >
                 {loading && <Loader2 size={17} className="animate-spin" />}
                 {t('auth.sendLink')}
@@ -244,19 +246,19 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
             <button
               type="button"
               onClick={handleGoogle}
-              className="mt-5 flex w-full items-center justify-center gap-2.5 rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-sm font-extrabold text-ink transition hover:border-white/30 hover:bg-white/[0.07]"
+              className="mt-5 flex w-full items-center justify-center gap-2.5 rounded-xl border border-black/10 bg-black/[0.04] px-4 py-3 text-sm font-extrabold text-ink transition hover:border-black/20 hover:bg-black/[0.06]"
             >
               <GoogleIcon />
               {t('auth.google')}
             </button>
 
             <div className="my-4 flex items-center gap-3">
-              <span className="h-px flex-1 bg-white/10" />
+              <span className="h-px flex-1 bg-black/5" />
               <span className="text-xs font-bold uppercase tracking-wide text-muted">{t('auth.or')}</span>
-              <span className="h-px flex-1 bg-white/10" />
+              <span className="h-px flex-1 bg-black/5" />
             </div>
 
-            <div className="flex gap-1 rounded-xl bg-white/5 p-1">
+            <div className="flex gap-1 rounded-xl bg-black/5 p-1">
               {tabBtn('login', t('auth.loginTab'))}
               {tabBtn('register', t('auth.registerTab'))}
             </div>
@@ -323,7 +325,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-white transition hover:bg-up-dark disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-ink transition hover:bg-up-dark disabled:opacity-60"
               >
                 {loading && <Loader2 size={17} className="animate-spin" />}
                 {tab === 'register' ? t('auth.submitRegister') : t('auth.submitLogin')}
