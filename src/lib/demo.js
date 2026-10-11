@@ -3,7 +3,7 @@
  * local con datos guardados en el navegador. Ideal para probar todos los
  * flujos antes de conectar el backend real.
  */
-import { normalizeWhatsapp } from './format'
+import { sanitizeWhatsapp } from './format'
 import { t } from './i18n'
 
 const LS_DATA = 'up_demo_v1'
@@ -141,7 +141,7 @@ export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, 
     id: uid,
     username: (username || '').trim().slice(0, 40) || 'DJ',
     bio: (bio || '').trim().slice(0, 300),
-    whatsapp: normalizeWhatsapp(whatsapp).slice(0, 20),
+    whatsapp: sanitizeWhatsapp(whatsapp),
     avatar_url,
   }
   writeData(d)
