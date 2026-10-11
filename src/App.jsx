@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import { PlayerProvider, usePlayer } from './context/PlayerContext'
 import { LanguageProvider, useLang } from './context/LanguageContext'
@@ -11,6 +11,7 @@ import Toaster from './components/Toaster'
 import SmokeBackground from './components/SmokeBackground'
 import DonateButton from './components/DonateButton'
 import Home from './pages/Home'
+import Privacy from './pages/Privacy'
 import * as data from './lib/data'
 
 function Shell() {
@@ -83,6 +84,7 @@ function Shell() {
                 />
               }
             />
+            <Route path="/privacidad" element={<Privacy />} />
             <Route
               path="*"
               element={
@@ -103,6 +105,11 @@ function Shell() {
         <footer className="border-t border-white/10 py-8 text-center">
           <p className="logo-neon font-display text-2xl font-black">up!</p>
           <p className="mt-1 text-xs text-muted">{t('app.tagline')}</p>
+          <p className="mt-3 text-xs">
+            <Link to="/privacidad" className="text-muted underline-offset-4 hover:text-white hover:underline">
+              {t('footer.privacy')}
+            </Link>
+          </p>
           <div className="mt-4">
             <DonateButton />
           </div>
