@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Loader2, Plus, Trash2, LogOut, Camera } from 'lucide-react'
+import { Loader2, Plus, Trash2, LogOut, Camera, Pencil } from 'lucide-react'
 import Modal from './Modal'
 import EventForm from './EventForm'
 import { useAuth } from '../hooks/useAuth'
@@ -23,6 +23,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [editingEvent, setEditingEvent] = useState(null)
   const [myEvents, setMyEvents] = useState([])
   const [loadingEvents, setLoadingEvents] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(null)
@@ -250,6 +251,19 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
         )}
 
         <h3 className="mt-6 font-display text-lg font-black text-ink">{t('profile.myEvents')}</h3>
+        {editingEvent && (
+          <div className="mt-3">
+            <EventForm
+              userId={user.id}
+              editingEvent={editingEvent}
+              onCancel={() => setEditingEvent(null)}
+              onUpdated={() => {
+                setEditingEvent(null)
+                refreshMyEvents()
+              }}
+            />
+          </div>
+        )}
         <div className="mt-3 space-y-2">
           {loadingEvents && <p className="text-sm text-muted">{t('profile.loading')}</p>}
           {!loadingEvents && myEvents.length === 0 && (
@@ -266,6 +280,14 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
                 <p className="truncate text-sm font-bold text-ink">{e.title}</p>
                 <p className="text-xs text-muted">{formatDate(e.created_at, lang)}</p>
               </div>
+              <button
+                onClick={() => setEditingEvent(editingEvent?.id === e.id ? null : e)}
+                aria-label={t('profile.edit')}
+                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold text-muted transition hover:bg-black/5 hover:text-ink"
+              >
+                <Pencil size={15} />
+                {t('profile.edit')}
+              </button>
               <button
                 onClick={() => handleDelete(e.id)}
                 className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold transition ${
