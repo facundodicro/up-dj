@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { User, UserPlus, LogIn, Globe, Check } from 'lucide-react'
 import DonateButton from './DonateButton'
+import InstallButton from './InstallButton'
 import { useLang } from '../context/LanguageContext'
 import { SUPPORTED_LANGS } from '../lib/i18n'
 
 const LANG_LABELS = { es: 'Español', en: 'English' }
 
-/** Header fijo: logo "up!" neón verde, donar, idioma y cuenta. */
+/**
+ * Header fijo: flechita de instalación a la izquierda, logo "up!" neón
+ * verde centrado, y a la derecha donar + idioma + cuenta.
+ */
 export default function Header({ user, profile, onAuthClick, onProfileClick, onLogoClick }) {
   const { t, lang, setLang } = useLang()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -28,11 +32,15 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-night/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+      <div className="relative mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+        <div className="flex items-center">
+          <InstallButton />
+        </div>
+
         <button
           onClick={onLogoClick}
           aria-label={t('header.home')}
-          className="logo-neon font-display text-[34px] font-black leading-none tracking-tight transition-transform duration-200 hover:scale-105"
+          className="logo-neon absolute left-1/2 -translate-x-1/2 font-display text-[34px] font-black leading-none tracking-tight transition-transform duration-200 hover:scale-105"
         >
           up!
         </button>

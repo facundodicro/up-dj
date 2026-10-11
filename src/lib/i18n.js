@@ -38,6 +38,19 @@ const STRINGS = {
     'auth.welcomeBack': '¡Hola de nuevo!',
     'auth.genericError': 'Ocurrió un error. Probá de nuevo.',
     'auth.confirmFirst': 'Tenés que confirmar tu email antes de entrar. Revisá tu correo.',
+    'auth.forgot': '¿Olvidaste tu contraseña?',
+    'auth.resetSubtitle': 'Te mandamos un link para crear una nueva.',
+    'auth.sendLink': 'Enviar link',
+    'auth.back': 'Volver',
+    'auth.resetSent': '¡Listo! Revisá tu correo para seguir.',
+    'auth.newPassword': 'Nueva contraseña',
+    'auth.newPasswordSub': 'Elegí una contraseña nueva para tu cuenta.',
+    'auth.savePassword': 'Guardar contraseña',
+    'auth.passwordUpdated': 'Contraseña actualizada. Ya podés entrar.',
+    'auth.google': 'Continuar con Google',
+    'auth.or': 'o',
+    'auth.googleDemo': 'El login con Google se activa al conectar Supabase.',
+    'auth.mismatch': 'Las contraseñas no coinciden.',
 
     'profile.title': 'Mi perfil',
     'profile.subtitle': 'Así te van a ver quienes escuchen tus sets.',
@@ -131,6 +144,11 @@ const STRINGS = {
 
     'app.tagline': 'La pista donde viven los sets.',
 
+    'install.label': 'Instalar app',
+    'install.manual':
+      'Para instalarla: en Android, menú ⋮ → “Instalar app”. En iPhone, Compartir → “Agregar a la pantalla de inicio”.',
+    'install.done': '¡App instalada!',
+
     'demo.invalidEmail': 'Ingresá un email válido.',
     'demo.shortPassword': 'La contraseña tiene que tener al menos 6 caracteres.',
     'demo.emailTaken': 'Ese email ya está registrado. Iniciá sesión.',
@@ -169,6 +187,19 @@ const STRINGS = {
     'auth.welcomeBack': 'Welcome back!',
     'auth.genericError': 'Something went wrong. Try again.',
     'auth.confirmFirst': 'You need to confirm your email before logging in. Check your inbox.',
+    'auth.forgot': 'Forgot your password?',
+    'auth.resetSubtitle': "We'll send you a link to create a new one.",
+    'auth.sendLink': 'Send link',
+    'auth.back': 'Back',
+    'auth.resetSent': 'Done! Check your email to continue.',
+    'auth.newPassword': 'New password',
+    'auth.newPasswordSub': 'Choose a new password for your account.',
+    'auth.savePassword': 'Save password',
+    'auth.passwordUpdated': 'Password updated. You can log in now.',
+    'auth.google': 'Continue with Google',
+    'auth.or': 'or',
+    'auth.googleDemo': 'Google login activates once you connect Supabase.',
+    'auth.mismatch': "Passwords don't match.",
 
     'profile.title': 'My profile',
     'profile.subtitle': 'This is how listeners will see you.',
@@ -261,6 +292,11 @@ const STRINGS = {
     'home.beFirst': 'Be the first',
 
     'app.tagline': 'The dancefloor where sets live.',
+
+    'install.label': 'Install app',
+    'install.manual':
+      'To install: on Android, menu ⋮ → “Install app”. On iPhone, Share → “Add to Home Screen”.',
+    'install.done': 'App installed!',
 
     'demo.invalidEmail': 'Enter a valid email.',
     'demo.shortPassword': 'Password must be at least 6 characters.',

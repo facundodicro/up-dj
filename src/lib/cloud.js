@@ -250,3 +250,28 @@ export async function deleteEvent(uid, id) {
   const { error } = await supabase.from('events').delete().eq('id', id).eq('user_id', uid)
   if (error) throw new Error(t('profile.deleteError'))
 }
+
+/** Envía el email de recupero de contraseña (link con token). */
+export async function resetPassword(email) {
+  if (!/^\S+@\S+\.\S+$/.test(email || '')) throw new Error(t('demo.invalidEmail'))
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+    redirectTo: window.location.origin,
+  })
+  if (error) throw new Error(friendlyAuthError(error))
+}
+
+/** Define la nueva contraseña (tras abrir el link de recupero). */
+export async function updatePassword(password) {
+  if (!password || password.length < 6) throw new Error(t('demo.shortPassword'))
+  const { error } = await supabase.auth.updateUser({ password })
+  if (error) throw new Error(friendlyAuthError(error))
+}
+
+/** Login con Google vía OAuth (requiere configurarlo en Supabase). */
+export async function signInWithGoogle() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin },
+  })
+  if (error) throw new Error(friendlyAuthError(error))
+}

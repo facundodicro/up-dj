@@ -207,3 +207,18 @@ export async function deleteEvent(uid, id) {
   d.events = d.events.filter((e) => e.id !== id)
   writeData(d)
 }
+
+/** Recupero de contraseña (demo): valida el email y simula el envío. */
+export async function resetPassword(email) {
+  if (!/^\S+@\S+\.\S+$/.test(email || '')) throw new Error(t('demo.invalidEmail'))
+}
+
+/** Actualiza la contraseña (demo): solo valida el formato. */
+export async function updatePassword(password) {
+  if (!password || password.length < 6) throw new Error(t('demo.shortPassword'))
+}
+
+/** Login con Google: solo disponible con Supabase conectado. */
+export async function signInWithGoogle() {
+  throw new Error(t('auth.googleDemo'))
+}

@@ -22,6 +22,14 @@ function Shell() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [feedKey, setFeedKey] = useState(0)
 
+  // Si se abrió el link de recupero de contraseña (hash con type=recovery),
+  // abrir el modal en modo "nueva contraseña".
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash.includes('type=recovery')) {
+      setAuthModal({ open: true, tab: 'recovery' })
+    }
+  }, [])
+
   useEffect(() => {
     if (!user) {
       setProfile(null)

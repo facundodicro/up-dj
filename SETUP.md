@@ -61,3 +61,29 @@ Supabase trae la confirmación por email activada por defecto: al registrarse,
 el usuario recibe un correo y debe confirmarlo antes de entrar. La app muestra
 un aviso en ese caso. Si preferís login directo sin confirmación, desactivá
 **"Confirm email"** en **Authentication → Providers → Email**.
+
+## Recupero de contraseña
+
+El link "¿Olvidaste tu contraseña?" envía un email con un link que vuelve a la
+app (`redirectTo` = la URL raíz). Para que funcione en producción, agregá el
+dominio de Vercel (ej. `https://up-dj.vercel.app`) en **Authentication → URL
+Configuration → Redirect URLs**.
+
+## Login con Google
+
+1. En [Google Cloud Console](https://console.cloud.google.com) creá credenciales
+   OAuth 2.0 (tipo **Web application**) con el origen autorizado de tu dominio.
+2. En Supabase: **Authentication → Providers → Google**, activalo y pegá el
+   **Client ID** y **Client Secret**.
+3. Agregá tu dominio a **Redirect URLs** (igual que arriba).
+
+Sin esta configuración, el botón de Google muestra un aviso de que se activa
+al conectar Supabase.
+
+## Instalación PWA
+
+La app incluye manifiesto (`public/manifest.webmanifest`), iconos y un service
+worker **mínimo que no cachea nada** (solo habilita el botón de instalación;
+cada visita trae archivos frescos). En el header hay una flechita de descarga:
+si el navegador lo permite abre el diálogo de instalación, si no muestra las
+instrucciones manuales.
