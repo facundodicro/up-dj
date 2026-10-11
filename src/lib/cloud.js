@@ -9,7 +9,7 @@ import { t } from './i18n'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const MAX_AUDIO_BYTES = 200 * 1024 * 1024
+const MAX_AUDIO_BYTES = 50 * 1024 * 1024
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
 function validateCredentials(email, password) {
