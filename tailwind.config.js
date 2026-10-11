@@ -5,9 +5,9 @@ export default {
     extend: {
       colors: {
         night: {
-          DEFAULT: '#0A0A14',
-          alt: '#0D0D1A',
-          card: '#141422',
+          DEFAULT: '#FAFAF8',
+          alt: '#FFFFFF',
+          card: '#FFFFFF',
         },
         up: {
           DEFAULT: '#8B5CF6',
@@ -18,8 +18,8 @@ export default {
           DEFAULT: '#3B82F6',
           light: '#60A5FA',
         },
-        ink: '#F4F4F5',
-        muted: '#A1A1AA',
+        ink: '#17171C',
+        muted: '#6E6E78',
       },
       fontFamily: {
         sans: ['Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],
