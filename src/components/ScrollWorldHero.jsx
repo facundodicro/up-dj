@@ -23,13 +23,9 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
   const panelRefs = useRef([])
   const [failed, setFailed] = useState(false)
 
-  const panels = [
-    { e: t('scroll3d.p0e'), title: t('scroll3d.p0t'), sub: t('scroll3d.p0s') },
-    { e: t('scroll3d.p1e'), title: t('scroll3d.p1t'), sub: t('scroll3d.p1s') },
-    { e: t('scroll3d.p2e'), title: t('scroll3d.p2t'), sub: t('scroll3d.p2s') },
-    { e: t('scroll3d.p3e'), title: t('scroll3d.p3t'), sub: t('scroll3d.p3s') },
-    { e: t('scroll3d.p4e'), title: t('scroll3d.p4t'), sub: '', cta: true },
-  ]
+  // El héroe usa solo contenido real de la app (tagline + CTAs),
+  // sin textos de marketing inventados.
+  const panels = [{ tagline: true }, { cta: true }]
 
   useEffect(() => {
     const wrap = wrapRef.current
@@ -421,7 +417,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
       for (let i = 0; i < panels.length; i++) setPanel(i, p)
       if (progressRef.current) progressRef.current.style.width = `${(p * 100).toFixed(2)}%`
       if (hintRef.current) hintRef.current.style.opacity = p > 0.04 ? '0' : '1'
-      if (ctaRef.current) ctaRef.current.style.pointerEvents = p > 0.82 ? 'auto' : 'none'
+      if (ctaRef.current) ctaRef.current.style.pointerEvents = p > 0.6 ? 'auto' : 'none'
     }
 
     /* ---------- loop ---------- */
@@ -560,27 +556,24 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
             }}
             className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center px-[8vw] text-center opacity-0"
           >
-            <p
-              className="mb-4 text-[13px] font-bold uppercase tracking-[0.35em] text-[#00E065]"
-              style={{ textShadow: '0 0 18px rgba(0,224,101,.8)' }}
-            >
-              {p.e}
-            </p>
-            <h1
-              className="font-display text-[clamp(38px,8vw,84px)] font-black leading-[1.05] tracking-tight text-white"
-              style={{ textShadow: '0 4px 40px rgba(0,0,0,.9)' }}
-              dangerouslySetInnerHTML={{ __html: p.title }}
-            />
-            {p.sub ? (
-              <p
-                className="mt-4 max-w-xl text-[clamp(15px,2.6vw,21px)] leading-relaxed text-[#c9c9d6]"
-                style={{ textShadow: '0 2px 12px rgba(0,0,0,.9)' }}
-              >
-                {p.sub}
-              </p>
+            {p.tagline ? (
+              <>
+                <p
+                  className="logo-neon font-display text-2xl font-black"
+                  style={{ textShadow: '0 0 18px rgba(0,224,101,.8)' }}
+                >
+                  up!
+                </p>
+                <h1
+                  className="mx-auto mt-4 max-w-2xl font-display text-[clamp(30px,6vw,64px)] font-black leading-[1.1] tracking-tight text-white"
+                  style={{ textShadow: '0 4px 40px rgba(0,0,0,.9)' }}
+                >
+                  {t('home.heroSub')}
+                </h1>
+              </>
             ) : null}
             {p.cta ? (
-              <div ref={ctaRef} className="mt-7 flex flex-col items-center gap-4" style={{ pointerEvents: 'none' }}>
+              <div ref={ctaRef} className="flex flex-col items-center gap-4" style={{ pointerEvents: 'none' }}>
                 <button
                   onClick={user ? onUploadClick : onRegisterClick}
                   className="inline-flex items-center gap-2 rounded-full bg-[#00E065] px-8 py-4 text-base font-extrabold text-[#04120a] shadow-[0_0_30px_rgba(0,224,101,.55)] transition active:scale-95"
