@@ -3,11 +3,20 @@ import { Disc3, Plus, Search, X } from 'lucide-react'
 import DonateButton from '../components/DonateButton'
 import EventCard from '../components/EventCard'
 import SmokeBackground from '../components/SmokeBackground'
+import TopDjs from '../components/TopDjs'
 import { useLang } from '../context/LanguageContext'
 import * as data from '../lib/data'
 import { isDemoMode } from '../lib/data'
 
 const ScrollWorldHero = lazy(() => import('../components/ScrollWorldHero'))
+
+const FILTERS = [
+  { id: 'all', label: 'home.filterAll' },
+  { id: 'today', label: 'home.filterToday' },
+  { id: 'week', label: 'home.filterWeek' },
+  { id: 'liked', label: 'home.filterLiked' },
+  { id: 'following', label: 'home.filterFollowing' },
+]
 
 /** Héroe 3D mientras three.js se descarga. */
 function HeroFallback() {
@@ -32,17 +41,51 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
   const [myFollows, setMyFollows] = useState(new Set())
   const [followerCounts, setFollowerCounts] = useState({})
   const [query, setQuery] = useState('')
+  const [filter, setFilter] = useState('all')
+  const [topDjs, setTopDjs] = useState([])
 
   const filteredEvents = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return events
-    return events.filter(
-      (e) =>
-        (e.title || '').toLowerCase().includes(q) ||
-        (e.description || '').toLowerCase().includes(q) ||
-        (e.dj?.username || '').toLowerCase().includes(q),
-    )
-  }, [events, query])
+    let list = q
+      ? events.filter(
+          (e) =>
+            (e.title || '').toLowerCase().includes(q) ||
+            (e.description || '').toLowerCase().includes(q) ||
+            (e.dj?.username || '').toLowerCase().includes(q),
+        )
+      : [...events]
+    const now = Date.now()
+    if (filter === 'today') {
+      list = list.filter((e) => now - new Date(e.created_at).getTime() < 86400000)
+    } else if (filter === 'week') {
+      list = list.filter((e) => now - new Date(e.created_at).getTime() < 7 * 86400000)
+    } else if (filter === 'following') {
+      list = user ? list.filter((e) => e.user_id && myFollows.has(e.user_id)) : []
+    }
+    if (filter === 'week' || filter === 'liked') {
+      list.sort((a, b) => (likeCounts[b.id] || 0) - (likeCounts[a.id] || 0))
+    } else {
+      list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    }
+    return list
+  }, [events, query, filter, likeCounts, myFollows, user])
+
+  const handleFilter = (id) => {
+    if (id === 'following' && !user) {
+      onAuthClick('login')
+      return
+    }
+    setFilter(id)
+  }
+
+  const filterEmptyKey =
+    filter === 'today'
+      ? 'home.emptyToday'
+      : filter === 'week'
+        ? 'home.emptyWeek'
+        : filter === 'following'
+          ? 'home.emptyFollowing'
+          : null
 
   useEffect(() => {
     let alive = true
@@ -140,6 +183,19 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
     }
   }, [events, user?.id])
 
+  useEffect(() => {
+    let alive = true
+    data
+      .getTopDjs(10)
+      .then((d) => {
+        if (alive) setTopDjs(d)
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [feedKey])
+
   return (
     <>
       {/* Héroe 3D: mundo neón navegable con scroll (carga diferida) */}
@@ -177,6 +233,29 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
               </button>
             )}
           </div>
+        )}
+
+        {!loading && !error && events.length > 0 && (
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+            {FILTERS.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => handleFilter(f.id)}
+                className={`shrink-0 rounded-full border px-4 py-1.5 text-xs font-extrabold transition active:scale-95 ${
+                  filter === f.id
+                    ? 'border-ink bg-ink text-white'
+                    : 'border-black/10 bg-night-card text-muted hover:border-black/25 hover:text-ink'
+                }`}
+              >
+                {t(f.label)}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {!loading && !error && filter === 'all' && !query.trim() && (
+          <TopDjs djs={topDjs} onSelect={(name) => setQuery(name)} />
         )}
 
         {loading && (
@@ -226,7 +305,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
 
         {!loading && !error && events.length > 0 && filteredEvents.length === 0 && (
           <p className="mt-4 rounded-2xl border border-dashed border-black/10 px-5 py-8 text-center text-sm text-muted">
-            {t('home.noResults')}
+            {filterEmptyKey && !query.trim() ? t(filterEmptyKey) : t('home.noResults')}
           </p>
         )}
 
