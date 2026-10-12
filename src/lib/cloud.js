@@ -385,3 +385,55 @@ export async function signInWithGoogle() {
   })
   if (error) throw new Error(friendlyAuthError(error))
 }
+
+/** IDs de los DJs que sigue el usuario. */
+export async function getMyFollows(uid) {
+  if (!sb || !uid) return new Set()
+  const { data, error } = await supabase
+    .from('follows')
+    .select('followed_id')
+    .eq('follower_id', uid)
+  if (error) return new Set()
+  return new Set((data || []).map((f) => f.followed_id))
+}
+
+/** Cantidad de seguidores por cada ID de usuario. */
+export async function getFollowerCounts(userIds) {
+  const counts = {}
+  if (!sb || !userIds?.length) return counts
+  const { data, error } = await supabase
+    .from('follows')
+    .select('followed_id')
+    .in('followed_id', userIds)
+  if (error) return counts
+  for (const f of data || []) counts[f.followed_id] = (counts[f.followed_id] || 0) + 1
+  return counts
+}
+
+/** Seguidores y seguidos de un usuario (para mostrar en el perfil). */
+export async function getFollowCounts(uid) {
+  if (!sb || !uid) return { followers: 0, following: 0 }
+  const [{ count: followers }, { count: following }] = await Promise.all([
+    supabase.from('follows').select('follower_id', { count: 'exact', head: true }).eq('followed_id', uid),
+    supabase.from('follows').select('followed_id', { count: 'exact', head: true }).eq('follower_id', uid),
+  ])
+  return { followers: followers || 0, following: following || 0 }
+}
+
+/** Seguir o dejar de seguir a un DJ. */
+export async function toggleFollow(uid, followedId, following) {
+  if (uid === followedId) return
+  let error
+  if (following) {
+    ;({ error } = await supabase
+      .from('follows')
+      .delete()
+      .eq('follower_id', uid)
+      .eq('followed_id', followedId))
+  } else {
+    ;({ error } = await supabase
+      .from('follows')
+      .insert({ follower_id: uid, followed_id: followedId }))
+  }
+  if (error) throw new Error(t('home.loadError'))
+}
