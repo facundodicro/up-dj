@@ -139,7 +139,16 @@ export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, 
   }
   d.profiles[uid] = {
     id: uid,
-    username: (username || '').trim().slice(0, 40) || 'DJ',
+    username: (() => {
+      const clean = (username || '').trim().replace(/\s+/g, ' ').slice(0, 40) || null
+      if (clean) {
+        const taken = Object.values(d.profiles).some(
+          (p) => p.id !== uid && (p.username || '').toLowerCase() === clean.toLowerCase(),
+        )
+        if (taken) throw new Error(t('profile.usernameTaken'))
+      }
+      return clean
+    })(),
     bio: (bio || '').trim().slice(0, 300),
     whatsapp: sanitizeWhatsapp(whatsapp),
     avatar_url,
@@ -196,6 +205,34 @@ export async function createEvent(uid, { title, description, audioFile, photoFil
   d.events.unshift(event)
   writeData(d)
   return event
+}
+
+/** Likes en modo demo: se guardan en localStorage. */
+export async function getLikes(eventIds) {
+  const counts = {}
+  const mine = new Set()
+  const d = readData()
+  const likes = d.likes || []
+  const session = JSON.parse(localStorage.getItem(LS_SESSION) || 'null')
+  const uid = session?.uid
+  for (const l of likes) {
+    if (!eventIds.includes(l.event_id)) continue
+    counts[l.event_id] = (counts[l.event_id] || 0) + 1
+    if (uid && l.user_id === uid) mine.add(l.event_id)
+  }
+  return { counts, mine }
+}
+
+export async function toggleLike(uid, eventId, liked) {
+  const d = readData()
+  const likes = d.likes || []
+  if (liked) {
+    d.likes = likes.filter((l) => !(l.event_id === eventId && l.user_id === uid))
+  } else if (!likes.some((l) => l.event_id === eventId && l.user_id === uid)) {
+    likes.push({ event_id: eventId, user_id: uid })
+    d.likes = likes
+  }
+  writeData(d)
 }
 
 export async function deleteEvent(uid, id) {
