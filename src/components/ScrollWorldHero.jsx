@@ -219,19 +219,11 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
       )
     }
 
-    /* ---------- escena 1: monumento up! ---------- */
+    /* ---------- escena 1: portal (sin texto: el efecto es el protagonista) ---------- */
     const logoGroup = new THREE.Group()
     logoGroup.position.set(0, 5, 10)
     scene.add(logoGroup)
     {
-      const { tex, aspect } = logoTexture({ size: 200 })
-      const h = 6
-      const w = h * aspect
-      const m = new THREE.Mesh(
-        new THREE.PlaneGeometry(w, h),
-        new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide }),
-      )
-      logoGroup.add(m)
       logoGroup.add(glowSprite(GREEN, 22, 0.35))
       const ring = new THREE.Mesh(new THREE.TorusGeometry(9, 0.09, 12, 90), neonMat(VIOLET))
       logoGroup.add(ring)
