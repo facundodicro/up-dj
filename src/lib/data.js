@@ -28,4 +28,6 @@ export const updateEvent = (...args) => {
     throw new Error('Editar no está disponible en modo demo')
   return db.updateEvent(...args)
 }
+export const getLikes = (...args) => db.getLikes(...args)
+export const toggleLike = (...args) => db.toggleLike(...args)
 export const deleteEvent = (...args) => db.deleteEvent(...args)
