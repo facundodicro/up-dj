@@ -28,6 +28,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
   const [loadingEvents, setLoadingEvents] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(null)
   const [signingOut, setSigningOut] = useState(false)
+  const [followCounts, setFollowCounts] = useState({ followers: 0, following: 0 })
   const fileRef = useRef(null)
 
   // Sincronizar campos al abrir
@@ -54,6 +55,10 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
       .then((all) => setMyEvents(all.filter((e) => e.user_id === user.id)))
       .catch(() => setMyEvents([]))
       .finally(() => setLoadingEvents(false))
+    data
+      .getFollowCounts(user.id)
+      .then((c) => setFollowCounts(c))
+      .catch(() => {})
   }, [open, user])
 
   const pickAvatar = (e) => {
@@ -130,6 +135,11 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
       <div className="p-6 pt-8">
         <h2 className="font-display text-xl font-black text-ink">{t('profile.title')}</h2>
         <p className="mt-1 text-sm text-muted">{t('profile.subtitle')}</p>
+        <p className="mt-2 text-sm font-extrabold text-ink">
+          {followCounts.followers} <span className="font-semibold text-muted">{t('profile.followers')}</span>
+          <span className="mx-2 text-muted/40">·</span>
+          {followCounts.following} <span className="font-semibold text-muted">{t('profile.following')}</span>
+        </p>
 
         <form onSubmit={save} className="mt-5 space-y-4">
           <div className="flex items-center gap-4">
