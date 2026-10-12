@@ -1,14 +1,17 @@
 import { useState } from 'react'
-import { Play, Pause, Disc3, MessageCircle } from 'lucide-react'
+import { Play, Pause, Disc3, MessageCircle, Heart } from 'lucide-react'
 import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
 import { formatDate, buildWaUrl } from '../lib/format'
+import * as data from '../lib/data'
 
-/** Tarjeta de un evento en el feed: foto, play, DJ, descripción y WhatsApp. */
-export default function EventCard({ event }) {
+/** Tarjeta de un evento en el feed: foto, play, DJ, descripción, like y WhatsApp. */
+export default function EventCard({ event, user, likeCount = 0, liked = false, onToggleLike, onAuthClick }) {
   const { track, isPlaying, playTrack } = usePlayer()
   const { t, lang } = useLang()
   const [expanded, setExpanded] = useState(false)
+  const [beating, setBeating] = useState(false)
+  const [liking, setLiking] = useState(false)
 
   const isCurrent = track?.id === event.id
   const playing = isCurrent && isPlaying
@@ -26,6 +29,24 @@ export default function EventCard({ event }) {
   }
 
   const waUrl = buildWaUrl(dj.whatsapp, t('card.waMessage'))
+
+  const handleLike = async () => {
+    if (!user) {
+      onAuthClick?.('login')
+      return
+    }
+    if (liking) return
+    setLiking(true)
+    try {
+      await data.toggleLike(user.id, event.id, liked)
+      onToggleLike?.(event.id, !liked)
+      if (!liked) setBeating(true)
+    } catch {
+      /* noop */
+    } finally {
+      setLiking(false)
+    }
+  }
 
   const longDesc = (event.description || '').length > 140
   const desc = expanded || !longDesc ? event.description : `${event.description.slice(0, 140)}…`
@@ -98,7 +119,30 @@ export default function EventCard({ event }) {
         )}
 
         <div className="mt-4 flex items-center justify-between">
-          <span className="text-xs font-semibold text-muted/70">{formatDate(event.created_at, lang)}</span>
+          <div className="flex items-center gap-1">
+            <span className="text-xs font-semibold text-muted/70">{formatDate(event.created_at, lang)}</span>
+            <button
+              onClick={handleLike}
+              aria-label={t(liked ? 'card.unlike' : 'card.like')}
+              aria-pressed={liked}
+              title={t(liked ? 'card.unlike' : 'card.like')}
+              className={`flex items-center gap-1.5 rounded-full px-2.5 py-2 text-sm font-extrabold transition ${
+                liked ? 'text-[#00E065]' : 'text-muted/50 hover:text-muted'
+              }`}
+            >
+              <span
+                className={beating ? 'animate-heartbeat inline-flex' : 'inline-flex'}
+                onAnimationEnd={() => setBeating(false)}
+              >
+                <Heart
+                  size={19}
+                  fill={liked ? 'currentColor' : 'none'}
+                  className={liked ? 'drop-shadow-[0_0_8px_rgba(0,224,101,0.55)]' : ''}
+                />
+              </span>
+              {likeCount > 0 && <span className="tabular-nums">{likeCount}</span>}
+            </button>
+          </div>
           {waUrl ? (
             <a
               href={waUrl}
