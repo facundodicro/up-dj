@@ -1,1 +1,48 @@
-aW1wb3J0IHsgdXNlRWZmZWN0IH0gZnJvbSAncmVhY3QnCmltcG9ydCB7IFggfSBmcm9tICdsdWNpZGUtcmVhY3QnCmltcG9ydCB7IHQgfSBmcm9tICcuLi9saWIvaTE4bicKCi8qKiBWZW50YW5hIG1vZGFsIHJldXRpbGl6YWJsZTogb3ZlcmxheSBvc2N1cm8gKyB0YXJqZXRhIHNvYnJlIGZvbmRvIG5pZ2h0LiAqLwpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBNb2RhbCh7IG9wZW4sIG9uQ2xvc2UsIGNoaWxkcmVuLCBtYXhXaWR0aCA9ICdtYXgtdy1tZCcsIGxhYmVsIH0pIHsKICB1c2VFZmZlY3QoKCkgPT4gewogICAgaWYgKCFvcGVuKSByZXR1cm4KICAgIGNvbnN0IG9uS2V5ID0gKGUpID0+IHsKICAgICAgaWYgKGUua2V5ID09PSAnRXNjYXBlJykgb25DbG9zZSgpCiAgICB9CiAgICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdrZXlkb3duJywgb25LZXkpCiAgICBkb2N1bWVudC5ib2R5LnN0eWxlLm92ZXJmbG93ID0gJ2hpZGRlbicKICAgIHJldHVybiAoKSA9PiB7CiAgICAgIGRvY3VtZW50LnJlbW92ZUV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBvbktleSkKICAgICAgZG9jdW1lbnQuYm9keS5zdHlsZS5vdmVyZmxvdyA9ICcnCiAgICB9CiAgfSwgW29wZW4sIG9uQ2xvc2VdKQoKICBpZiAoIW9wZW4pIHJldHVybiBudWxsCgogIHJldHVybiAoCiAgICA8ZGl2CiAgICAgIGNsYXNzTmFtZT0iZml4ZWQgaW5zZXQtMCB6LTUwIGZsZXgganVzdGlmeS1jZW50ZXIgc206aXRlbXMtY2VudGVyIHNtOnAtNCIKICAgICAgcm9sZT0iZGlhbG9nIgogICAgICBhcmlhLW1vZGFsPSJ0cnVlIgogICAgICBhcmlhLWxhYmVsPXtsYWJlbH0KICAgID4KICAgICAgPGJ1dHRvbgogICAgICAgIGFyaWEtbGFiZWw9e3QoJ2NvbW1vbi5jbG9zZScpfQogICAgICAgIG9uQ2xpY2s9e29uQ2xvc2V9CiAgICAgICAgY2xhc3NOYW1lPSJhYnNvbHV0ZSBpbnNldC0wIGN1cnNvci1kZWZhdWx0IGJnLWJsYWNrLzcwIGJhY2tkcm9wLWJsdXItc20iCiAgICAgIC8+CiAgICAgIDxkaXYKICAgICAgICBjbGFzc05hbWU9e2ByZWxhdGl2ZSBoLWZ1bGwgdy1mdWxsICR7bWF4V2lkdGh9IG92ZXJmbG93LXktYXV0byBiZy1uaWdodC1jYXJkIHNtOmgtYXV0byBzbTptYXgtaC1bOTJ2aF0gc206cm91bmRlZC0yeGwgc206Ym9yZGVyIHNtOmJvcmRlci1ibGFjay8xMCBzbTpzaGFkb3ctMnhsIHNtOnNoYWRvdy1ibGFjay82MGB9CiAgICAgID4KICAgICAgICA8YnV0dG9uCiAgICAgICAgICBvbkNsaWNrPXtvbkNsb3NlfQogICAgICAgICAgYXJpYS1sYWJlbD17dCgnY29tbW9uLmNsb3NlJyl9CiAgICAgICAgICBjbGFzc05hbWU9ImFic29sdXRlIHJpZ2h0LTMgdG9wLTMgei0xMCBmbGV4IG1pbi1oLVs0NHB4XSBtaW4tdy1bNDRweF0gaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHJvdW5kZWQtZnVsbCBwLTIgdGV4dC1tdXRlZCB0cmFuc2l0aW9uIGhvdmVyOmJnLWJsYWNrLzUgaG92ZXI6dGV4dC1pbmsiCiAgICAgICAgPgogICAgICAgICAgPFggc2l6ZT17MTh9IC8+CiAgICAgICAgPC9idXR0b24+CiAgICAgICAge2NoaWxkcmVufQogICAgICA8L2Rpdj4KICAgIDwvZGl2PgogICkKfQo=
+import { useEffect } from 'react'
+import { X } from 'lucide-react'
+import { t } from '../lib/i18n'
+
+/** Ventana modal reutilizable: overlay oscuro + tarjeta sobre fondo night. */
+export default function Modal({ open, onClose, children, maxWidth = 'max-w-md', label }) {
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [open, onClose])
+
+  if (!open) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex justify-center sm:items-center sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={label}
+    >
+      <button
+        aria-label={t('common.close')}
+        onClick={onClose}
+        className="absolute inset-0 cursor-default bg-black/70 backdrop-blur-sm"
+      />
+      <div
+        className={`relative h-full w-full ${maxWidth} overflow-y-auto bg-night-card sm:h-auto sm:max-h-[92vh] sm:rounded-2xl sm:border sm:border-black/10 sm:shadow-2xl sm:shadow-black/60`}
+      >
+        <button
+          onClick={onClose}
+          aria-label={t('common.close')}
+          className="absolute right-3 top-3 z-10 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2 text-muted transition hover:bg-black/5 hover:text-ink"
+        >
+          <X size={18} />
+        </button>
+        {children}
+      </div>
+    </div>
+  )
+}
