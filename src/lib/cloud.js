@@ -437,3 +437,34 @@ export async function toggleFollow(uid, followedId, following) {
   }
   if (error) throw new Error(t('home.loadError'))
 }
+
+/** DJs más seguidos en los últimos 7 días (para la tira "Top DJs"). */
+export async function getTopDjs(limit = 10) {
+  if (!sb) return []
+  const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString()
+  const { data, error } = await supabase
+    .from('follows')
+    .select('followed_id')
+    .gte('created_at', weekAgo)
+  if (error || !data) return []
+  const counts = {}
+  for (const f of data) counts[f.followed_id] = (counts[f.followed_id] || 0) + 1
+  const ids = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([id]) => id)
+  if (!ids.length) return []
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, username, avatar_url')
+    .in('id', ids)
+  const byId = Object.fromEntries((profiles || []).map((p) => [p.id, p]))
+  return ids
+    .filter((id) => byId[id])
+    .map((id) => ({
+      user_id: id,
+      username: byId[id].username || t('card.djFallback'),
+      avatar_url: byId[id].avatar_url || null,
+      followers: counts[id],
+    }))
+}
