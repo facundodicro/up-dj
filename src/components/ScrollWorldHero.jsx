@@ -102,6 +102,41 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
       tex.anisotropy = 4
       return { tex, aspect: c.width / c.height }
     }
+    /* "up" en blanco + "!" en verde, como el logo: luz blanca suave con acento verde. */
+    function logoTexture({ size = 200, pad = 60 } = {}) {
+      const font = `900 ${size}px Nunito, Arial, sans-serif`
+      const c = document.createElement('canvas')
+      const g = c.getContext('2d')
+      g.font = font
+      const wUp = g.measureText('up').width
+      const wBang = g.measureText('!').width
+      const gap = size * 0.05
+      const total = wUp + gap + wBang
+      c.width = Math.ceil(total) + pad * 2
+      c.height = size + pad * 2
+      const g2 = c.getContext('2d')
+      g2.font = font
+      g2.textBaseline = 'middle'
+      g2.textAlign = 'left'
+      const cy = c.height / 2
+      let x = pad + (c.width - pad * 2 - total) / 2
+      const drawRun = (txt, color, glowColor) => {
+        g2.shadowColor = glowColor
+        g2.shadowBlur = size * 0.16
+        g2.fillStyle = color
+        g2.fillText(txt, x, cy)
+        g2.shadowBlur = 0
+        g2.fillText(txt, x, cy)
+        x += g2.measureText(txt).width
+      }
+      drawRun('up', '#FFFFFF', 'rgba(255,255,255,0.85)')
+      x += gap
+      drawRun('!', '#00E065', 'rgba(0,224,101,0.9)')
+      const tex = new THREE.CanvasTexture(c)
+      tex.colorSpace = THREE.SRGBColorSpace
+      tex.anisotropy = 4
+      return { tex, aspect: c.width / c.height }
+    }
     function glowTexture() {
       const c = document.createElement('canvas')
       c.width = c.height = 128
@@ -189,7 +224,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
     logoGroup.position.set(0, 5, 10)
     scene.add(logoGroup)
     {
-      const { tex, aspect } = textTexture('up!', { size: 200, color: '#00E065' })
+      const { tex, aspect } = logoTexture({ size: 200 })
       const h = 6
       const w = h * aspect
       const m = new THREE.Mesh(
@@ -356,7 +391,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
 
     /* ---------- escena 5: final ---------- */
     {
-      const { tex, aspect } = textTexture('up!', { size: 220, color: '#00E065' })
+      const { tex, aspect } = logoTexture({ size: 220 })
       const h = 8
       const w = h * aspect
       const m = new THREE.Mesh(
@@ -564,11 +599,13 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
                 >
                   up!
                 </p>
-                <h1
-                  className="mx-auto mt-4 max-w-2xl font-display text-[clamp(30px,6vw,64px)] font-black leading-[1.1] tracking-tight text-white"
-                  style={{ textShadow: '0 2px 18px rgba(0,0,0,.95), 0 0 60px rgba(0,0,0,.8)' }}
-                >
-                  {t('home.heroSub')}
+                <h1 className="mx-auto mt-4 max-w-2xl font-display text-[clamp(30px,6vw,64px)] font-black leading-[1.5] tracking-tight text-white">
+                  <span
+                    className="rounded-2xl bg-black/55 px-6 py-3 shadow-[0_10px_50px_rgba(0,0,0,0.55)]"
+                    style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone' }}
+                  >
+                    {t('home.heroSub')}
+                  </span>
                 </h1>
               </>
             ) : null}
