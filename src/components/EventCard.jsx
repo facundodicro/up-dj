@@ -70,7 +70,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
   const desc = expanded || !longDesc ? event.description : `${event.description.slice(0, 140)}…`
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-black/10 bg-night-card transition duration-200 hover:border-black/15 hover:shadow-[0_8px_40px_rgba(139,92,246,0.12)]">
+    <article className="overflow-hidden rounded-2xl border border-black/10 bg-night-card shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition duration-200 hover:border-black/15 hover:shadow-[0_8px_40px_rgba(139,92,246,0.12)]">
       <div className="relative aspect-[16/10] bg-night-alt">
         {event.photo_url ? (
           <img
@@ -112,14 +112,14 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
             <img
               src={dj.avatar_url}
               alt=""
-              className="h-7 w-7 rounded-full border border-black/10 object-cover"
+              className="h-6 w-6 rounded-full border border-black/10 object-cover"
             />
           ) : (
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-up/20 font-display text-sm font-extrabold text-up-light">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-up/20 font-display text-xs font-extrabold text-up-light">
               {initial}
             </span>
           )}
-          <span className="text-sm font-bold text-muted">{dj.username}</span>
+          <span className="text-sm font-bold text-[#1A1A1A]">{dj.username}</span>
           {followerCount > 0 && (
             <span className="text-xs font-semibold text-muted/60">
               · {followerCount} {t('profile.followers')}
@@ -140,7 +140,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
         </div>
 
         {event.description && (
-          <p className="mt-3 text-sm leading-relaxed text-muted">
+          <p className="mt-2 text-sm font-normal leading-[1.4] text-[#8A8A8A]">
             {desc}{' '}
             {longDesc && (
               <button
@@ -153,16 +153,16 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
           </p>
         )}
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex items-center justify-between border-t border-[#F0F0F0] pt-3">
           <div className="flex items-center gap-1">
-            <span className="text-xs font-semibold text-muted/70">{formatRelative(event.created_at, t)}</span>
+            <span className="text-xs font-semibold text-[#A0A0A0]">{formatRelative(event.created_at, t)}</span>
             <button
               onClick={handleLike}
               aria-label={t(liked ? 'card.unlike' : 'card.like')}
               aria-pressed={liked}
               title={t(liked ? 'card.unlike' : 'card.like')}
               className={`flex items-center gap-1.5 rounded-full px-2.5 py-2 text-sm font-extrabold transition ${
-                liked ? 'text-[#00E065]' : 'text-muted/50 hover:text-muted'
+                liked ? 'text-[#00D26A]' : 'text-muted/50 hover:text-muted'
               }`}
             >
               <span
@@ -172,7 +172,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
                 <Heart
                   size={19}
                   fill={liked ? 'currentColor' : 'none'}
-                  className={liked ? 'drop-shadow-[0_0_8px_rgba(0,224,101,0.55)]' : ''}
+                  className={liked ? 'drop-shadow-[0_0_8px_rgba(0,210,106,0.55)]' : ''}
                 />
               </span>
               {likeCount > 0 && <span className="tabular-nums">{likeCount}</span>}
@@ -189,7 +189,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
               {t('card.whatsapp')}
             </a>
           ) : (
-            <span className="text-xs text-muted/50">{t('card.noContact')}</span>
+            <span className="text-xs text-[#A0A0A0]">{t('card.noContact')}</span>
           )}
         </div>
       </div>
