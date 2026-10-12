@@ -421,11 +421,23 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
     const setPanel = (i, p) => {
       const el = panelRefs.current[i]
       if (!el) return
-      const c = (i + 0.5) / panels.length
-      const d = Math.abs(p - c)
-      const o = Math.max(0, 1 - d * panels.length * 1.5)
+      const smooth = (x) => {
+        const t = Math.min(1, Math.max(0, x))
+        return t * t * (3 - 2 * t)
+      }
+      let o
+      let drift
+      if (i === 0) {
+        // Tagline: aparece, se mantiene un momento y se desvanece hasta desaparecer.
+        o = smooth(p / 0.1) * (1 - smooth((p - 0.24) / 0.18))
+        drift = (p - 0.21) * 120
+      } else {
+        // CTA final: aparece y queda firme hasta el final de la sección.
+        o = smooth((p - 0.58) / 0.14)
+        drift = (p - 0.75) * 120
+      }
       el.style.opacity = o.toFixed(3)
-      el.style.transform = `translateY(${(p - c) * 160}px)`
+      el.style.transform = `translateY(${drift.toFixed(1)}px)`
       el.style.visibility = o < 0.02 ? 'hidden' : 'visible'
     }
     const updateChrome = (p) => {
