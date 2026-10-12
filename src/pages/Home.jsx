@@ -29,6 +29,8 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
   const [error, setError] = useState('')
   const [likeCounts, setLikeCounts] = useState({})
   const [myLikes, setMyLikes] = useState(new Set())
+  const [myFollows, setMyFollows] = useState(new Set())
+  const [followerCounts, setFollowerCounts] = useState({})
   const [query, setQuery] = useState('')
 
   const filteredEvents = useMemo(() => {
@@ -96,6 +98,47 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
       [eventId]: Math.max(0, (prev[eventId] || 0) + (nowLiked ? 1 : -1)),
     }))
   }
+
+  const handleToggleFollow = (djId, nowFollowing) => {
+    setMyFollows((prev) => {
+      const next = new Set(prev)
+      if (nowFollowing) next.add(djId)
+      else next.delete(djId)
+      return next
+    })
+    setFollowerCounts((prev) => ({
+      ...prev,
+      [djId]: Math.max(0, (prev[djId] || 0) + (nowFollowing ? 1 : -1)),
+    }))
+  }
+
+  useEffect(() => {
+    let alive = true
+    if (user?.id) {
+      data
+        .getMyFollows(user.id)
+        .then((s) => {
+          if (alive) setMyFollows(s)
+        })
+        .catch(() => {})
+    } else {
+      setMyFollows(new Set())
+    }
+    const djIds = [...new Set(events.map((e) => e.user_id).filter(Boolean))]
+    if (!djIds.length) {
+      setFollowerCounts({})
+      return
+    }
+    data
+      .getFollowerCounts(djIds)
+      .then((counts) => {
+        if (alive) setFollowerCounts(counts)
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [events, user?.id])
 
   return (
     <>
@@ -198,6 +241,9 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
                 liked={myLikes.has(e.id)}
                 onToggleLike={handleToggleLike}
                 onAuthClick={onAuthClick}
+                followed={e.user_id ? myFollows.has(e.user_id) : false}
+                followerCount={e.user_id ? followerCounts[e.user_id] || 0 : 0}
+                onToggleFollow={handleToggleFollow}
               />
             ))}
           </div>
