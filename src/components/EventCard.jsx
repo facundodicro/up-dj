@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Play, Pause, Disc3, MessageCircle, Heart } from 'lucide-react'
 import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
-import { formatDate, buildWaUrl } from '../lib/format'
+import { formatRelative, buildWaUrl } from '../lib/format'
 import * as data from '../lib/data'
 
 /** Tarjeta de un evento en el feed: foto, play, DJ, descripción, like y WhatsApp. */
@@ -155,7 +155,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
 
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <span className="text-xs font-semibold text-muted/70">{formatDate(event.created_at, lang)}</span>
+            <span className="text-xs font-semibold text-muted/70">{formatRelative(event.created_at, t)}</span>
             <button
               onClick={handleLike}
               aria-label={t(liked ? 'card.unlike' : 'card.like')}
