@@ -297,3 +297,22 @@ export async function toggleFollow(uid, followedId, following) {
   }
   writeData(d)
 }
+
+/** DJs más seguidos en modo demo (últimos 7 días). */
+export async function getTopDjs(limit = 10) {
+  const d = readData()
+  const weekAgo = Date.now() - 7 * 86400000
+  const counts = {}
+  for (const f of d.follows || []) {
+    const ts = f.created_at ? new Date(f.created_at).getTime() : Date.now()
+    if (ts < weekAgo) continue
+    counts[f.followed_id] = (counts[f.followed_id] || 0) + 1
+  }
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([id, followers]) => {
+      const p = d.profiles[id] || {}
+      return { user_id: id, username: p.username || 'DJ', avatar_url: p.avatar_url || null, followers }
+    })
+}
