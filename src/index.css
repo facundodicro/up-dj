@@ -106,3 +106,14 @@ body {
   transform: rotate(45deg);
   animation: sw-bob 1.6s ease-in-out infinite;
 }
+
+/* Corazón de like: late suave al dar like */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  20% { transform: scale(1.35); }
+  40% { transform: scale(1); }
+  60% { transform: scale(1.22); }
+}
+.animate-heartbeat {
+  animation: heartbeat 0.7s ease-in-out;
+}
