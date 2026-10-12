@@ -236,7 +236,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
         )}
 
         {!loading && !error && events.length > 0 && (
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          <div className="mt-3 flex flex-wrap gap-2">
             {FILTERS.map((f) => (
               <button
                 key={f.id}
