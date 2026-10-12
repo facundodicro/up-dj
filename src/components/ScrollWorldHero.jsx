@@ -592,14 +592,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
             className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center px-[8vw] text-center opacity-0"
           >
             {p.tagline ? (
-              <>
-                <p
-                  className="logo-neon font-display text-2xl font-black"
-                  style={{ textShadow: '0 0 18px rgba(0,224,101,.8)' }}
-                >
-                  up!
-                </p>
-                <h1 className="mx-auto mt-4 max-w-2xl font-display text-[clamp(30px,6vw,64px)] font-black leading-[1.5] tracking-tight text-white">
+              <h1 className="mx-auto max-w-2xl font-display text-[clamp(30px,6vw,64px)] font-black leading-[1.5] tracking-tight text-white">
                   <span
                     className="rounded-2xl bg-black/55 px-6 py-3 shadow-[0_10px_50px_rgba(0,0,0,0.55)]"
                     style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone' }}
@@ -607,7 +600,6 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
                     {t('home.heroSub')}
                   </span>
                 </h1>
-              </>
             ) : null}
             {p.cta ? (
               <div ref={ctaRef} className="flex flex-col items-center gap-4" style={{ pointerEvents: 'none' }}>
