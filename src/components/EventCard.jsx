@@ -6,12 +6,13 @@ import { formatDate, buildWaUrl } from '../lib/format'
 import * as data from '../lib/data'
 
 /** Tarjeta de un evento en el feed: foto, play, DJ, descripción, like y WhatsApp. */
-export default function EventCard({ event, user, likeCount = 0, liked = false, onToggleLike, onAuthClick }) {
+export default function EventCard({ event, user, likeCount = 0, liked = false, onToggleLike, onAuthClick, followed = false, followerCount = 0, onToggleFollow }) {
   const { track, isPlaying, playTrack } = usePlayer()
   const { t, lang } = useLang()
   const [expanded, setExpanded] = useState(false)
   const [beating, setBeating] = useState(false)
   const [liking, setLiking] = useState(false)
+  const [following, setFollowing] = useState(false)
 
   const isCurrent = track?.id === event.id
   const playing = isCurrent && isPlaying
@@ -29,6 +30,23 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
   }
 
   const waUrl = buildWaUrl(dj.whatsapp, t('card.waMessage'))
+
+  const handleFollow = async () => {
+    if (!user) {
+      onAuthClick?.('login')
+      return
+    }
+    if (following || !event.user_id || user.id === event.user_id) return
+    setFollowing(true)
+    try {
+      await data.toggleFollow(user.id, event.user_id, followed)
+      onToggleFollow?.(event.user_id, !followed)
+    } catch {
+      /* noop */
+    } finally {
+      setFollowing(false)
+    }
+  }
 
   const handleLike = async () => {
     if (!user) {
@@ -102,6 +120,23 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
             </span>
           )}
           <span className="text-sm font-bold text-muted">{dj.username}</span>
+          {followerCount > 0 && (
+            <span className="text-xs font-semibold text-muted/60">
+              · {followerCount} {t('profile.followers')}
+            </span>
+          )}
+          {event.user_id && (!user || user.id !== event.user_id) && (
+            <button
+              onClick={handleFollow}
+              className={`ml-auto rounded-full px-3.5 py-1.5 text-xs font-extrabold transition active:scale-95 ${
+                followed
+                  ? 'border border-[#00E065]/40 bg-[#00E065]/10 text-[#00a34c]'
+                  : 'bg-ink text-white shadow-[0_2px_12px_rgba(0,0,0,0.25)] hover:opacity-90'
+              }`}
+            >
+              {followed ? t('card.following') : t('card.follow')}
+            </button>
+          )}
         </div>
 
         {event.description && (
