@@ -160,6 +160,7 @@ const STRINGS = {
 
     'scroll3d.aria': 'Presentación 3D de Up!',
     'scroll3d.hint': 'scrolleá',
+    'scroll3d.skip': 'Saltar intro',
     'home.loadError': 'No se pudieron cargar los sets.',
     'home.emptyTitle': 'Todavía no hay sets por acá',
     'home.emptySub':
@@ -333,6 +334,7 @@ const STRINGS = {
 
     'scroll3d.aria': 'Up! 3D showcase',
     'scroll3d.hint': 'scroll',
+    'scroll3d.skip': 'Skip intro',
     'home.loadError': "Couldn't load the sets.",
     'home.emptyTitle': 'No sets here yet',
     'home.emptySub':
