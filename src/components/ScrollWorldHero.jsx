@@ -582,14 +582,14 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
                 </h1>
             ) : null}
             {p.cta ? (
-              <div ref={ctaRef} className="flex flex-col items-center gap-4" style={{ pointerEvents: 'none' }}>
+              <div ref={ctaRef} className="flex flex-row flex-wrap items-center justify-center gap-3" style={{ pointerEvents: 'none' }}>
                 <button
                   onClick={user ? onUploadClick : onRegisterClick}
                   className="inline-flex items-center gap-2 rounded-full bg-[#00E065] px-8 py-4 text-base font-extrabold text-[#04120a] shadow-[0_0_30px_rgba(0,224,101,.55)] transition active:scale-95"
                 >
                   {user ? t('home.uploadSet') : t('home.createProfile')}
                 </button>
-                <DonateButton />
+                <DonateButton variant="dark" />
               </div>
             ) : null}
           </div>
