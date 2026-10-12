@@ -22,6 +22,29 @@ export function formatDate(isoString, lang) {
   }
 }
 
+/**
+ * Fecha relativa ("Hoy • 14:32", "Ayer", "Hace 3 días"); más de 7 días usa formatDate.
+ */
+export function formatRelative(isoString, t) {
+  if (!isoString) return ''
+  const d = new Date(isoString)
+  if (Number.isNaN(d.getTime())) return ''
+  const now = new Date()
+  const mins = Math.floor((now - d) / 60000)
+  if (mins < 1) return t('time.now')
+  if (mins < 60) return t('time.minutesAgo', { n: mins })
+  const sameDay = d.toDateString() === now.toDateString()
+  const yesterday = new Date(now.getTime() - 86400000).toDateString() === d.toDateString()
+  if (sameDay) {
+    const hm = d.toLocaleTimeString(localeTag(), { hour: '2-digit', minute: '2-digit' })
+    return t('time.todayAt', { time: hm })
+  }
+  if (yesterday) return t('time.yesterday')
+  const days = Math.floor((now - d) / 86400000)
+  if (days < 7) return t('time.daysAgo', { n: days })
+  return formatDate(isoString)
+}
+
 /** Tamaño de archivo legible (ej. "84,2 MB" / "84.2 MB") */
 export function formatBytes(bytes, lang) {
   if (!Number.isFinite(bytes) || bytes < 0) return ''
