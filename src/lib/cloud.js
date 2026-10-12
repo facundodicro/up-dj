@@ -136,9 +136,20 @@ export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, 
     const path = `${uid}/avatar-${crypto.randomUUID()}.${ext}`
     avatar_url = await uploadWithProgress('avatars', path, avatarFile, onProgress)
   }
+  const cleanName = (username || '').trim().replace(/\s+/g, ' ').slice(0, 40) || null
+  if (cleanName) {
+    // El nombre de DJ es único (insensible a mayúsculas): aviso amigable antes del upsert.
+    const { data: taken } = await supabase
+      .from('profiles')
+      .select('id')
+      .neq('id', uid)
+      .ilike('username', cleanName)
+      .maybeSingle()
+    if (taken) throw new Error(t('profile.usernameTaken'))
+  }
   const patch = {
     id: uid,
-    username: (username || '').trim().slice(0, 40) || 'DJ',
+    username: cleanName,
     bio: (bio || '').trim().slice(0, 300),
     whatsapp: sanitizeWhatsapp(whatsapp),
     updated_at: new Date().toISOString(),
@@ -149,7 +160,11 @@ export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, 
     .upsert(patch, { onConflict: 'id' })
     .select()
     .single()
-  if (error) throw new Error(t('profile.saveError'))
+  if (error) {
+    // 23505 = violación del índice único (carrera entre dos usuarios)
+    if (error.code === '23505') throw new Error(t('profile.usernameTaken'))
+    throw new Error(t('profile.saveError'))
+  }
   return data
 }
 
@@ -280,6 +295,44 @@ export async function updateEvent(
     .eq('id', id)
     .eq('user_id', uid)
   if (error) throw new Error(t('event.publishError'))
+}
+
+/**
+ * Likes de varios eventos: conteo por evento + cuáles likeó el usuario actual.
+ * Devuelve { counts: {eventId: n}, mine: Set<eventId> }.
+ */
+export async function getLikes(eventIds) {
+  const counts = {}
+  const mine = new Set()
+  if (!eventIds?.length) return { counts, mine }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const { data, error } = await supabase
+    .from('likes')
+    .select('event_id, user_id')
+    .in('event_id', eventIds)
+  if (error) throw new Error(t('home.loadError'))
+  for (const l of data || []) {
+    counts[l.event_id] = (counts[l.event_id] || 0) + 1
+    if (user && l.user_id === user.id) mine.add(l.event_id)
+  }
+  return { counts, mine }
+}
+
+/** Da o quita el like del usuario a un evento. */
+export async function toggleLike(uid, eventId, liked) {
+  let error
+  if (liked) {
+    ;({ error } = await supabase
+      .from('likes')
+      .delete()
+      .eq('event_id', eventId)
+      .eq('user_id', uid))
+  } else {
+    ;({ error } = await supabase.from('likes').insert({ event_id: eventId, user_id: uid }))
+  }
+  if (error) throw new Error(t('home.loadError'))
 }
 
 export async function deleteEvent(uid, id) {
