@@ -381,20 +381,8 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
       }
     }
 
-    /* ---------- escena 5: final ---------- */
+    /* ---------- escena 5: final (sin texto: el disco y los botones son el cierre) ---------- */
     {
-      const { tex, aspect } = logoTexture({ size: 220 })
-      const h = 8
-      const w = h * aspect
-      const m = new THREE.Mesh(
-        new THREE.PlaneGeometry(w, h),
-        new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide }),
-      )
-      m.position.set(0, 6, -54)
-      scene.add(m)
-      const halo = glowSprite(GREEN, 30, 0.4)
-      halo.position.set(0, 6, -55)
-      scene.add(halo)
       const disc = new THREE.Mesh(new THREE.TorusGeometry(11, 0.14, 12, 90), neonMat(VIOLET))
       disc.rotation.x = Math.PI / 2
       disc.position.set(0, 0.05, -54)
