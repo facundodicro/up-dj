@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
+import { SkipForward } from 'lucide-react'
 import { useLang } from '../context/LanguageContext'
 import DonateButton from './DonateButton'
 
@@ -512,7 +513,8 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
     ro.observe(sticky)
 
     /* ---------- limpieza ---------- */
-    return () => {
+
+  return () => {
       stop()
       io.disconnect()
       ro.disconnect()
@@ -566,10 +568,26 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
     )
   }
 
+  const skipIntro = () => {
+    const wrap = wrapRef.current
+    if (!wrap) return
+    const y =
+      wrap.getBoundingClientRect().top + window.scrollY + wrap.offsetHeight - window.innerHeight
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' })
+  }
+
   return (
     <section ref={wrapRef} className="relative" style={{ height: '520vh' }} aria-label={t('scroll3d.aria')}>
       <div ref={stickyRef} className="sticky top-0 h-[100svh] overflow-hidden bg-[#05050c]">
         <div ref={hostRef} className="absolute inset-0" aria-hidden="true" />
+        <button
+          type="button"
+          onClick={skipIntro}
+          className="absolute bottom-6 right-5 z-20 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/45 px-3.5 py-2 text-xs font-extrabold uppercase tracking-wider text-white/85 backdrop-blur-sm transition hover:border-[#00e065]/60 hover:text-white active:scale-95"
+        >
+          <SkipForward size={14} aria-hidden="true" />
+          {t('scroll3d.skip')}
+        </button>
         <div
           ref={progressRef}
           className="absolute left-0 top-0 z-20 h-[3px] bg-gradient-to-r from-[#8B5CF6] to-[#00E065] shadow-[0_0_12px_rgba(0,224,101,.8)]"
