@@ -1,5 +1,5 @@
-import { Suspense, lazy, useEffect, useState } from 'react'
-import { Disc3, Plus } from 'lucide-react'
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { Disc3, Plus, Search, X } from 'lucide-react'
 import DonateButton from '../components/DonateButton'
 import EventCard from '../components/EventCard'
 import SmokeBackground from '../components/SmokeBackground'
@@ -27,6 +27,20 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [likeCounts, setLikeCounts] = useState({})
+  const [myLikes, setMyLikes] = useState(new Set())
+  const [query, setQuery] = useState('')
+
+  const filteredEvents = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return events
+    return events.filter(
+      (e) =>
+        (e.title || '').toLowerCase().includes(q) ||
+        (e.description || '').toLowerCase().includes(q) ||
+        (e.dj?.username || '').toLowerCase().includes(q),
+    )
+  }, [events, query])
 
   useEffect(() => {
     let alive = true
@@ -49,6 +63,40 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feedKey])
 
+  useEffect(() => {
+    let alive = true
+    if (!events.length) {
+      setLikeCounts({})
+      setMyLikes(new Set())
+      return
+    }
+    data
+      .getLikes(events.map((e) => e.id))
+      .then(({ counts, mine }) => {
+        if (alive) {
+          setLikeCounts(counts)
+          setMyLikes(mine)
+        }
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [events, user?.id])
+
+  const handleToggleLike = (eventId, nowLiked) => {
+    setMyLikes((prev) => {
+      const next = new Set(prev)
+      if (nowLiked) next.add(eventId)
+      else next.delete(eventId)
+      return next
+    })
+    setLikeCounts((prev) => ({
+      ...prev,
+      [eventId]: Math.max(0, (prev[eventId] || 0) + (nowLiked ? 1 : -1)),
+    }))
+  }
+
   return (
     <>
       {/* Héroe 3D: mundo neón navegable con scroll (carga diferida) */}
@@ -63,6 +111,30 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
       {/* Feed */}
       <section className="mt-10" aria-label="Sets publicados">
         <h2 className="font-display text-lg font-black text-ink">{t('home.latest')}</h2>
+
+        {!loading && !error && events.length > 0 && (
+          <div className="relative mt-3">
+            <Search size={17} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted/60" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t('home.searchPh')}
+              aria-label={t('home.searchLabel')}
+              className="w-full rounded-full border border-black/10 bg-night-card py-2.5 pl-11 pr-11 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70 [&::-webkit-search-cancel-button]:hidden"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery('')}
+                aria-label={t('home.clearSearch')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted/60 transition hover:text-ink"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+        )}
 
         {loading && (
           <div className="mt-4 grid gap-5 sm:grid-cols-2">
@@ -109,10 +181,24 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
           </div>
         )}
 
-        {!loading && !error && events.length > 0 && (
+        {!loading && !error && events.length > 0 && filteredEvents.length === 0 && (
+          <p className="mt-4 rounded-2xl border border-dashed border-black/10 px-5 py-8 text-center text-sm text-muted">
+            {t('home.noResults')}
+          </p>
+        )}
+
+        {!loading && !error && filteredEvents.length > 0 && (
           <div className="mt-4 grid gap-5 sm:grid-cols-2">
-            {events.map((e) => (
-              <EventCard key={e.id} event={e} />
+            {filteredEvents.map((e) => (
+              <EventCard
+                key={e.id}
+                event={e}
+                user={user}
+                likeCount={likeCounts[e.id] || 0}
+                liked={myLikes.has(e.id)}
+                onToggleLike={handleToggleLike}
+                onAuthClick={onAuthClick}
+              />
             ))}
           </div>
         )}
