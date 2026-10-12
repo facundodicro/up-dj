@@ -30,4 +30,8 @@ export const updateEvent = (...args) => {
 }
 export const getLikes = (...args) => db.getLikes(...args)
 export const toggleLike = (...args) => db.toggleLike(...args)
+export const getMyFollows = (...args) => db.getMyFollows(...args)
+export const getFollowerCounts = (...args) => db.getFollowerCounts(...args)
+export const getFollowCounts = (...args) => db.getFollowCounts(...args)
+export const toggleFollow = (...args) => db.toggleFollow(...args)
 export const deleteEvent = (...args) => db.deleteEvent(...args)
