@@ -259,3 +259,41 @@ export async function updatePassword(password) {
 export async function signInWithGoogle() {
   throw new Error(t('auth.googleDemo'))
 }
+
+/** Seguidores en modo demo: se guardan en localStorage. */
+export async function getMyFollows(uid) {
+  if (!uid) return new Set()
+  const d = readData()
+  return new Set((d.follows || []).filter((f) => f.follower_id === uid).map((f) => f.followed_id))
+}
+
+export async function getFollowerCounts(userIds) {
+  const counts = {}
+  const d = readData()
+  for (const f of d.follows || []) {
+    if (userIds.includes(f.followed_id)) counts[f.followed_id] = (counts[f.followed_id] || 0) + 1
+  }
+  return counts
+}
+
+export async function getFollowCounts(uid) {
+  const d = readData()
+  const follows = d.follows || []
+  return {
+    followers: follows.filter((f) => f.followed_id === uid).length,
+    following: follows.filter((f) => f.follower_id === uid).length,
+  }
+}
+
+export async function toggleFollow(uid, followedId, following) {
+  if (uid === followedId) return
+  const d = readData()
+  const follows = d.follows || []
+  if (following) {
+    d.follows = follows.filter((f) => !(f.follower_id === uid && f.followed_id === followedId))
+  } else if (!follows.some((f) => f.follower_id === uid && f.followed_id === followedId)) {
+    follows.push({ follower_id: uid, followed_id: followedId })
+    d.follows = follows
+  }
+  writeData(d)
+}
