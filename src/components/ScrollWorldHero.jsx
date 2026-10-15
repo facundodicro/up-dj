@@ -8,9 +8,13 @@ import DonateButton from './DonateButton'
  * Héroe 3D de Up!: un mundo neón que la cámara recorre a medida que
  * se hace scroll, con paneles de texto superpuestos.
  *
+ * - Al cargar arriba de todo, la intro se reproduce SOLA (~4 segundos):
+ *   el scroll se bloquea, la cámara recorre el mundo y al terminar
+ *   la página baja automáticamente al feed. Botón "Saltar intro" por si acaso.
+ * - Si se vuelve a la página ya scrolleada, no hay autoplay.
  * - Se importa con React.lazy: three.js no pesa en la carga inicial.
  * - Pausa el render cuando el héroe sale de pantalla.
- * - Respeta prefers-reduced-motion (muestra una vista fija).
+ * - Respeta prefers-reduced-motion (muestra una vista fija, sin autoplay).
  * - Si WebGL no está disponible, muestra el héroe compacto clásico.
  */
 export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }) {
@@ -23,6 +27,8 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
   const ctaRef = useRef(null)
   const panelRefs = useRef([])
   const [failed, setFailed] = useState(false)
+  // Para cancelar el autoplay desde el botón "Saltar intro" (definido fuera del effect).
+  const cancelAutoplayRef = useRef(null)
 
   // El héroe usa solo contenido real de la app (tagline + CTAs),
   // sin textos de marketing inventados.
@@ -512,9 +518,57 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
     const ro = new ResizeObserver(fit)
     ro.observe(sticky)
 
+    /* ---------- autoplay de la intro ---------- */
+    // La cámara recorre el mundo sola durante ~4s con el scroll bloqueado;
+    // al terminar, la página baja al feed. Solo en la carga inicial arriba.
+    let autoplayRaf = 0
+    let autoplayFinished = false
+    const unlockScroll = () => {
+      document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
+    }
+    const scrollToFeed = () => {
+      const y =
+        wrap.getBoundingClientRect().top + window.scrollY + wrap.offsetHeight - window.innerHeight
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' })
+    }
+    const finishAutoplay = () => {
+      if (autoplayFinished) return
+      autoplayFinished = true
+      cancelAnimationFrame(autoplayRaf)
+      unlockScroll()
+      scrollToFeed()
+    }
+    cancelAutoplayRef.current = finishAutoplay
+
+    if (!reduced && window.scrollY < 80) {
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+      const DUR = 4000
+      const t0 = performance.now()
+      const step = (now) => {
+        if (autoplayFinished) return
+        const k = Math.min(1, (now - t0) / DUR)
+        // ease-in-out para que arranque y frene suave
+        const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2
+        targetP = e
+        if (k < 1) {
+          autoplayRaf = requestAnimationFrame(step)
+        } else {
+          finishAutoplay()
+        }
+      }
+      autoplayRaf = requestAnimationFrame(step)
+    } else {
+      autoplayFinished = true
+    }
+
     /* ---------- limpieza ---------- */
 
   return () => {
+      autoplayFinished = true
+      cancelAnimationFrame(autoplayRaf)
+      unlockScroll()
       stop()
       io.disconnect()
       ro.disconnect()
@@ -569,6 +623,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
   }
 
   const skipIntro = () => {
+    cancelAutoplayRef.current?.()
     const wrap = wrapRef.current
     if (!wrap) return
     const y =
