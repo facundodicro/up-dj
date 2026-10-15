@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Play, Pause, Heart, MessageCircle } from 'lucide-react'
+import InstagramIcon from './InstagramIcon'
 import Modal from './Modal'
 import ShareButton from './ShareButton'
 import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
-import { formatRelative, buildWaUrl } from '../lib/format'
+import { formatRelative, buildWaUrl, buildInstagramUrl } from '../lib/format'
 import * as data from '../lib/data'
 
 /**
@@ -53,6 +54,7 @@ export default function DjProfileModal({
   const isOwn = !!user && user.id === djUserId
   const initial = (dj.username || 'D').trim().charAt(0).toUpperCase()
   const waUrl = buildWaUrl(dj.whatsapp, t('card.waMessage'))
+  const igUrl = buildInstagramUrl(dj.instagram)
 
   const handleFollow = async () => {
     if (!user) {
@@ -135,6 +137,17 @@ export default function DjProfileModal({
               >
                 <MessageCircle size={16} />
                 {t('card.whatsapp')}
+              </a>
+            )}
+            {igUrl && (
+              <a
+                href={igUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-h-[44px] items-center gap-2 rounded-full border border-[#E1306C]/40 px-4 py-2 text-sm font-bold text-[#C13584] transition hover:bg-[#E1306C]/10"
+              >
+                <InstagramIcon size={16} />
+                {t('card.instagram')}
               </a>
             )}
             {!isOwn && (

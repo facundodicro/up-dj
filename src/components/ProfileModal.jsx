@@ -18,6 +18,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
   const [username, setUsername] = useState('')
   const [bio, setBio] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
+  const [instagram, setInstagram] = useState('')
   const [avatarFile, setAvatarFile] = useState(null)
   const [avatarPreview, setAvatarPreview] = useState(null)
   const [saving, setSaving] = useState(false)
@@ -39,6 +40,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
       setUsername(profile?.username || '')
       setBio(profile?.bio || '')
       setWhatsapp(profile?.whatsapp || '')
+      setInstagram(profile?.instagram || '')
       setAvatarFile(null)
       setAvatarPreview(null)
       setError('')
@@ -79,6 +81,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
         username,
         bio,
         whatsapp,
+        instagram,
         avatarFile,
       })
       toast(t('profile.saved'), 'success')
@@ -215,6 +218,22 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               className="w-full rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
             />
             <p className="mt-1 text-xs text-muted">{t('profile.whatsappHint')}</p>
+          </div>
+
+          <div>
+            <label htmlFor="pf-ig" className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted">
+              {t('profile.instagram')}
+            </label>
+            <input
+              id="pf-ig"
+              type="text"
+              inputMode="text"
+              value={instagram}
+              onChange={(e) => setInstagram(e.target.value.replace(/\s+/g, '').slice(0, 40))}
+              placeholder={t('profile.instagramPh')}
+              className="w-full rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
+            />
+            <p className="mt-1 text-xs text-muted">{t('profile.instagramHint')}</p>
           </div>
 
           {error && (

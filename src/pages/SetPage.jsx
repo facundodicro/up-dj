@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Play, Pause, Heart, MessageCircle, Disc3 } from 'lucide-react'
+import InstagramIcon from '../components/InstagramIcon'
 import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
-import { formatRelative, buildWaUrl } from '../lib/format'
+import { formatRelative, buildWaUrl, buildInstagramUrl } from '../lib/format'
 import * as data from '../lib/data'
 import ShareButton from '../components/ShareButton'
 
@@ -84,6 +85,7 @@ export default function SetPage({ user, onAuthClick }) {
   const initial = (dj.username || 'D').trim().charAt(0).toUpperCase()
   const playing = track?.id === event.id && isPlaying
   const waUrl = buildWaUrl(dj.whatsapp, t('card.waMessage'))
+  const igUrl = buildInstagramUrl(dj.instagram)
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
   const setUrl = `${origin}/set/${event.id}`
 
@@ -220,6 +222,17 @@ export default function SetPage({ user, onAuthClick }) {
               >
                 <MessageCircle size={16} />
                 {t('card.whatsapp')}
+              </a>
+            )}
+            {igUrl && (
+              <a
+                href={igUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-h-[44px] items-center gap-2 rounded-full border border-[#E1306C]/40 px-4 py-2 text-sm font-extrabold text-[#C13584] transition hover:bg-[#E1306C]/10"
+              >
+                <InstagramIcon size={16} />
+                {t('card.instagram')}
               </a>
             )}
           </div>

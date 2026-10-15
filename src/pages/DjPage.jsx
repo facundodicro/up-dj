@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Play, Pause, Heart, MessageCircle } from 'lucide-react'
+import InstagramIcon from '../components/InstagramIcon'
 import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
-import { formatRelative, buildWaUrl } from '../lib/format'
+import { formatRelative, buildWaUrl, buildInstagramUrl } from '../lib/format'
 import * as data from '../lib/data'
 import ShareButton from '../components/ShareButton'
 
@@ -89,6 +90,7 @@ export default function DjPage({ user, onAuthClick }) {
   const isOwn = !!user && user.id === dj.id
   const initial = (dj.username || 'D').trim().charAt(0).toUpperCase()
   const waUrl = buildWaUrl(dj.whatsapp, t('card.waMessage'))
+  const igUrl = buildInstagramUrl(dj.instagram)
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
   const profileUrl = `${origin}/dj/${encodeURIComponent(dj.username)}`
 
@@ -182,6 +184,17 @@ export default function DjPage({ user, onAuthClick }) {
             >
               <MessageCircle size={16} />
               {t('card.whatsapp')}
+            </a>
+          )}
+          {igUrl && (
+            <a
+              href={igUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-h-[44px] items-center gap-2 rounded-full border border-[#E1306C]/40 px-4 py-2 text-sm font-bold text-[#C13584] transition hover:bg-[#E1306C]/10"
+            >
+              <InstagramIcon size={16} />
+              {t('card.instagram')}
             </a>
           )}
           {!isOwn && (
