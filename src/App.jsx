@@ -12,6 +12,8 @@ import SmokeBackground from './components/SmokeBackground'
 import DonateButton from './components/DonateButton'
 import Home from './pages/Home'
 import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
+import LiveTagline from './components/LiveTagline'
 import * as data from './lib/data'
 
 function Shell() {
@@ -85,6 +87,7 @@ function Shell() {
               }
             />
             <Route path="/privacidad" element={<Privacy />} />
+            <Route path="/terminos" element={<Terms />} />
             <Route
               path="*"
               element={
@@ -107,15 +110,20 @@ function Shell() {
             <span className="text-ink">up</span>
             <span className="text-[#00C75C]">!</span>
           </p>
-          <p className="mt-1 text-xs text-muted">{t('app.tagline')}</p>
+          <LiveTagline />
           <p className="mt-3 text-xs">
             <Link to="/privacidad" className="text-muted underline-offset-4 hover:text-ink hover:underline">
               {t('footer.privacy')}
+            </Link>
+            <span className="mx-2 text-muted/50">·</span>
+            <Link to="/terminos" className="text-muted underline-offset-4 hover:text-ink hover:underline">
+              {t('footer.terms')}
             </Link>
           </p>
           <div className="mt-4">
             <DonateButton />
           </div>
+          <p className="mt-4 text-[11px] font-medium text-muted/70">Hecha por Facundo Dicroce</p>
         </footer>
       </div>
 

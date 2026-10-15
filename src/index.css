@@ -117,3 +117,17 @@ body {
 .animate-heartbeat {
   animation: heartbeat 0.7s ease-in-out;
 }
+
+/* Tagline vivo del footer: latido sutil de opacidad */
+@keyframes tagline-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.92; }
+}
+.animate-tagline-pulse {
+  animation: tagline-pulse 3s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-tagline-pulse {
+    animation: none;
+  }
+}
