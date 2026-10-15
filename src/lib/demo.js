@@ -3,7 +3,7 @@
  * local con datos guardados en el navegador. Ideal para probar todos los
  * flujos antes de conectar el backend real.
  */
-import { sanitizeWhatsapp } from './format'
+import { sanitizeWhatsapp, sanitizeInstagram } from './format'
 import { t } from './i18n'
 
 const LS_DATA = 'up_demo_v1'
@@ -139,7 +139,7 @@ export async function getEvent(id) {
   const d = readData()
   const e = d.events.find((x) => x.id === id)
   if (!e) return null
-  return { ...e, dj: d.profiles[e.user_id] || { username: 'DJ', avatar_url: null, whatsapp: '' } }
+  return { ...e, dj: d.profiles[e.user_id] || { username: 'DJ', avatar_url: null, whatsapp: '', instagram: '' } }
 }
 
 export async function listEventsByUser(uid) {
@@ -149,11 +149,11 @@ export async function listEventsByUser(uid) {
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .map((e) => ({
       ...e,
-      dj: d.profiles[e.user_id] || { username: 'DJ', avatar_url: null, whatsapp: '' },
+      dj: d.profiles[e.user_id] || { username: 'DJ', avatar_url: null, whatsapp: '', instagram: '' },
     }))
 }
 
-export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, onProgress) {
+export async function saveProfile(uid, { username, bio, whatsapp, instagram, avatarFile }, onProgress) {
   const d = readData()
   let avatar_url = d.profiles[uid]?.avatar_url || null
   if (avatarFile) {
@@ -178,6 +178,7 @@ export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, 
     })(),
     bio: (bio || '').trim().slice(0, 300),
     whatsapp: sanitizeWhatsapp(whatsapp),
+    instagram: sanitizeInstagram(instagram) || null,
     avatar_url,
   }
   writeData(d)
@@ -190,7 +191,7 @@ export async function listEvents() {
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .map((e) => ({
       ...e,
-      dj: d.profiles[e.user_id] || { username: 'DJ', avatar_url: null, whatsapp: '' },
+      dj: d.profiles[e.user_id] || { username: 'DJ', avatar_url: null, whatsapp: '', instagram: '' },
     }))
 }
 

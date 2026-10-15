@@ -4,7 +4,7 @@
  * para poder mostrar progreso real de subida.
  */
 import { supabase } from './supabase'
-import { sanitizeWhatsapp } from './format'
+import { sanitizeWhatsapp, sanitizeInstagram } from './format'
 import { t } from './i18n'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
@@ -118,14 +118,14 @@ export async function signOut() {
 export async function getProfile(uid) {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, username, avatar_url, bio, whatsapp')
+    .select('id, username, avatar_url, bio, whatsapp, instagram')
     .eq('id', uid)
     .maybeSingle()
   if (error) throw new Error(t('profile.loadError'))
   return data
 }
 
-export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, onProgress) {
+export async function saveProfile(uid, { username, bio, whatsapp, instagram, avatarFile }, onProgress) {
   let avatar_url
   if (avatarFile) {
     if (!avatarFile.type.startsWith('image/'))
@@ -152,6 +152,7 @@ export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, 
     username: cleanName,
     bio: (bio || '').trim().slice(0, 300),
     whatsapp: sanitizeWhatsapp(whatsapp),
+    instagram: sanitizeInstagram(instagram) || null,
     updated_at: new Date().toISOString(),
   }
   if (avatar_url) patch.avatar_url = avatar_url
@@ -193,7 +194,7 @@ export async function listEvents() {
 export async function getProfileByUsername(username) {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, username, avatar_url, bio, whatsapp')
+    .select('id, username, avatar_url, bio, whatsapp, instagram')
     .ilike('username', (username || '').trim())
     .maybeSingle()
   if (error) throw new Error(t('profile.loadError'))
@@ -201,7 +202,7 @@ export async function getProfileByUsername(username) {
 }
 
 const EVENT_SELECT =
-  'id, user_id, title, description, photo_url, audio_url, created_at, profiles(username, avatar_url, whatsapp)'
+  'id, user_id, title, description, photo_url, audio_url, created_at, profiles(username, avatar_url, whatsapp, instagram)'
 
 function mapEvent(e) {
   return {
@@ -212,7 +213,7 @@ function mapEvent(e) {
     photo_url: e.photo_url,
     audio_url: e.audio_url,
     created_at: e.created_at,
-    dj: e.profiles || { username: 'DJ', avatar_url: null, whatsapp: '' },
+    dj: e.profiles || { username: 'DJ', avatar_url: null, whatsapp: '', instagram: '' },
   }
 }
 

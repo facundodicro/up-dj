@@ -79,3 +79,20 @@ export function buildWaUrl(whatsapp, message = '') {
   const base = `https://wa.me/${target}`
   return message ? `${base}?text=${encodeURIComponent(message)}` : base
 }
+
+/**
+ * Normaliza un usuario de Instagram: acepta "@usuario" o la URL completa
+ * y devuelve solo el handle (sin @). Vacío si no es válido.
+ */
+export function sanitizeInstagram(value) {
+  const v = String(value || '').trim()
+  const m = v.match(/(?:instagram\.com\/)?@?([A-Za-z0-9._]{1,30})\/?$/)
+  if (!m) return ''
+  return m[1]
+}
+
+/** Construye el link al perfil de Instagram. */
+export function buildInstagramUrl(handle) {
+  const target = sanitizeInstagram(handle)
+  return target ? `https://instagram.com/${target}` : null
+}
