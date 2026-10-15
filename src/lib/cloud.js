@@ -116,9 +116,10 @@ export async function signOut() {
 }
 
 export async function getProfile(uid) {
+  // select('*'): tolera que la columna instagram aún no exista (migración pendiente)
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, username, avatar_url, bio, whatsapp, instagram')
+    .select('*')
     .eq('id', uid)
     .maybeSingle()
   if (error) throw new Error(t('profile.loadError'))
@@ -152,15 +153,19 @@ export async function saveProfile(uid, { username, bio, whatsapp, instagram, ava
     username: cleanName,
     bio: (bio || '').trim().slice(0, 300),
     whatsapp: sanitizeWhatsapp(whatsapp),
-    instagram: sanitizeInstagram(instagram) || null,
     updated_at: new Date().toISOString(),
   }
   if (avatar_url) patch.avatar_url = avatar_url
-  const { data, error } = await supabase
-    .from('profiles')
-    .upsert(patch, { onConflict: 'id' })
-    .select()
-    .single()
+  // Instagram: la columna puede no existir aún (migración pendiente) → reintentar sin ella
+  const ig = sanitizeInstagram(instagram)
+  if (ig) patch.instagram = ig
+  let res = await supabase.from('profiles').upsert(patch, { onConflict: 'id' }).select().single()
+  // Si la columna instagram aún no existe (migración pendiente), reintentar sin ella
+  if (res.error && ig && /instagram/i.test(res.error.message || '')) {
+    delete patch.instagram
+    res = await supabase.from('profiles').upsert(patch, { onConflict: 'id' }).select().single()
+  }
+  const { data, error } = res
   if (error) {
     // 23505 = violación del índice único (carrera entre dos usuarios)
     if (error.code === '23505') throw new Error(t('profile.usernameTaken'))
@@ -192,9 +197,10 @@ export async function listEvents() {
 
 /** Un DJ por su nombre de usuario (insensible a mayúsculas), para /dj/:username. */
 export async function getProfileByUsername(username) {
+  // select('*'): tolera que la columna instagram aún no exista (migración pendiente)
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, username, avatar_url, bio, whatsapp, instagram')
+    .select('*')
     .ilike('username', (username || '').trim())
     .maybeSingle()
   if (error) throw new Error(t('profile.loadError'))
@@ -202,7 +208,8 @@ export async function getProfileByUsername(username) {
 }
 
 const EVENT_SELECT =
-  'id, user_id, title, description, photo_url, audio_url, created_at, profiles(username, avatar_url, whatsapp, instagram)'
+  // profiles(*): tolera que la columna instagram aún no exista (migración pendiente)
+  'id, user_id, title, description, photo_url, audio_url, created_at, profiles(*)'
 
 function mapEvent(e) {
   return {
