@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import { Disc3, Plus, Search, X } from 'lucide-react'
 import DonateButton from '../components/DonateButton'
 import EventCard from '../components/EventCard'
+import DjProfileModal from '../components/DjProfileModal'
 import SmokeBackground from '../components/SmokeBackground'
 import TopDjs from '../components/TopDjs'
 import { useLang } from '../context/LanguageContext'
@@ -43,6 +44,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('all')
   const [topDjs, setTopDjs] = useState([])
+  const [djModalUserId, setDjModalUserId] = useState(null)
 
   const filteredEvents = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -323,9 +325,26 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
                 followed={e.user_id ? myFollows.has(e.user_id) : false}
                 followerCount={e.user_id ? followerCounts[e.user_id] || 0 : 0}
                 onToggleFollow={handleToggleFollow}
+                onDjClick={setDjModalUserId}
               />
             ))}
           </div>
+        )}
+
+        {djModalUserId && (
+          <DjProfileModal
+            djUserId={djModalUserId}
+            user={user}
+            events={events}
+            myLikes={myLikes}
+            likeCounts={likeCounts}
+            onToggleLike={handleToggleLike}
+            onAuthClick={onAuthClick}
+            followed={myFollows.has(djModalUserId)}
+            followerCount={followerCounts[djModalUserId] || 0}
+            onToggleFollow={handleToggleFollow}
+            onClose={() => setDjModalUserId(null)}
+          />
         )}
       </section>
       </main>

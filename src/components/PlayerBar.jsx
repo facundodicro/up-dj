@@ -1,35 +1,40 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Play, Pause, X } from 'lucide-react'
 import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
 import { formatTime } from '../lib/format'
 
-/** Barra flotante de reproducción: fija abajo, con seek clickeable. */
+/** Barra flotante de reproducción: fija abajo, con seek arrastrable y saltos ±15s. */
 export default function PlayerBar() {
   const { track, isPlaying, currentTime, duration, toggle, seek, close } = usePlayer()
   const { t } = useLang()
   const barRef = useRef(null)
+  const [dragging, setDragging] = useState(false)
 
   if (!track) return null
 
   const fraction = duration > 0 ? Math.min(currentTime / duration, 1) : 0
 
-  const onSeek = (e) => {
+  const seekFromClientX = (clientX) => {
     const el = barRef.current
-    if (!el) return
+    if (!el || duration <= 0) return
     const rect = el.getBoundingClientRect()
-    const x = (e.clientX ?? (e.touches?.[0]?.clientX || 0)) - rect.left
-    seek(x / rect.width)
+    const f = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1)
+    seek(f)
+  }
+
+  const skip = (seconds) => {
+    if (duration <= 0) return
+    seek((currentTime + seconds) / duration)
   }
 
   const initial = (track.djName || 'D').trim().charAt(0).toUpperCase()
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-night-card/95 shadow-[0_-8px_40px_rgba(0,0,0,0.55)] backdrop-blur-md">
-      {/* Progreso clickeable */}
+      {/* Progreso arrastrable */}
       <div
         ref={barRef}
-        onClick={onSeek}
         role="slider"
         aria-label={t('player.progress')}
         aria-valuemin={0}
@@ -40,15 +45,35 @@ export default function PlayerBar() {
           if (e.key === 'ArrowRight') seek(fraction + 0.02)
           if (e.key === 'ArrowLeft') seek(fraction - 0.02)
         }}
-        className="group h-2.5 cursor-pointer bg-black/5"
+        onPointerDown={(e) => {
+          setDragging(true)
+          e.currentTarget.setPointerCapture?.(e.pointerId)
+          seekFromClientX(e.clientX)
+        }}
+        onPointerMove={(e) => {
+          if (dragging) seekFromClientX(e.clientX)
+        }}
+        onPointerUp={() => setDragging(false)}
+        onPointerCancel={() => setDragging(false)}
+        className="group h-2.5 cursor-pointer touch-none bg-black/5"
       >
         <div
-          className="h-full bg-gradient-to-r from-up to-neon shadow-[0_0_14px_rgba(139,92,246,0.8)] transition-[width] duration-150 group-hover:brightness-125"
+          className={`h-full bg-gradient-to-r from-up to-neon shadow-[0_0_14px_rgba(139,92,246,0.8)] group-hover:brightness-125 ${
+            dragging ? '' : 'transition-[width] duration-150'
+          }`}
           style={{ width: `${fraction * 100}%` }}
         />
       </div>
 
-      <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3">
+      <div className="mx-auto flex max-w-5xl items-center gap-2 px-4 py-3 sm:gap-3">
+        <button
+          onClick={() => skip(-15)}
+          aria-label={t('player.back15')}
+          className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-full px-2 text-xs font-bold text-muted transition hover:bg-black/5 hover:text-ink"
+        >
+          −15s
+        </button>
+
         <button
           onClick={toggle}
           aria-label={t(isPlaying ? 'player.pause' : 'player.play')}
@@ -61,9 +86,17 @@ export default function PlayerBar() {
           )}
         </button>
 
+        <button
+          onClick={() => skip(15)}
+          aria-label={t('player.fwd15')}
+          className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-full px-2 text-xs font-bold text-muted transition hover:bg-black/5 hover:text-ink"
+        >
+          +15s
+        </button>
+
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-extrabold text-ink">{track.title}</p>
-          <p className="truncate text-xs font-semibold text-muted">{track.djName}</p>
+          <p className="truncate text-sm font-bold text-ink">{track.title}</p>
+          <p className="truncate text-xs font-medium text-muted">{track.djName}</p>
         </div>
 
         {track.djAvatar ? (
@@ -73,12 +106,12 @@ export default function PlayerBar() {
             className="hidden h-9 w-9 shrink-0 rounded-full border border-black/10 object-cover sm:block"
           />
         ) : (
-          <span className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-up/20 font-display text-sm font-extrabold text-up-light sm:flex">
+          <span className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-up/20 font-display text-sm font-bold text-up-light sm:flex">
             {initial}
           </span>
         )}
 
-        <span className="shrink-0 text-xs font-bold tabular-nums text-muted">
+        <span className="shrink-0 text-xs font-semibold tabular-nums text-muted">
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>
 

@@ -152,6 +152,8 @@ const STRINGS = {
     'player.play': 'Reproducir',
     'player.pause': 'Pausar',
     'player.close': 'Cerrar reproductor',
+    'player.back15': 'Retroceder 15 segundos',
+    'player.fwd15': 'Adelantar 15 segundos',
 
     'donate.label': 'Donar',
     'donate.title': 'Donar a Up!',
@@ -185,6 +187,10 @@ const STRINGS = {
 
     'app.tagline': 'La pista donde viven los sets.',
     'footer.privacy': 'Privacidad',
+    'footer.terms': 'Términos',
+
+    'djProfile.sets': 'Sus sets',
+    'djProfile.noSets': 'Todavía no publicó ningún set.',
 
     'install.label': 'Instalar app',
     'install.manual':
@@ -341,6 +347,8 @@ const STRINGS = {
     'player.play': 'Play',
     'player.pause': 'Pause',
     'player.close': 'Close player',
+    'player.back15': 'Back 15 seconds',
+    'player.fwd15': 'Forward 15 seconds',
 
     'donate.label': 'Donate',
     'donate.title': 'Donate to Up!',
@@ -374,6 +382,10 @@ const STRINGS = {
 
     'app.tagline': 'The dancefloor where sets live.',
     'footer.privacy': 'Privacy',
+    'footer.terms': 'Terms',
+
+    'djProfile.sets': 'Their sets',
+    'djProfile.noSets': 'No sets published yet.',
 
     'install.label': 'Install app',
     'install.manual':

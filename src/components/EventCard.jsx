@@ -6,7 +6,7 @@ import { formatRelative, buildWaUrl } from '../lib/format'
 import * as data from '../lib/data'
 
 /** Tarjeta de un evento en el feed: foto, play, DJ, descripción, like y WhatsApp. */
-export default function EventCard({ event, user, likeCount = 0, liked = false, onToggleLike, onAuthClick, followed = false, followerCount = 0, onToggleFollow }) {
+export default function EventCard({ event, user, likeCount = 0, liked = false, onToggleLike, onAuthClick, followed = false, followerCount = 0, onToggleFollow, onDjClick }) {
   const { track, isPlaying, playTrack } = usePlayer()
   const { t, lang } = useLang()
   const [expanded, setExpanded] = useState(false)
@@ -119,7 +119,12 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
               {initial}
             </span>
           )}
-          <span className="text-sm font-bold text-[#1A1A1A]">{dj.username}</span>
+          <button
+            onClick={() => event.user_id && onDjClick?.(event.user_id)}
+            className="min-h-[44px] text-left text-sm font-bold text-[#1A1A1A] transition hover:text-up-light"
+          >
+            {dj.username}
+          </button>
           {followerCount > 0 && (
             <span className="text-xs font-semibold text-muted/60">
               · {followerCount} {t('profile.followers')}
