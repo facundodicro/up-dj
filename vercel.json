@@ -1,1 +1,1 @@
-{"rewrites":[{"destination":"/","source":"/(.*)"}]}
+{"rewrites":[{"destination":"/api/og?type=set&id=:id","has":[{"key":"user-agent","type":"header","value":".*(WhatsApp|facebookexternalhit|Twitterbot|LinkedInBot|TelegramBot|Discordbot|Slackbot).*"}],"source":"/set/:id"},{"destination":"/api/og?type=dj&u=:username","has":[{"key":"user-agent","type":"header","value":".*(WhatsApp|facebookexternalhit|Twitterbot|LinkedInBot|TelegramBot|Discordbot|Slackbot).*"}],"source":"/dj/:username"},{"destination":"/","source":"/(.*)"}]}
