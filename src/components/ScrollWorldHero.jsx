@@ -9,8 +9,9 @@ import DonateButton from './DonateButton'
  * se hace scroll, con paneles de texto superpuestos.
  *
  * - Al cargar arriba de todo, la intro se reproduce SOLA (~4 segundos):
- *   el scroll se bloquea, la cámara recorre el mundo y al terminar
- *   la página baja automáticamente al feed. Botón "Saltar intro" por si acaso.
+ *   el scroll se bloquea, la cámara recorre el mundo y al terminar la sección
+ *   se colapsa (el feed sube solo) quedando como tarjeta final con el CTA.
+ *   Botón "Saltar intro" por si acaso.
  * - Si se vuelve a la página ya scrolleada, no hay autoplay.
  * - Se importa con React.lazy: three.js no pesa en la carga inicial.
  * - Pausa el render cuando el héroe sale de pantalla.
@@ -29,6 +30,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
   const [failed, setFailed] = useState(false)
   // Para cancelar el autoplay desde el botón "Saltar intro" (definido fuera del effect).
   const cancelAutoplayRef = useRef(null)
+  const skipBtnRef = useRef(null)
 
   // El héroe usa solo contenido real de la app (tagline + CTAs),
   // sin textos de marketing inventados.
@@ -417,7 +419,11 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
     /* ---------- scroll dentro de la sección ---------- */
     let targetP = 0
     let curP = 0
+    // Cuando la intro termina (autoplay o skip), la cámara queda fija en p=1
+    // y la sección colapsada: el scroll posterior no la mueve más.
+    let introDone = false
     const readScroll = () => {
+      if (introDone) return
       const total = Math.max(1, wrap.offsetHeight - window.innerHeight)
       const p = -wrap.getBoundingClientRect().top / total
       targetP = Math.min(1, Math.max(0, p))
@@ -519,48 +525,52 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
     ro.observe(sticky)
 
     /* ---------- autoplay de la intro ---------- */
-    // La cámara recorre el mundo sola durante ~4s con el scroll bloqueado;
-    // al terminar, la página baja al feed. Solo en la carga inicial arriba.
+    // La cámara recorre el mundo sola (~4s) con el scroll bloqueado. Al terminar,
+    // la sección se colapsa de 520vh a 100vh (el feed sube solo) y queda como
+    // tarjeta final con el CTA; el usuario sigue bajando por su cuenta.
+    // No se usa window.scrollTo: en algunos entornos no se aplica.
     let autoplayRaf = 0
     let autoplayFinished = false
     const unlockScroll = () => {
       document.body.style.overflow = ''
       document.documentElement.style.overflow = ''
     }
-    // Bajada animada manual (rAF): no depende del smooth-scroll nativo,
-    // que en algunos navegadores/automatizaciones no se aplica.
-    const animatedScrollTo = (target, dur = 650) => {
-      const from = window.scrollY
-      const dist = target - from
-      if (dist <= 1) return
+    const collapseHero = (instant) => {
+      if (progressRef.current) progressRef.current.style.display = 'none'
+      if (skipBtnRef.current) skipBtnRef.current.style.display = 'none'
+      const toH = window.innerHeight
+      const fromH = wrap.offsetHeight
+      if (instant || fromH <= toH + 1) {
+        wrap.style.height = `${toH}px`
+        return
+      }
       const t0 = performance.now()
+      const dur = 700
       const tick = (now) => {
         const k = Math.min(1, (now - t0) / dur)
         const e = 1 - Math.pow(1 - k, 3)
-        window.scrollTo(0, from + dist * e)
+        wrap.style.height = `${fromH + (toH - fromH) * e}px`
         if (k < 1) requestAnimationFrame(tick)
       }
       requestAnimationFrame(tick)
-      // Seguro: si por lo que sea no llegó, salto instantáneo.
-      setTimeout(() => {
-        if (window.scrollY < target - 80) window.scrollTo(0, target)
-      }, dur + 500)
     }
-    const scrollToFeed = () => {
-      const y =
-        wrap.getBoundingClientRect().top + window.scrollY + wrap.offsetHeight - window.innerHeight
-      animatedScrollTo(Math.max(0, y))
-    }
-    const finishAutoplay = () => {
+    const finishAutoplay = (instant = false) => {
       if (autoplayFinished) return
       autoplayFinished = true
+      introDone = true
+      targetP = 1
       cancelAnimationFrame(autoplayRaf)
       unlockScroll()
-      scrollToFeed()
+      collapseHero(instant)
     }
-    cancelAutoplayRef.current = finishAutoplay
+    cancelAutoplayRef.current = () => finishAutoplay(true)
 
-    if (!reduced && window.scrollY < 80) {
+    if (reduced) {
+      // Sin movimiento: sección colapsada para no dejar 520vh de scroll muerto.
+      autoplayFinished = true
+      introDone = true
+      collapseHero(true)
+    } else if (window.scrollY < 80) {
       document.body.style.overflow = 'hidden'
       document.documentElement.style.overflow = 'hidden'
       const DUR = 4000
@@ -574,7 +584,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
         if (k < 1) {
           autoplayRaf = requestAnimationFrame(step)
         } else {
-          finishAutoplay()
+          finishAutoplay(false)
         }
       }
       autoplayRaf = requestAnimationFrame(step)
@@ -642,12 +652,8 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
   }
 
   const skipIntro = () => {
+    // Cancela el autoplay y colapsa la intro al instante (ver finishAutoplay).
     cancelAutoplayRef.current?.()
-    const wrap = wrapRef.current
-    if (!wrap) return
-    const y =
-      wrap.getBoundingClientRect().top + window.scrollY + wrap.offsetHeight - window.innerHeight
-    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' })
   }
 
   return (
@@ -656,6 +662,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
         <div ref={hostRef} className="absolute inset-0" aria-hidden="true" />
         <button
           type="button"
+          ref={skipBtnRef}
           onClick={skipIntro}
           className="absolute bottom-6 right-5 z-20 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/45 px-3.5 py-2 text-xs font-extrabold uppercase tracking-wider text-white/85 backdrop-blur-sm transition hover:border-[#00e065]/60 hover:text-white active:scale-95"
         >
