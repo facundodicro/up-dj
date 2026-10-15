@@ -191,10 +191,11 @@ export default function DjPage({ user, onAuthClick }) {
               href={igUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex min-h-[44px] items-center gap-2 rounded-full border border-[#E1306C]/40 px-4 py-2 text-sm font-bold text-[#C13584] transition hover:bg-[#E1306C]/10"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#E1306C]/40 text-[#C13584] transition hover:bg-[#E1306C]/10"
+              aria-label="Instagram"
+              title="Instagram"
             >
-              <InstagramIcon size={16} />
-              {t('card.instagram')}
+              <InstagramIcon size={18} />
             </a>
           )}
           {!isOwn && (
