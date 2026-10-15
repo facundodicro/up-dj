@@ -6,6 +6,7 @@
  * user-agent es de un bot; esta función devuelve un HTML mínimo con los
  * meta tags og: para que el link compartido muestre portada, título y DJ.
  * Los humanos nunca llegan acá (ven la SPA normal).
+ * v2: redeploy para tomar env vars de producción.
  */
 
 const SITE = 'https://up-dj.vercel.app'
