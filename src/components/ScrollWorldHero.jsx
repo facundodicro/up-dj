@@ -527,10 +527,29 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
       document.body.style.overflow = ''
       document.documentElement.style.overflow = ''
     }
+    // Bajada animada manual (rAF): no depende del smooth-scroll nativo,
+    // que en algunos navegadores/automatizaciones no se aplica.
+    const animatedScrollTo = (target, dur = 650) => {
+      const from = window.scrollY
+      const dist = target - from
+      if (dist <= 1) return
+      const t0 = performance.now()
+      const tick = (now) => {
+        const k = Math.min(1, (now - t0) / dur)
+        const e = 1 - Math.pow(1 - k, 3)
+        window.scrollTo(0, from + dist * e)
+        if (k < 1) requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+      // Seguro: si por lo que sea no llegó, salto instantáneo.
+      setTimeout(() => {
+        if (window.scrollY < target - 80) window.scrollTo(0, target)
+      }, dur + 500)
+    }
     const scrollToFeed = () => {
       const y =
         wrap.getBoundingClientRect().top + window.scrollY + wrap.offsetHeight - window.innerHeight
-      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' })
+      animatedScrollTo(Math.max(0, y))
     }
     const finishAutoplay = () => {
       if (autoplayFinished) return
