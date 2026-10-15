@@ -126,6 +126,33 @@ export async function getProfile(uid) {
   return d.profiles[uid] || null
 }
 
+export async function getProfileByUsername(username) {
+  const d = readData()
+  const needle = (username || '').trim().toLowerCase()
+  return (
+    Object.values(d.profiles).find((p) => (p.username || '').toLowerCase() === needle) ||
+    null
+  )
+}
+
+export async function getEvent(id) {
+  const d = readData()
+  const e = d.events.find((x) => x.id === id)
+  if (!e) return null
+  return { ...e, dj: d.profiles[e.user_id] || { username: 'DJ', avatar_url: null, whatsapp: '' } }
+}
+
+export async function listEventsByUser(uid) {
+  const d = readData()
+  return d.events
+    .filter((e) => e.user_id === uid)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .map((e) => ({
+      ...e,
+      dj: d.profiles[e.user_id] || { username: 'DJ', avatar_url: null, whatsapp: '' },
+    }))
+}
+
 export async function saveProfile(uid, { username, bio, whatsapp, avatarFile }, onProgress) {
   const d = readData()
   let avatar_url = d.profiles[uid]?.avatar_url || null

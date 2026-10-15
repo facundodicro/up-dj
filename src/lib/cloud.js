@@ -189,6 +189,56 @@ export async function listEvents() {
   }))
 }
 
+/** Un DJ por su nombre de usuario (insensible a mayúsculas), para /dj/:username. */
+export async function getProfileByUsername(username) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, username, avatar_url, bio, whatsapp')
+    .ilike('username', (username || '').trim())
+    .maybeSingle()
+  if (error) throw new Error(t('profile.loadError'))
+  return data
+}
+
+const EVENT_SELECT =
+  'id, user_id, title, description, photo_url, audio_url, created_at, profiles(username, avatar_url, whatsapp)'
+
+function mapEvent(e) {
+  return {
+    id: e.id,
+    user_id: e.user_id,
+    title: e.title,
+    description: e.description,
+    photo_url: e.photo_url,
+    audio_url: e.audio_url,
+    created_at: e.created_at,
+    dj: e.profiles || { username: 'DJ', avatar_url: null, whatsapp: '' },
+  }
+}
+
+/** Un set por id, para /set/:id. */
+export async function getEvent(id) {
+  const { data, error } = await supabase
+    .from('events')
+    .select(EVENT_SELECT)
+    .eq('id', id)
+    .maybeSingle()
+  if (error) throw new Error(t('demo.eventNotFound'))
+  return data ? mapEvent(data) : null
+}
+
+/** Sets de un DJ, para su página pública. */
+export async function listEventsByUser(uid) {
+  const { data, error } = await supabase
+    .from('events')
+    .select(EVENT_SELECT)
+    .eq('user_id', uid)
+    .order('created_at', { ascending: false })
+    .limit(100)
+  if (error) throw new Error(t('home.loadError'))
+  return (data || []).map(mapEvent)
+}
+
 export async function createEvent(uid, { title, description, audioFile, photoFile }, onProgress) {
   if (!audioFile) throw new Error(t('event.needAudio'))
   if (audioFile.size > MAX_AUDIO_BYTES)

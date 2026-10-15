@@ -11,6 +11,8 @@ import Toaster from './components/Toaster'
 import SmokeBackground from './components/SmokeBackground'
 import DonateButton from './components/DonateButton'
 import Home from './pages/Home'
+import DjPage from './pages/DjPage'
+import SetPage from './pages/SetPage'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import LiveTagline from './components/LiveTagline'
@@ -88,6 +90,14 @@ function Shell() {
             />
             <Route path="/privacidad" element={<Privacy />} />
             <Route path="/terminos" element={<Terms />} />
+            <Route
+              path="/dj/:username"
+              element={<DjPage user={user} onAuthClick={openAuth} />}
+            />
+            <Route
+              path="/set/:id"
+              element={<SetPage user={user} onAuthClick={openAuth} />}
+            />
             <Route
               path="*"
               element={

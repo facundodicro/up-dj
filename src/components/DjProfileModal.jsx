@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Play, Pause, Heart, MessageCircle } from 'lucide-react'
 import Modal from './Modal'
+import ShareButton from './ShareButton'
 import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
 import { formatRelative, buildWaUrl } from '../lib/format'
@@ -148,6 +149,11 @@ export default function DjProfileModal({
                 {followed ? t('card.following') : t('card.follow')}
               </button>
             )}
+            <ShareButton
+              title={dj.username}
+              text={t('share.djText', { dj: dj.username })}
+              url={`${typeof window !== 'undefined' ? window.location.origin : ''}/dj/${encodeURIComponent(dj.username || '')}`}
+            />
           </div>
         </div>
 

@@ -192,6 +192,14 @@ const STRINGS = {
     'djProfile.sets': 'Sus sets',
     'djProfile.noSets': 'Todavía no publicó ningún set.',
 
+    'share.share': 'Compartir',
+    'share.copied': '¡Enlace copiado!',
+    'share.djText': 'Mirá a {dj} en Up!',
+    'share.setText': '{title} de {dj} en Up!',
+    'page.notFound': 'No encontramos esta página.',
+    'djPage.notFound': 'No encontramos a este DJ.',
+    'setPage.notFound': 'No encontramos este set.',
+
     'install.label': 'Instalar app',
     'install.manual':
       'Para instalarla: en Android, menú ⋮ → “Instalar app”. En iPhone, Compartir → “Agregar a la pantalla de inicio”.',
@@ -386,6 +394,14 @@ const STRINGS = {
 
     'djProfile.sets': 'Their sets',
     'djProfile.noSets': 'No sets published yet.',
+
+    'share.share': 'Share',
+    'share.copied': 'Link copied!',
+    'share.djText': 'Check out {dj} on Up!',
+    'share.setText': '{title} by {dj} on Up!',
+    'page.notFound': 'Page not found.',
+    'djPage.notFound': 'DJ not found.',
+    'setPage.notFound': 'Set not found.',
 
     'install.label': 'Install app',
     'install.manual':

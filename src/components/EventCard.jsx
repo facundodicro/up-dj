@@ -3,6 +3,7 @@ import { Play, Pause, Disc3, MessageCircle, Heart } from 'lucide-react'
 import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
 import { formatRelative, buildWaUrl } from '../lib/format'
+import ShareButton from './ShareButton'
 import * as data from '../lib/data'
 
 /** Tarjeta de un evento en el feed: foto, play, DJ, descripción, like y WhatsApp. */
@@ -182,6 +183,11 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
               </span>
               {likeCount > 0 && <span className="tabular-nums">{likeCount}</span>}
             </button>
+            <ShareButton
+              title={event.title}
+              text={t('share.setText', { title: event.title, dj: dj.username })}
+              url={`${typeof window !== 'undefined' ? window.location.origin : ''}/set/${event.id}`}
+            />
           </div>
           {waUrl ? (
             <a
