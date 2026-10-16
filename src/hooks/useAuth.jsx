@@ -33,11 +33,10 @@ export function AuthProvider({ children }) {
   }, [])
   const resetPassword = useCallback((email) => data.resetPassword(email), [])
   const updatePassword = useCallback((password) => data.updatePassword(password), [])
-  const signInWithGoogle = useCallback(() => data.signInWithGoogle(), [])
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signUp, signIn, signOut, resetPassword, updatePassword, signInWithGoogle }}
+      value={{ user, loading, signUp, signIn, signOut, resetPassword, updatePassword }}
     >
       {children}
     </AuthContext.Provider>
