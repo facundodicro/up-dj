@@ -5,6 +5,7 @@
  */
 import { supabase } from './supabase'
 import { sanitizeWhatsapp, sanitizeInstagram } from './format'
+import { compressImage } from './image'
 import { t } from './i18n'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
@@ -131,11 +132,12 @@ export async function saveProfile(uid, { username, bio, whatsapp, instagram, ava
   if (avatarFile) {
     if (!avatarFile.type.startsWith('image/'))
       throw new Error(t('demo.avatarNotImage'))
-    if (avatarFile.size > MAX_IMAGE_BYTES)
+    // Compresor de fotos: se achica antes de subir
+    const compressed = await compressImage(avatarFile)
+    if (compressed.size > MAX_IMAGE_BYTES)
       throw new Error(t('demo.avatarTooBig'))
-    const ext = safeName(avatarFile.name).split('.').pop()
-    const path = `${uid}/avatar-${crypto.randomUUID()}.${ext}`
-    avatar_url = await uploadWithProgress('avatars', path, avatarFile, onProgress)
+    const path = `${uid}/avatar-${crypto.randomUUID()}.webp`
+    avatar_url = await uploadWithProgress('avatars', path, compressed, onProgress)
   }
   const cleanName = (username || '').trim().replace(/\s+/g, ' ').slice(0, 40) || null
   if (cleanName) {
@@ -254,8 +256,6 @@ export async function createEvent(uid, { title, description, audioFile, photoFil
   if (photoFile) {
     if (!photoFile.type.startsWith('image/'))
       throw new Error(t('demo.photoNotImage'))
-    if (photoFile.size > MAX_IMAGE_BYTES)
-      throw new Error(t('demo.photoTooBig'))
   }
   const audioPath = `${uid}/${crypto.randomUUID()}-${safeName(audioFile.name)}`
   const audio_url = await uploadWithProgress(
@@ -266,8 +266,12 @@ export async function createEvent(uid, { title, description, audioFile, photoFil
   )
   let photo_url = null
   if (photoFile) {
-    const photoPath = `${uid}/${crypto.randomUUID()}-${safeName(photoFile.name)}`
-    photo_url = await uploadWithProgress('event-photos', photoPath, photoFile, (p) =>
+    // Compresor de fotos: se achica antes de subir
+    const compressed = await compressImage(photoFile)
+    if (compressed.size > MAX_IMAGE_BYTES)
+      throw new Error(t('demo.photoTooBig'))
+    const photoPath = `${uid}/${crypto.randomUUID()}.webp`
+    photo_url = await uploadWithProgress('event-photos', photoPath, compressed, (p) =>
       onProgress ? onProgress(0.85 + p * 0.15) : undefined,
     )
   }
@@ -319,9 +323,11 @@ export async function updateEvent(
   let photo_url = ev.photo_url ?? null
   if (photoFile) {
     if (!photoFile.type.startsWith('image/')) throw new Error(t('demo.photoNotImage'))
-    if (photoFile.size > MAX_IMAGE_BYTES) throw new Error(t('demo.photoTooBig'))
-    const photoPath = `${uid}/${crypto.randomUUID()}-${safeName(photoFile.name)}`
-    photo_url = await uploadWithProgress('event-photos', photoPath, photoFile, onProgress)
+    // Compresor de fotos: se achica antes de subir
+    const compressed = await compressImage(photoFile)
+    if (compressed.size > MAX_IMAGE_BYTES) throw new Error(t('demo.photoTooBig'))
+    const photoPath = `${uid}/${crypto.randomUUID()}.webp`
+    photo_url = await uploadWithProgress('event-photos', photoPath, compressed, onProgress)
     // Borra la foto anterior (best-effort)
     const oldPath = ev.photo_url ? pathFromPublicUrl(ev.photo_url, 'event-photos') : null
     if (oldPath) {
