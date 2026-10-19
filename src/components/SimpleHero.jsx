@@ -1,11 +1,8 @@
-import { useLang } from '../context/LanguageContext'
-
 /**
  * Hero simple en blanco: logo "up!" (negro + "!" verde) con latido suave
  * y destello de entrada chico. Compacto a propósito: no es el protagonista.
  */
 export default function SimpleHero() {
-  const { t } = useLang()
   const reducedMotion =
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -24,8 +21,8 @@ export default function SimpleHero() {
       >
         up<span className="text-[#00E065]">!</span>
       </div>
-      <p className="relative mx-auto mt-3 max-w-md text-sm font-medium text-neutral-600 sm:text-base">
-        {t('home.heroSub')}
+      <p className="relative mx-auto mt-4 translate-x-[0.15em] font-mono text-lg font-medium tracking-[0.3em] text-black sm:text-2xl">
+        [escena electrónica]
       </p>
     </section>
   )
