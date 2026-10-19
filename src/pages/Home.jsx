@@ -223,19 +223,22 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
         )}
 
         {!loading && !error && events.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap items-center gap-x-7 gap-y-1 px-1">
             {FILTERS.map((f) => (
               <button
                 key={f.id}
                 type="button"
                 onClick={() => handleFilter(f.id)}
-                className={`shrink-0 inline-flex min-h-[44px] items-center rounded-full border px-4 py-1.5 text-xs font-extrabold transition active:scale-95 ${
+                className={`relative min-h-[44px] py-2 text-sm transition ${
                   filter === f.id
-                    ? 'border-ink bg-ink text-white'
-                    : 'border-clay bg-night-card text-muted hover:border-clay-deep hover:text-ink'
+                    ? 'font-extrabold text-ink'
+                    : 'font-semibold text-muted hover:text-ink'
                 }`}
               >
                 {t(f.label)}
+                {filter === f.id && (
+                  <span className="absolute -bottom-0.5 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-[#00E065]" />
+                )}
               </button>
             ))}
           </div>
