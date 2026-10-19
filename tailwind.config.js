@@ -24,7 +24,7 @@ export default {
           light: '#60A5FA',
         },
         ink: '#17171C',
-        muted: '#6E6E78',
+        muted: '#6F635A',
       },
       fontFamily: {
         sans: ['Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],

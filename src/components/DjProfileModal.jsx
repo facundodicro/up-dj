@@ -200,7 +200,7 @@ export default function DjProfileModal({
                   </button>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-ink">{e.title}</p>
-                    <p className="mt-0.5 text-xs font-normal text-[#767676]">
+                    <p className="mt-0.5 text-xs font-normal text-[#7A6A5E]">
                       {formatRelative(e.created_at, t)}
                     </p>
                   </div>

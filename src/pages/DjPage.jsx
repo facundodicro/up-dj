@@ -250,7 +250,7 @@ export default function DjPage({ user, onAuthClick }) {
                   <p className="truncate text-sm font-semibold text-ink hover:text-up-light">
                     {e.title}
                   </p>
-                  <p className="mt-0.5 text-xs font-normal text-[#767676]">
+                  <p className="mt-0.5 text-xs font-normal text-[#7A6A5E]">
                     {formatRelative(e.created_at, t)}
                   </p>
                 </Link>

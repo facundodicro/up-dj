@@ -161,7 +161,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
 
         <div className="mt-4 flex items-center justify-between border-t border-[#E7DACA] pt-3">
           <div className="flex items-center gap-1">
-            <span className="text-xs font-semibold text-[#767676]">{formatRelative(event.created_at, t)}</span>
+            <span className="text-xs font-semibold text-[#7A6A5E]">{formatRelative(event.created_at, t)}</span>
             <button
               onClick={handleLike}
               aria-label={t(liked ? 'card.unlike' : 'card.like')}
@@ -200,7 +200,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
               {t('card.whatsapp')}
             </a>
           ) : (
-            <span className="text-xs text-[#767676]">{t('card.noContact')}</span>
+            <span className="text-xs text-[#7A6A5E]">{t('card.noContact')}</span>
           )}
         </div>
       </div>

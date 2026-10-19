@@ -178,7 +178,7 @@ export default function SetPage({ user, onAuthClick }) {
             ) : (
               <span className="text-base font-bold text-[#1A1A1A]">{dj.username}</span>
             )}
-            <span className="text-xs font-semibold text-[#767676]">
+            <span className="text-xs font-semibold text-[#7A6A5E]">
               · {formatRelative(event.created_at, t)}
             </span>
           </div>
@@ -276,7 +276,7 @@ export default function SetPage({ user, onAuthClick }) {
                     <p className="truncate text-sm font-semibold text-ink hover:text-up-light">
                       {e.title}
                     </p>
-                    <p className="mt-0.5 text-xs font-normal text-[#767676]">
+                    <p className="mt-0.5 text-xs font-normal text-[#7A6A5E]">
                       {formatRelative(e.created_at, t)}
                     </p>
                   </Link>
