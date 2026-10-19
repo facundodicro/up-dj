@@ -31,6 +31,10 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
   // Para cancelar el autoplay desde el botón "Saltar intro" (definido fuera del effect).
   const cancelAutoplayRef = useRef(null)
   const skipBtnRef = useRef(null)
+  // El destello de entrada no se muestra si el usuario prefiere movimiento reducido.
+  const reducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   // El héroe usa solo contenido real de la app (tagline + CTAs),
   // sin textos de marketing inventados.
@@ -626,7 +630,19 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
   if (failed) {
     return (
       <section className="relative overflow-hidden border-b border-white/10 bg-night-alt px-6 py-14 text-center">
-        <p className="mx-auto max-w-md text-base font-medium text-muted sm:text-xl">{t('home.heroSub')}</p>
+        {!reducedMotion && (
+          <div className="shine-burst z-0" aria-hidden="true">
+            <img src="/shine-burst.svg" alt="" className="h-full w-full" draggable="false" />
+          </div>
+        )}
+        <div
+          className="hero-logo relative font-display font-black leading-none tracking-tight text-white"
+          style={{ fontSize: 'clamp(64px, 12vw, 120px)' }}
+          aria-hidden="true"
+        >
+          up<span className="text-[#00E065]">!</span>
+        </div>
+        <p className="hero-breathe relative mx-auto max-w-md text-base font-medium text-muted sm:text-xl">{t('home.heroSub')}</p>
         <div className="mt-5">
           {user ? (
             <button
@@ -683,7 +699,15 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
             className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center px-[8vw] text-center opacity-0"
           >
             {p.tagline ? (
-              <h1 className="mx-auto max-w-2xl font-display text-[clamp(30px,6vw,64px)] font-black leading-[1.5] tracking-tight text-white">
+              <>
+                <div
+                  className="hero-logo font-display font-black leading-none tracking-tight text-white"
+                  style={{ fontSize: 'clamp(72px, 14vw, 150px)' }}
+                  aria-hidden="true"
+                >
+                  up<span className="text-[#00E065]">!</span>
+                </div>
+                <h1 className="hero-breathe mx-auto max-w-2xl font-display text-[clamp(30px,6vw,64px)] font-black leading-[1.5] tracking-tight text-white">
                   <span
                     className="rounded-2xl bg-black/55 px-6 py-3 shadow-[0_10px_50px_rgba(0,0,0,0.55)]"
                     style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone' }}
@@ -691,6 +715,7 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
                     {t('home.heroSub')}
                   </span>
                 </h1>
+              </>
             ) : null}
             {p.cta ? (
               <div ref={ctaRef} className="flex flex-row flex-wrap items-center justify-center gap-3" style={{ pointerEvents: 'none' }}>
@@ -712,6 +737,12 @@ export default function ScrollWorldHero({ user, onUploadClick, onRegisterClick }
           {t('scroll3d.hint')}
           <span className="sw-chev" />
         </div>
+        {/* Destello de entrada: aparece al cargar, se expande y se disuelve */}
+        {!reducedMotion && (
+          <div className="shine-burst z-10" aria-hidden="true">
+            <img src="/shine-burst.svg" alt="" className="h-full w-full" draggable="false" />
+          </div>
+        )}
       </div>
     </section>
   )

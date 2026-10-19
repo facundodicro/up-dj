@@ -7,10 +7,10 @@ import { SUPPORTED_LANGS } from '../lib/i18n'
 const LANG_LABELS = { es: 'Español', en: 'English' }
 
 /**
- * Header fijo: flechita de instalación a la izquierda, logo "up!" neón
- * verde centrado, y a la derecha donar + idioma + cuenta.
+ * Header fijo: flechita de instalación a la izquierda y a la derecha
+ * idioma + cuenta. (El logo "up!" vive en el hero.)
  */
-export default function Header({ user, profile, onAuthClick, onProfileClick, onLogoClick }) {
+export default function Header({ user, profile, onAuthClick, onProfileClick }) {
   const { t, lang, setLang } = useLang()
   const [menuOpen, setMenuOpen] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
@@ -35,14 +35,6 @@ export default function Header({ user, profile, onAuthClick, onProfileClick, onL
         <div className="flex items-center">
           <InstallButton />
         </div>
-
-        <button
-          onClick={onLogoClick}
-          aria-label={t('header.home')}
-          className="absolute left-1/2 -translate-x-1/2 font-display text-[32px] font-black leading-none tracking-tight text-ink transition-transform duration-200 hover:scale-105"
-        >
-          up<span className="text-[#00E065]">!</span>
-        </button>
 
         <div className="flex items-center gap-2">
           <div className="relative" ref={langRef}>

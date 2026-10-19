@@ -131,3 +131,45 @@ body {
     animation: none;
   }
 }
+
+/* Destello de entrada del hero (SVG exportado de Space Type Generator) */
+@keyframes shine-burst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.35) rotate(-8deg); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.7) rotate(10deg); }
+}
+.shine-burst {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(70vmin, 440px);
+  aspect-ratio: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: shine-burst 1.6s ease-out 0.15s forwards;
+}
+
+/* Latido suave del tagline del hero: respiración apenas perceptible */
+@keyframes hero-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.018); }
+}
+.hero-breathe {
+  animation: hero-breathe 4.5s ease-in-out infinite;
+  transform-origin: center;
+}
+/* Logo "up!" del hero: se materializa cuando el destello se expande */
+@keyframes hero-logo-in {
+  0% { opacity: 0; transform: scale(0.65); filter: blur(6px); }
+  60% { opacity: 1; transform: scale(1.05); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+.hero-logo {
+  animation: hero-logo-in 1.1s cubic-bezier(.2,.9,.25,1.15) 0.55s backwards;
+  text-shadow: 0 0 44px rgba(0,224,101,.35), 0 4px 24px rgba(0,0,0,.6);
+}
+@media (prefers-reduced-motion: reduce) {
+  .shine-burst { display: none; }
+  .hero-breathe { animation: none; }
+  .hero-logo { animation: none; }
+}
