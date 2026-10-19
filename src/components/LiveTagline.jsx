@@ -41,7 +41,7 @@ export default function LiveTagline() {
   }, [lang])
 
   return (
-    <p className="mt-1 text-xs text-muted">
+    <p className="mt-2 text-sm font-extrabold text-ink">
       <span className="animate-tagline-pulse inline-block">{text}</span>
     </p>
   )
