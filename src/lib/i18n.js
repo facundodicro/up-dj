@@ -159,7 +159,7 @@ const STRINGS = {
     'player.back15': 'Retroceder 15 segundos',
     'player.fwd15': 'Adelantar 15 segundos',
 
-    'donate.label': 'Donar',
+    'donate.label': 'Invitame un café',
     'donate.title': 'Donar a Up!',
     'donate.subtitle': 'Tu ayuda mantiene viva la pista',
     'donate.mpTitle': 'Donar con Mercado Pago',
@@ -366,7 +366,7 @@ const STRINGS = {
     'player.back15': 'Back 15 seconds',
     'player.fwd15': 'Forward 15 seconds',
 
-    'donate.label': 'Donate',
+    'donate.label': 'Buy me a coffee',
     'donate.title': 'Donate to Up!',
     'donate.subtitle': 'Your help keeps the dancefloor alive',
     'donate.mpTitle': 'Donate with Mercado Pago',

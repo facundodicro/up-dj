@@ -31,7 +31,7 @@ export default function SimpleHero({ user, onUploadClick, onRegisterClick }) {
       <div className="relative mt-5 flex flex-row flex-wrap items-center justify-center gap-3">
         <button
           onClick={user ? onUploadClick : onRegisterClick}
-          className="inline-flex items-center gap-2 rounded-full bg-[#00E065] px-5 py-2.5 text-sm font-extrabold text-[#04120a] shadow-[0_0_20px_rgba(0,224,101,.4)] transition active:scale-95"
+          className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-b from-[#00e065] to-[#00b359] px-5 py-2.5 text-sm font-extrabold text-[#04120a] shadow-[0_6px_16px_rgba(0,224,101,0.35),inset_0_1px_0_rgba(255,255,255,0.4)] transition hover:brightness-105 active:scale-95"
         >
           {user ? t('home.uploadSet') : t('home.createProfile')}
         </button>
