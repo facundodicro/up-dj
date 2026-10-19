@@ -20,7 +20,7 @@ export default function SimpleHero({ user, onUploadClick, onRegisterClick }) {
       )}
       <div
         className="hero-breathe relative font-display font-black leading-none tracking-tight text-black"
-        style={{ fontSize: 'clamp(54px, 11vw, 88px)' }}
+        style={{ fontSize: 'clamp(76px, 17vw, 124px)' }}
         aria-label="up!"
       >
         up<span className="text-[#00E065]">!</span>
@@ -31,7 +31,7 @@ export default function SimpleHero({ user, onUploadClick, onRegisterClick }) {
       <div className="relative mt-5 flex flex-row flex-wrap items-center justify-center gap-3">
         <button
           onClick={user ? onUploadClick : onRegisterClick}
-          className="inline-flex items-center gap-2 rounded-full bg-[#00E065] px-7 py-3.5 text-base font-extrabold text-[#04120a] shadow-[0_0_24px_rgba(0,224,101,.45)] transition active:scale-95"
+          className="inline-flex items-center gap-2 rounded-full bg-[#00E065] px-5 py-2.5 text-sm font-extrabold text-[#04120a] shadow-[0_0_20px_rgba(0,224,101,.4)] transition active:scale-95"
         >
           {user ? t('home.uploadSet') : t('home.createProfile')}
         </button>
