@@ -157,10 +157,13 @@ body {
 /* Latido suave del tagline del hero: respiración apenas perceptible */
 @keyframes hero-breathe {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.018); }
+  8% { transform: scale(1.03); }
+  16% { transform: scale(1); }
+  24% { transform: scale(1.022); }
+  34% { transform: scale(1); }
 }
 .hero-breathe {
-  animation: hero-breathe 4.5s ease-in-out infinite;
+  animation: hero-breathe 2.4s ease-in-out infinite;
   transform-origin: center;
 }
 /* Logo "up!" del hero: se materializa cuando el destello se expande */
