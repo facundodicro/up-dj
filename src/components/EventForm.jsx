@@ -141,7 +141,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
   const optional = <span className="font-semibold normal-case">{t('event.optional')}</span>
 
   return (
-    <form onSubmit={submit} className="space-y-4 rounded-2xl border border-black/10 bg-night p-4">
+    <form onSubmit={submit} className="space-y-4 rounded-2xl border border-clay bg-night p-4">
       {isEditing && (
         <h4 className="font-display text-base font-black text-ink">{t('event.editTitle')}</h4>
       )}
@@ -157,7 +157,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
           placeholder={t('event.titlePh')}
           maxLength={80}
           disabled={uploading}
-          className="w-full rounded-xl border border-black/10 bg-night-card px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
+          className="w-full rounded-xl border border-clay bg-night-card px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
         />
       </div>
 
@@ -171,7 +171,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
           type="button"
           onClick={() => audioRef.current?.click()}
           disabled={uploading}
-          className="flex w-full items-center gap-3 rounded-xl border border-dashed border-black/15 bg-night-card px-4 py-3.5 text-left transition hover:border-up/60 disabled:opacity-60"
+          className="flex w-full items-center gap-3 rounded-xl border border-dashed border-clay-deep bg-night-card px-4 py-3.5 text-left transition hover:border-up/60 disabled:opacity-60"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-up/15 text-up-light">
             <Music2 size={19} />
@@ -202,7 +202,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
           rows={3}
           maxLength={500}
           disabled={uploading}
-          className="w-full resize-none rounded-xl border border-black/10 bg-night-card px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
+          className="w-full resize-none rounded-xl border border-clay bg-night-card px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
         />
       </div>
 
@@ -213,7 +213,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
         <input ref={photoRef} type="file" accept="image/*" onChange={pickPhoto} className="hidden" disabled={uploading} />
         {photoPreview ? (
           <div className="relative inline-block">
-            <img src={photoPreview} alt={t('event.photoAlt')} className="h-28 w-44 rounded-xl border border-black/10 object-cover" />
+            <img src={photoPreview} alt={t('event.photoAlt')} className="h-28 w-44 rounded-xl border border-clay object-cover" />
             <button
               type="button"
               onClick={clearPhoto}
@@ -229,7 +229,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
             type="button"
             onClick={() => photoRef.current?.click()}
             disabled={uploading}
-            className="flex items-center gap-2 rounded-xl border border-black/10 bg-night-card px-4 py-2.5 text-sm font-bold text-muted transition hover:border-up/60 hover:text-ink disabled:opacity-60"
+            className="flex items-center gap-2 rounded-xl border border-clay bg-night-card px-4 py-2.5 text-sm font-bold text-muted transition hover:border-up/60 hover:text-ink disabled:opacity-60"
           >
             <ImagePlus size={17} className="text-up-light" />
             {t('event.addPhoto')}
@@ -239,7 +239,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
 
       {uploading && (
         <div>
-          <div className="h-2 overflow-hidden rounded-full bg-black/5">
+          <div className="h-2 overflow-hidden rounded-full bg-clay-soft">
             <div
               className="h-full rounded-full bg-gradient-to-r from-up to-neon shadow-[0_0_12px_rgba(139,92,246,0.7)] transition-[width]"
               style={{ width: `${Math.round(progress * 100)}%` }}
@@ -271,7 +271,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
             type="button"
             onClick={onCancel}
             disabled={uploading}
-            className="rounded-xl border border-black/10 px-4 py-3 text-sm font-bold text-muted transition hover:text-ink disabled:opacity-60"
+            className="rounded-xl border border-clay px-4 py-3 text-sm font-bold text-muted transition hover:text-ink disabled:opacity-60"
           >
             {t('event.cancel')}
           </button>

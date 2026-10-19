@@ -5,9 +5,14 @@ export default {
     extend: {
       colors: {
         night: {
-          DEFAULT: '#FAFAF8',
-          alt: '#FFFFFF',
+          DEFAULT: '#F6F1ED',
+          alt: '#F1EAE4',
           card: '#FFFFFF',
+        },
+        clay: {
+          soft: '#EFE7DE',
+          DEFAULT: '#E2D3C6',
+          deep: '#C9B39F',
         },
         up: {
           DEFAULT: '#8B5CF6',

@@ -1,11 +1,10 @@
-import DonateButton from './DonateButton'
 import { useLang } from '../context/LanguageContext'
 
 /**
  * Hero simple en blanco: logo "up!" (negro + "!" verde) con latido suave
  * y destello de entrada chico. Compacto a propósito: no es el protagonista.
  */
-export default function SimpleHero({ user, onUploadClick, onRegisterClick }) {
+export default function SimpleHero() {
   const { t } = useLang()
   const reducedMotion =
     typeof window !== 'undefined' &&
@@ -28,9 +27,6 @@ export default function SimpleHero({ user, onUploadClick, onRegisterClick }) {
       <p className="relative mx-auto mt-3 max-w-md text-sm font-medium text-neutral-600 sm:text-base">
         {t('home.heroSub')}
       </p>
-      <div className="relative mt-5 flex flex-row flex-wrap items-center justify-center gap-3">
-        <DonateButton variant="light" iconOnly />
-      </div>
     </section>
   )
 }

@@ -115,7 +115,7 @@ function Shell() {
         {/* Compensa la altura de la barra flotante */}
         {track && <div className="h-[104px]" aria-hidden="true" />}
 
-        <footer className="border-t border-black/10 py-8 text-center">
+        <footer className="border-t border-clay py-8 text-center">
           <p className="font-display text-2xl font-black tracking-tight">
             <span className="text-ink">up</span>
             <span className="text-[#00C75C]">!</span>

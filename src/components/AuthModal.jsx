@@ -90,7 +90,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
   )
 
   const inputCls =
-    'w-full rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.2)]'
+    'w-full rounded-xl border border-clay bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.2)]'
   const labelCls = 'mb-1 block text-xs font-bold uppercase tracking-wide text-muted'
 
   return (
@@ -206,7 +206,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
               {tab === 'register' ? t('auth.registerSubtitle') : t('auth.loginSubtitle')}
             </p>
 
-            <div className="mt-5 flex gap-1 rounded-xl bg-black/5 p-1">
+            <div className="mt-5 flex gap-1 rounded-xl bg-clay-soft p-1">
               {tabBtn('login', t('auth.loginTab'))}
               {tabBtn('register', t('auth.registerTab'))}
             </div>

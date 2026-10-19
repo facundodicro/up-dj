@@ -207,7 +207,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t('home.searchPh')}
               aria-label={t('home.searchLabel')}
-              className="w-full rounded-full border border-black/10 bg-night-card py-2.5 pl-11 pr-11 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70 [&::-webkit-search-cancel-button]:hidden"
+              className="w-full rounded-full border border-clay bg-night-card py-2.5 pl-11 pr-11 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70 [&::-webkit-search-cancel-button]:hidden"
             />
             {query && (
               <button
@@ -232,7 +232,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
                 className={`shrink-0 inline-flex min-h-[44px] items-center rounded-full border px-4 py-1.5 text-xs font-extrabold transition active:scale-95 ${
                   filter === f.id
                     ? 'border-ink bg-ink text-white'
-                    : 'border-black/10 bg-night-card text-muted hover:border-black/25 hover:text-ink'
+                    : 'border-clay bg-night-card text-muted hover:border-clay-deep hover:text-ink'
                 }`}
               >
                 {t(f.label)}
@@ -250,12 +250,12 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
             {[0, 1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="animate-pulse overflow-hidden rounded-2xl border border-black/10 bg-night-card"
+                className="animate-pulse overflow-hidden rounded-2xl border border-clay bg-night-card"
               >
-                <div className="aspect-[16/10] bg-black/5" />
+                <div className="aspect-[16/10] bg-clay-soft" />
                 <div className="space-y-3 p-5">
-                  <div className="h-4 w-2/3 rounded bg-black/5" />
-                  <div className="h-3 w-1/3 rounded bg-black/5" />
+                  <div className="h-4 w-2/3 rounded bg-clay-soft" />
+                  <div className="h-3 w-1/3 rounded bg-clay-soft" />
                 </div>
               </div>
             ))}
@@ -269,7 +269,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
         )}
 
         {!loading && !error && events.length === 0 && (
-          <div className="relative mt-4 overflow-hidden rounded-3xl border border-black/10 bg-night-alt px-6 py-14 text-center">
+          <div className="relative mt-4 overflow-hidden rounded-3xl border border-clay bg-night-alt px-6 py-14 text-center">
             <SmokeBackground density="hero" />
             <div className="relative">
               <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-up/25 to-neon/25 shadow-[0_0_40px_rgba(139,92,246,0.35)]">
@@ -291,7 +291,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
         )}
 
         {!loading && !error && events.length > 0 && filteredEvents.length === 0 && (
-          <p className="mt-4 rounded-2xl border border-dashed border-black/10 px-5 py-8 text-center text-sm text-muted">
+          <p className="mt-4 rounded-2xl border border-dashed border-clay px-5 py-8 text-center text-sm text-muted">
             {filterEmptyKey && !query.trim() ? t(filterEmptyKey) : t('home.noResults')}
           </p>
         )}

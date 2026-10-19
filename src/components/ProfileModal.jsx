@@ -150,7 +150,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               type="button"
               onClick={() => fileRef.current?.click()}
               aria-label={t('profile.changePhoto')}
-              className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-night transition hover:border-up/70"
+              className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-clay bg-night transition hover:border-up/70"
             >
               {avatarSrc ? (
                 <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
@@ -185,7 +185,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               onChange={(e) => setUsername(e.target.value)}
               placeholder={t('profile.usernamePh')}
               maxLength={40}
-              className="w-full rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
+              className="w-full rounded-xl border border-clay bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
             />
           </div>
 
@@ -200,7 +200,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               placeholder={t('profile.bioPh')}
               rows={3}
               maxLength={300}
-              className="w-full resize-none rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
+              className="w-full resize-none rounded-xl border border-clay bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
             />
           </div>
 
@@ -215,7 +215,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, '').slice(0, 20))}
               placeholder={t('profile.whatsappPh')}
-              className="w-full rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
+              className="w-full rounded-xl border border-clay bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
             />
             <p className="mt-1 text-xs text-muted">{t('profile.whatsappHint')}</p>
           </div>
@@ -231,7 +231,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               value={instagram}
               onChange={(e) => setInstagram(e.target.value.replace(/\s+/g, '').slice(0, 40))}
               placeholder={t('profile.instagramPh')}
-              className="w-full rounded-xl border border-black/10 bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
+              className="w-full rounded-xl border border-clay bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
             />
             <p className="mt-1 text-xs text-muted">{t('profile.instagramHint')}</p>
           </div>
@@ -252,7 +252,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
           </button>
         </form>
 
-        <div className="my-6 border-t border-black/10" />
+        <div className="my-6 border-t border-clay" />
 
         <div className="flex items-center justify-between">
           <h3 className="font-display text-xl font-black text-ink">{t('profile.createEvent')}</h3>
@@ -296,14 +296,14 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
         <div className="mt-3 space-y-2">
           {loadingEvents && <p className="text-sm text-muted">{t('profile.loading')}</p>}
           {!loadingEvents && myEvents.length === 0 && (
-            <p className="rounded-xl border border-dashed border-black/10 px-4 py-5 text-center text-sm text-muted">
+            <p className="rounded-xl border border-dashed border-clay px-4 py-5 text-center text-sm text-muted">
               {t('profile.noEvents')}
             </p>
           )}
           {myEvents.map((e) => (
             <div
               key={e.id}
-              className="flex items-center gap-3 rounded-xl border border-black/10 bg-night px-4 py-3"
+              className="flex items-center gap-3 rounded-xl border border-clay bg-night px-4 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-bold text-ink">{e.title}</p>
@@ -312,7 +312,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               <button
                 onClick={() => setEditingEvent(editingEvent?.id === e.id ? null : e)}
                 aria-label={t('profile.edit')}
-                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold text-muted transition hover:bg-black/5 hover:text-ink"
+                className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold text-muted transition hover:bg-clay-soft hover:text-ink"
               >
                 <Pencil size={15} />
                 {t('profile.edit')}
@@ -322,7 +322,7 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
                 className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold transition ${
                   confirmDelete === e.id
                     ? 'bg-red-500/20 text-red-300 hover:bg-red-500/30'
-                    : 'text-muted hover:bg-black/5 hover:text-red-300'
+                    : 'text-muted hover:bg-clay-soft hover:text-red-300'
                 }`}
               >
                 <Trash2 size={15} />
@@ -332,11 +332,11 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
           ))}
         </div>
 
-        <div className="mt-6 border-t border-black/10 pt-4">
+        <div className="mt-6 border-t border-clay pt-4">
           <button
             onClick={handleSignOut}
             disabled={signingOut}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 px-4 py-2.5 text-sm font-bold text-muted transition hover:border-red-500/40 hover:text-red-300 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-clay px-4 py-2.5 text-sm font-bold text-muted transition hover:border-red-500/40 hover:text-red-300 disabled:opacity-60"
           >
             {signingOut ? <Loader2 size={16} className="animate-spin" /> : <LogOut size={16} />}
             {t('profile.signOut')}

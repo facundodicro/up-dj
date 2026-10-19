@@ -156,7 +156,7 @@ export default function DjPage({ user, onAuthClick }) {
           <img
             src={dj.avatar_url}
             alt={dj.username}
-            className="h-28 w-28 rounded-full border border-black/10 object-cover shadow-[0_4px_24px_rgba(0,0,0,0.12)]"
+            className="h-28 w-28 rounded-full border border-clay object-cover shadow-[0_4px_24px_rgba(0,0,0,0.12)]"
           />
         ) : (
           <span className="flex h-28 w-28 items-center justify-center rounded-full bg-up/20 font-display text-5xl font-bold text-up-light">
@@ -233,7 +233,7 @@ export default function DjPage({ user, onAuthClick }) {
             return (
               <li
                 key={e.id}
-                className="flex items-center gap-3 rounded-xl border border-black/10 bg-white/70 p-3"
+                className="flex items-center gap-3 rounded-xl border border-clay bg-white/70 p-3"
               >
                 <button
                   onClick={() => handlePlay(e)}

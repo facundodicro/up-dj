@@ -76,7 +76,7 @@ export default function Privacy() {
   const sections = lang === 'en' ? EN : ES
   return (
     <main className="mx-auto max-w-2xl px-4 pb-44 pt-24">
-      <section className="rounded-3xl border border-black/10 bg-night-alt px-6 py-8 sm:px-10 sm:py-10">
+      <section className="rounded-3xl border border-clay bg-night-alt px-6 py-8 sm:px-10 sm:py-10">
         <h1 className="font-display text-2xl font-black text-ink sm:text-[32px]">
           {lang === 'en' ? 'Privacy Policy' : 'Política de Privacidad'}
         </h1>

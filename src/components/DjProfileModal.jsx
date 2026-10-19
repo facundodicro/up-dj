@@ -109,7 +109,7 @@ export default function DjProfileModal({
             <img
               src={dj.avatar_url}
               alt={dj.username}
-              className="h-24 w-24 rounded-full border border-black/10 object-cover"
+              className="h-24 w-24 rounded-full border border-clay object-cover"
             />
           ) : (
             <span className="flex h-24 w-24 items-center justify-center rounded-full bg-up/20 font-display text-4xl font-bold text-up-light">
@@ -185,7 +185,7 @@ export default function DjProfileModal({
               return (
                 <li
                   key={e.id}
-                  className="flex items-center gap-3 rounded-xl border border-black/10 bg-white/70 p-3"
+                  className="flex items-center gap-3 rounded-xl border border-clay bg-white/70 p-3"
                 >
                   <button
                     onClick={() => handlePlay(e)}

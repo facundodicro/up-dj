@@ -120,7 +120,7 @@ export default function SetPage({ user, onAuthClick }) {
 
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pb-16 pt-8">
-      <article className="overflow-hidden rounded-2xl border border-black/10 bg-night-card shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+      <article className="overflow-hidden rounded-2xl border border-clay bg-night-card shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
         <div className="relative aspect-[16/10] bg-night-alt">
           {event.photo_url ? (
             <img
@@ -161,7 +161,7 @@ export default function SetPage({ user, onAuthClick }) {
               <img
                 src={dj.avatar_url}
                 alt=""
-                className="h-8 w-8 rounded-full border border-black/10 object-cover"
+                className="h-8 w-8 rounded-full border border-clay object-cover"
               />
             ) : (
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-up/20 font-display text-sm font-extrabold text-up-light">
@@ -189,7 +189,7 @@ export default function SetPage({ user, onAuthClick }) {
             </p>
           )}
 
-          <div className="mt-5 flex items-center justify-between border-t border-[#F0F0F0] pt-4">
+          <div className="mt-5 flex items-center justify-between border-t border-[#E7DACA] pt-4">
             <div className="flex items-center gap-1">
               <button
                 onClick={handleLike}
@@ -251,7 +251,7 @@ export default function SetPage({ user, onAuthClick }) {
               return (
                 <li
                   key={e.id}
-                  className="flex items-center gap-3 rounded-xl border border-black/10 bg-white/70 p-3"
+                  className="flex items-center gap-3 rounded-xl border border-clay bg-white/70 p-3"
                 >
                   <button
                     onClick={() =>

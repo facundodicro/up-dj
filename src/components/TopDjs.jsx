@@ -18,14 +18,14 @@ export default function TopDjs({ djs, onSelect }) {
               key={dj.user_id}
               type="button"
               onClick={() => onSelect?.(dj.username)}
-              className="flex w-24 shrink-0 flex-col items-center gap-1.5 rounded-2xl border border-black/10 bg-night-card p-3 transition hover:border-[#00e065]/50 active:scale-95"
+              className="flex w-24 shrink-0 flex-col items-center gap-1.5 rounded-2xl border border-clay bg-night-card p-3 transition hover:border-[#00e065]/50 active:scale-95"
             >
               {dj.avatar_url ? (
                 <img
                   src={dj.avatar_url}
                   alt=""
                   loading="lazy"
-                  className="h-12 w-12 rounded-full border border-black/10 object-cover"
+                  className="h-12 w-12 rounded-full border border-clay object-cover"
                 />
               ) : (
                 <span className="flex h-12 w-12 items-center justify-center rounded-full bg-up/20 font-display text-xl font-extrabold text-up-light">

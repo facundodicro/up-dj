@@ -71,7 +71,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
   const desc = expanded || !longDesc ? event.description : `${event.description.slice(0, 140)}…`
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-black/10 bg-night-card shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition duration-200 hover:border-black/15 hover:shadow-[0_8px_40px_rgba(139,92,246,0.12)]">
+    <article className="overflow-hidden rounded-2xl border border-clay bg-night-card shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition duration-200 hover:border-clay-deep hover:shadow-[0_8px_40px_rgba(139,92,246,0.12)]">
       <div className="relative aspect-[16/10] bg-night-alt">
         {event.photo_url ? (
           <img
@@ -81,7 +81,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#EDE9FE] via-[#F5F3FF] to-[#DBEAFE]">
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#F3E7DE] via-[#FAF4EE] to-[#EAD9CB]">
             <Disc3 size={64} className="text-up/50" strokeWidth={1.4} />
           </div>
         )}
@@ -113,7 +113,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
             <img
               src={dj.avatar_url}
               alt=""
-              className="h-6 w-6 rounded-full border border-black/10 object-cover"
+              className="h-6 w-6 rounded-full border border-clay object-cover"
             />
           ) : (
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-up/20 font-display text-xs font-extrabold text-up-light">
@@ -159,7 +159,7 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
           </p>
         )}
 
-        <div className="mt-4 flex items-center justify-between border-t border-[#F0F0F0] pt-3">
+        <div className="mt-4 flex items-center justify-between border-t border-[#E7DACA] pt-3">
           <div className="flex items-center gap-1">
             <span className="text-xs font-semibold text-[#767676]">{formatRelative(event.created_at, t)}</span>
             <button

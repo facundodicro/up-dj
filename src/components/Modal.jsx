@@ -32,12 +32,12 @@ export default function Modal({ open, onClose, children, maxWidth = 'max-w-md', 
         className="absolute inset-0 cursor-default bg-black/70 backdrop-blur-sm"
       />
       <div
-        className={`relative h-full w-full ${maxWidth} overflow-y-auto bg-night-card sm:h-auto sm:max-h-[92vh] sm:rounded-2xl sm:border sm:border-black/10 sm:shadow-2xl sm:shadow-black/60`}
+        className={`relative h-full w-full ${maxWidth} overflow-y-auto bg-night-card sm:h-auto sm:max-h-[92vh] sm:rounded-2xl sm:border sm:border-clay sm:shadow-2xl sm:shadow-black/60`}
       >
         <button
           onClick={onClose}
           aria-label={t('common.close')}
-          className="absolute right-3 top-3 z-10 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2 text-muted transition hover:bg-black/5 hover:text-ink"
+          className="absolute right-3 top-3 z-10 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2 text-muted transition hover:bg-clay-soft hover:text-ink"
         >
           <X size={18} />
         </button>
