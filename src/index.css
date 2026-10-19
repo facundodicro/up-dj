@@ -148,6 +148,11 @@ body {
   mix-blend-mode: screen;
   animation: shine-burst 1.6s ease-out 0.15s forwards;
 }
+/* Variante chica para el hero simple en blanco */
+.shine-burst--sm {
+  width: min(52vmin, 300px);
+  top: 36%;
+}
 
 /* Latido suave del tagline del hero: respiración apenas perceptible */
 @keyframes hero-breathe {

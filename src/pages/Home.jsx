@@ -1,6 +1,7 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Disc3, Plus, Search, X } from 'lucide-react'
 import DonateButton from '../components/DonateButton'
+import SimpleHero from '../components/SimpleHero'
 import EventCard from '../components/EventCard'
 import DjProfileModal from '../components/DjProfileModal'
 import SmokeBackground from '../components/SmokeBackground'
@@ -8,8 +9,6 @@ import TopDjs from '../components/TopDjs'
 import { useLang } from '../context/LanguageContext'
 import * as data from '../lib/data'
 import { isDemoMode } from '../lib/data'
-
-const ScrollWorldHero = lazy(() => import('../components/ScrollWorldHero'))
 
 const FILTERS = [
   { id: 'all', label: 'home.filterAll' },
@@ -19,19 +18,7 @@ const FILTERS = [
   { id: 'following', label: 'home.filterFollowing' },
 ]
 
-/** Héroe 3D mientras three.js se descarga. */
-function HeroFallback() {
-  return (
-    <section className="relative overflow-hidden border-b border-black/10 bg-night-alt px-6 py-16 text-center">
-      <p className="font-display text-5xl font-black text-ink">
-        up<span className="text-[#00E065]">!</span>
-      </p>
-      <p className="mx-auto mt-3 max-w-md animate-pulse text-sm text-muted">Cargando mundo 3D…</p>
-    </section>
-  )
-}
-
-/** Página principal: hero nocturno + feed de eventos. */
+/** Página principal: hero simple en blanco + feed de eventos. */
 export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
   const { t } = useLang()
   const [events, setEvents] = useState([])
@@ -200,14 +187,12 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
 
   return (
     <>
-      {/* Héroe 3D: mundo neón navegable con scroll (carga diferida) */}
-      <Suspense fallback={<HeroFallback />}>
-        <ScrollWorldHero
-          user={user}
-          onUploadClick={onProfileClick}
-          onRegisterClick={() => onAuthClick('register')}
-        />
-      </Suspense>
+      {/* Hero simple en blanco */}
+      <SimpleHero
+        user={user}
+        onUploadClick={onProfileClick}
+        onRegisterClick={() => onAuthClick('register')}
+      />
       <main className="mx-auto max-w-5xl px-4 pb-44">
       {/* Feed */}
       <section className="mt-10" aria-label="Sets publicados">
