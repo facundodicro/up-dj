@@ -79,11 +79,160 @@ function uploadOnce(bucket, path, file, onProgress) {
 
 const NETWORK_ERROR_MSG = 'Error de red al subir el archivo.'
 
-/**
- * Subida con reintentos automáticos ante cortes de red (hasta 3 intentos
- * con espera progresiva). Los errores del servidor no se reintentan.
- */
-export async function uploadWithProgress(bucket, path, file, onProgress) {
+/* ------------------------------------------------------------------ */
+/* Subida reanudable (protocolo tus): el archivo sube en pedazos de    */
+/* 6 MB; si la conexión se corta, se retoma desde el último pedazo     */
+/* confirmado por el servidor en vez de arrancar de cero.              */
+/* ------------------------------------------------------------------ */
+
+const TUS_CHUNK_SIZE = 6 * 1024 * 1024 // tamaño de chunk que exige Supabase
+
+function b64utf8(str) {
+  const bytes = new TextEncoder().encode(str)
+  let bin = ''
+  for (const b of bytes) bin += String.fromCharCode(b)
+  return btoa(bin)
+}
+
+async function getAuthToken() {
+  const { data } = await supabase.auth.getSession()
+  return data.session?.access_token || ANON_KEY
+}
+
+async function tusCreate(token, bucket, path, file) {
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/upload/resumable`, {
+    method: 'POST',
+    headers: {
+      apikey: ANON_KEY,
+      Authorization: `Bearer ${token}`,
+      'Tus-Resumable': '1.0.0',
+      'Upload-Length': String(file.size),
+      'Upload-Metadata':
+        `bucketName ${b64utf8(bucket)},objectName ${b64utf8(path)},` +
+        `contentType ${b64utf8(file.type || 'application/octet-stream')}`,
+      'x-upsert': 'true',
+    },
+  })
+  if (res.status !== 201) {
+    let msg = 'No se pudo subir el archivo.'
+    try {
+      const j = await res.json()
+      if (j?.message) msg = j.message
+    } catch {
+      /* noop */
+    }
+    const err = new Error(msg)
+    err.httpStatus = res.status
+    throw err
+  }
+  const loc = res.headers.get('Location')
+  if (!loc) {
+    const err = new Error('No se pudo crear la subida.')
+    err.unsupported = true
+    throw err
+  }
+  return loc.startsWith('http') ? loc : `${SUPABASE_URL}${loc}`
+}
+
+/** Offset confirmado por el servidor; -1 si la sesión ya no existe. */
+async function tusHead(token, url) {
+  const res = await fetch(url, {
+    method: 'HEAD',
+    headers: {
+      apikey: ANON_KEY,
+      Authorization: `Bearer ${token}`,
+      'Tus-Resumable': '1.0.0',
+      'Cache-Control': 'no-store',
+    },
+  })
+  if (res.status === 404 || res.status === 410) return -1
+  if (!res.ok) throw new Error(NETWORK_ERROR_MSG)
+  return parseInt(res.headers.get('Upload-Offset') || '0', 10)
+}
+
+function tusPatch(token, url, blob, offset, onLoaded) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('PATCH', url)
+    xhr.setRequestHeader('apikey', ANON_KEY)
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`)
+    xhr.setRequestHeader('Tus-Resumable', '1.0.0')
+    xhr.setRequestHeader('Upload-Offset', String(offset))
+    xhr.setRequestHeader('Content-Type', 'application/offset+octet-stream')
+    xhr.timeout = 120000
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onLoaded) onLoaded(e.loaded)
+    }
+    xhr.onload = () => {
+      if (xhr.status === 204) {
+        const off = parseInt(
+          xhr.getResponseHeader('Upload-Offset') || String(offset + blob.size),
+          10,
+        )
+        resolve(off)
+      } else if (xhr.status === 409) {
+        const err = new Error('Conflicto de offset.')
+        err.conflict = true
+        reject(err)
+      } else {
+        let msg = 'No se pudo subir el archivo.'
+        try {
+          const j = JSON.parse(xhr.responseText)
+          if (j?.message) msg = j.message
+        } catch {
+          /* noop */
+        }
+        const err = new Error(msg)
+        err.httpStatus = xhr.status
+        reject(err)
+      }
+    }
+    xhr.onerror = () => reject(new Error(NETWORK_ERROR_MSG))
+    xhr.ontimeout = () => reject(new Error(NETWORK_ERROR_MSG))
+    xhr.send(blob)
+  })
+}
+
+async function uploadResumable(bucket, path, file, onProgress) {
+  const token = await getAuthToken()
+  let url = await tusCreate(token, bucket, path, file)
+  let offset = 0
+  let resumes = 0
+  let restarts = 0
+  while (offset < file.size) {
+    const end = Math.min(offset + TUS_CHUNK_SIZE, file.size)
+    try {
+      offset = await tusPatch(token, url, file.slice(offset, end), offset, (loaded) => {
+        if (onProgress) onProgress(Math.min(1, (offset + loaded) / file.size))
+      })
+    } catch (err) {
+      if (err?.httpStatus) throw err // error del servidor: no reintentar a ciegas
+      if (++resumes > 15) throw new Error(FRIENDLY_CUT_MSG)
+      await new Promise((r) => setTimeout(r, Math.min(1000 * resumes, 6000)))
+      let serverOffset = -2
+      try {
+        serverOffset = await tusHead(token, url)
+      } catch {
+        serverOffset = -2 // HEAD falló por red: se reintenta el mismo chunk
+      }
+      if (serverOffset === -1) {
+        if (++restarts > 2) throw new Error(FRIENDLY_CUT_MSG)
+        url = await tusCreate(token, bucket, path, file)
+        offset = 0
+      } else if (serverOffset >= 0) {
+        offset = serverOffset
+      }
+    }
+  }
+  if (onProgress) onProgress(1)
+  return publicUrl(bucket, path)
+}
+
+const FRIENDLY_CUT_MSG =
+  'Se cortó la conexión varias veces. Revisá tu WiFi e intentá de nuevo.'
+
+/** Camino clásico: un solo envío con reintentos (respaldo si tus no está). */
+async function uploadLegacyWithRetries(bucket, path, file, onProgress) {
   const delays = [0, 1500, 4000]
   let lastErr = null
   for (let i = 0; i < delays.length; i++) {
@@ -100,6 +249,27 @@ export async function uploadWithProgress(bucket, path, file, onProgress) {
     throw new Error('Se cortó la conexión varias veces. Revisá tu WiFi e intentá de nuevo.')
   }
   throw lastErr
+}
+
+/**
+ * Subida de archivos: reanudable por pedazos (tus); si el servidor no
+ * soporta ese protocolo o la sesión no se puede crear por red, cae al
+ * camino clásico de un solo envío con reintentos.
+ */
+export async function uploadWithProgress(bucket, path, file, onProgress) {
+  try {
+    return await uploadResumable(bucket, path, file, onProgress)
+  } catch (err) {
+    if (
+      err?.unsupported ||
+      err?.httpStatus === 404 ||
+      err?.httpStatus === 501 ||
+      err instanceof TypeError
+    ) {
+      return uploadLegacyWithRetries(bucket, path, file, onProgress)
+    }
+    throw err
+  }
 }
 
 export async function getSessionUser() {
