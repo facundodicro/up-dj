@@ -30,6 +30,8 @@ const STRINGS = {
     'auth.email': 'Email',
     'auth.password': 'Contraseña',
     'auth.passwordHint': 'Mínimo 6 caracteres',
+    'auth.showPassword': 'Mostrar contraseña',
+    'auth.hidePassword': 'Ocultar contraseña',
     'auth.submitLogin': 'Entrar',
     'auth.submitRegister': 'Crear mi perfil',
     'auth.confirmEmail':
@@ -239,6 +241,8 @@ const STRINGS = {
     'auth.email': 'Email',
     'auth.password': 'Password',
     'auth.passwordHint': 'Minimum 6 characters',
+    'auth.showPassword': 'Show password',
+    'auth.hidePassword': 'Hide password',
     'auth.submitLogin': 'Log in',
     'auth.submitRegister': 'Create my profile',
     'auth.confirmEmail':

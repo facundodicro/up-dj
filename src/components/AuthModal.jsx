@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Loader2, ArrowLeft } from 'lucide-react'
+import { Loader2, ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import Modal from './Modal'
 import { useAuth } from '../hooks/useAuth'
 import { useLang } from '../context/LanguageContext'
@@ -11,6 +11,35 @@ import { toast } from '../lib/toast'
  * - vista "olvidé mi contraseña" (envía link de recupero)
  * - vista "recovery" (define la nueva contraseña tras abrir el link)
  */
+/** Input de contraseña con ojito para mostrar/ocultar lo escrito. */
+function PasswordInput({ id, value, onChange, placeholder, autoComplete, className }) {
+  const { t } = useLang()
+  const [show, setShow] = useState(false)
+  return (
+    <div className="relative">
+      <input
+        id={id}
+        type={show ? 'text' : 'password'}
+        required
+        autoComplete={autoComplete}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`${className} pr-11`}
+      />
+      <button
+        type="button"
+        tabIndex={-1}
+        onClick={() => setShow((s) => !s)}
+        aria-label={show ? t('auth.hidePassword') : t('auth.showPassword')}
+        className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-muted transition hover:text-ink"
+      >
+        {show ? <EyeOff size={18} /> : <Eye size={18} />}
+      </button>
+    </div>
+  )
+}
+
 export default function AuthModal({ open, initialTab = 'login', onClose }) {
   const { signUp, signIn, resetPassword, updatePassword } = useAuth()
   const { t } = useLang()
@@ -108,10 +137,8 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
                 <label htmlFor="auth-newpass" className={labelCls}>
                   {t('auth.newPassword')}
                 </label>
-                <input
+                <PasswordInput
                   id="auth-newpass"
-                  type="password"
-                  required
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -123,10 +150,8 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
                 <label htmlFor="auth-confirmpass" className={labelCls}>
                   {t('auth.newPassword')}
                 </label>
-                <input
+                <PasswordInput
                   id="auth-confirmpass"
-                  type="password"
-                  required
                   autoComplete="new-password"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
@@ -231,10 +256,8 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
                 <label htmlFor="auth-pass" className={labelCls}>
                   {t('auth.password')}
                 </label>
-                <input
+                <PasswordInput
                   id="auth-pass"
-                  type="password"
-                  required
                   autoComplete={tab === 'register' ? 'new-password' : 'current-password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
