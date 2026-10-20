@@ -40,7 +40,7 @@ function publicUrl(bucket, path) {
 }
 
 /** Sube un archivo a Storage con progreso real (0..1). Devuelve la URL pública. */
-export function uploadWithProgress(bucket, path, file, onProgress) {
+function uploadOnce(bucket, path, file, onProgress) {
   return new Promise((resolve, reject) => {
     supabase.auth
       .getSession()
@@ -75,6 +75,31 @@ export function uploadWithProgress(bucket, path, file, onProgress) {
       })
       .catch(reject)
   })
+}
+
+const NETWORK_ERROR_MSG = 'Error de red al subir el archivo.'
+
+/**
+ * Subida con reintentos automáticos ante cortes de red (hasta 3 intentos
+ * con espera progresiva). Los errores del servidor no se reintentan.
+ */
+export async function uploadWithProgress(bucket, path, file, onProgress) {
+  const delays = [0, 1500, 4000]
+  let lastErr = null
+  for (let i = 0; i < delays.length; i++) {
+    if (i > 0) await new Promise((r) => setTimeout(r, delays[i]))
+    try {
+      return await uploadOnce(bucket, path, file, onProgress)
+    } catch (err) {
+      lastErr = err
+      const isNetwork = err?.message === NETWORK_ERROR_MSG
+      if (!isNetwork || i === delays.length - 1) break
+    }
+  }
+  if (lastErr?.message === NETWORK_ERROR_MSG) {
+    throw new Error('Se cortó la conexión varias veces. Revisá tu WiFi e intentá de nuevo.')
+  }
+  throw lastErr
 }
 
 export async function getSessionUser() {
