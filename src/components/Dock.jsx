@@ -18,7 +18,7 @@ export default function Dock({ section, onChange, raised, t }) {
         raised ? 'bottom-[118px]' : 'bottom-5'
       }`}
     >
-      <div className="flex items-center gap-2 rounded-full border border-clay bg-white/92 px-2.5 py-2 shadow-[0_10px_36px_rgba(60,40,20,0.20)] backdrop-blur-md">
+      <div className="flex items-center gap-2 rounded-full border border-black/10 bg-white/95 px-2.5 py-2 shadow-[0_14px_44px_rgba(0,0,0,0.38)] backdrop-blur-md">
         {SECTIONS.map((s) => (
           <button
             key={s.id}
