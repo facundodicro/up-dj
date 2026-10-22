@@ -34,7 +34,7 @@ export default function ShowsSection({ user, feedKey, onAuthClick, onProfileClic
 
   return (
     <main className="mx-auto max-w-5xl px-4 pb-44">
-      <section className="mt-10" aria-label={t('shows.title')}>
+      <section className="mt-24" aria-label={t('shows.title')}>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="font-display text-3xl font-black tracking-tight text-ink">

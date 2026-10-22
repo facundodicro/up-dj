@@ -9,7 +9,7 @@ export default function BiosSection() {
   const { t } = useLang()
   return (
     <main className="mx-auto max-w-5xl px-4 pb-44">
-      <section className="mt-10" aria-label={t('dock.bios')}>
+      <section className="mt-24" aria-label={t('dock.bios')}>
         <h2 className="font-display text-3xl font-black tracking-tight text-ink">{t('dock.bios')}</h2>
         <div className="mt-6 rounded-3xl border border-dashed border-clay px-6 py-14 text-center">
           <BookOpenText size={38} className="mx-auto text-muted" strokeWidth={1.5} />
