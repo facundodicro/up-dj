@@ -620,6 +620,104 @@ export async function deleteEvent(uid, id) {
   if (error) throw new Error(t('profile.deleteError'))
 }
 
+/** Fecha local de hoy como 'YYYY-MM-DD' (para comparar con show_date). */
+function todayYmd() {
+  const d = new Date()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${d.getFullYear()}-${m}-${day}`
+}
+
+const SHOW_SELECT =
+  'id, user_id, title, show_date, venue, flyer_url, created_at, profiles(username, avatar_url)'
+
+function mapShow(s) {
+  return {
+    id: s.id,
+    user_id: s.user_id,
+    title: s.title,
+    show_date: s.show_date,
+    venue: s.venue || '',
+    flyer_url: s.flyer_url || null,
+    created_at: s.created_at,
+    dj: s.profiles || { username: 'DJ', avatar_url: null },
+  }
+}
+
+/** Agenda pública: solo eventos de hoy en adelante, ordenados por fecha. */
+export async function listShows() {
+  const { data, error } = await supabase
+    .from('shows')
+    .select(SHOW_SELECT)
+    .gte('show_date', todayYmd())
+    .order('show_date', { ascending: true })
+    .order('created_at', { ascending: true })
+    .limit(100)
+  if (error) throw new Error(t('shows.loadError'))
+  return (data || []).map(mapShow)
+}
+
+/** Todos los eventos de un usuario (incluye pasados, para su panel). */
+export async function listShowsByUser(uid) {
+  const { data, error } = await supabase
+    .from('shows')
+    .select('id, user_id, title, show_date, venue, flyer_url, created_at')
+    .eq('user_id', uid)
+    .order('show_date', { ascending: true })
+    .limit(100)
+  if (error) throw new Error(t('shows.loadError'))
+  return (data || []).map((s) => ({ ...s, flyer_url: s.flyer_url || null }))
+}
+
+/** Publica un evento de la agenda: flyer (comprimido) + fila en shows. */
+export async function createShow(uid, { title, showDate, venue, flyerFile }, onProgress) {
+  if (!(title || '').trim()) throw new Error(t('show.needTitle'))
+  if (!showDate) throw new Error(t('show.needDate'))
+  let flyer_url = null
+  if (flyerFile) {
+    if (!flyerFile.type.startsWith('image/')) throw new Error(t('demo.photoNotImage'))
+    // Compresor de fotos: se achica antes de subir
+    const compressed = await compressImage(flyerFile)
+    if (compressed.size > MAX_IMAGE_BYTES) throw new Error(t('demo.photoTooBig'))
+    const path = `${uid}/${crypto.randomUUID()}.webp`
+    flyer_url = await uploadWithProgress('flyers', path, compressed, onProgress)
+  }
+  const { data, error } = await supabase
+    .from('shows')
+    .insert({
+      user_id: uid,
+      title: title.trim(),
+      show_date: showDate,
+      venue: (venue || '').trim(),
+      flyer_url,
+    })
+    .select()
+    .single()
+  if (error) throw new Error(t('show.publishError'))
+  return data
+}
+
+/** Elimina un evento de la agenda: flyer del storage + fila. */
+export async function deleteShow(uid, id) {
+  const { data: sh, error: fetchError } = await supabase
+    .from('shows')
+    .select('flyer_url')
+    .eq('id', id)
+    .eq('user_id', uid)
+    .maybeSingle()
+  if (fetchError || !sh) throw new Error(t('shows.loadError'))
+  const path = sh.flyer_url ? pathFromPublicUrl(sh.flyer_url, 'flyers') : null
+  if (path) {
+    try {
+      await supabase.storage.from('flyers').remove([path])
+    } catch {
+      /* sigue igual */
+    }
+  }
+  const { error } = await supabase.from('shows').delete().eq('id', id).eq('user_id', uid)
+  if (error) throw new Error(t('profile.deleteError'))
+}
+
 /** Envía el email de recupero de contraseña (link con token). */
 export async function resetPassword(email) {
   if (!/^\S+@\S+\.\S+$/.test(email || '')) throw new Error(t('demo.invalidEmail'))

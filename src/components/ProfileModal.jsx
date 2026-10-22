@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Loader2, Plus, Trash2, LogOut, Camera, Pencil } from 'lucide-react'
 import Modal from './Modal'
 import EventForm from './EventForm'
+import ShowForm from './ShowForm'
 import { useAuth } from '../hooks/useAuth'
 import { useLang } from '../context/LanguageContext'
 import * as data from '../lib/data'
-import { formatDate } from '../lib/format'
+import { formatDate, localDateFromYmd } from '../lib/format'
 import { toast } from '../lib/toast'
 
 /**
@@ -28,6 +29,10 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
   const [myEvents, setMyEvents] = useState([])
   const [loadingEvents, setLoadingEvents] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(null)
+  const [myShows, setMyShows] = useState([])
+  const [loadingShows, setLoadingShows] = useState(false)
+  const [showShowForm, setShowShowForm] = useState(false)
+  const [confirmDeleteShow, setConfirmDeleteShow] = useState(null)
   const [signingOut, setSigningOut] = useState(false)
   const [followCounts, setFollowCounts] = useState({ followers: 0, following: 0 })
   const fileRef = useRef(null)
@@ -46,6 +51,8 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
       setError('')
       setShowForm(false)
       setConfirmDelete(null)
+      setShowShowForm(false)
+      setConfirmDeleteShow(null)
     }
   }
 
@@ -57,6 +64,29 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
       .then((all) => setMyEvents(all.filter((e) => e.user_id === user.id)))
       .catch(() => setMyEvents([]))
       .finally(() => setLoadingEvents(false))
+    setLoadingShows(true)
+    data
+      .listShowsByUser(user.id)
+      .then(async (list) => {
+        // Regla de la agenda: el evento que ya ocurrió se elimina por completo
+        const hoy = new Date()
+        const ymd = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`
+        const vigentes = []
+        for (const sh of list) {
+          if (sh.show_date < ymd) {
+            try {
+              await data.deleteShow(user.id, sh.id)
+            } catch {
+              vigentes.push(sh)
+            }
+          } else {
+            vigentes.push(sh)
+          }
+        }
+        setMyShows(vigentes)
+      })
+      .catch(() => setMyShows([]))
+      .finally(() => setLoadingShows(false))
     data
       .getFollowCounts(user.id)
       .then((c) => setFollowCounts(c))
@@ -101,6 +131,33 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
       /* noop */
     }
     onEventsChanged()
+  }
+
+  const refreshMyShows = async () => {
+    try {
+      const list = await data.listShowsByUser(user.id)
+      const hoy = new Date()
+      const ymd = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`
+      setMyShows(list.filter((sh) => sh.show_date >= ymd))
+    } catch {
+      /* noop */
+    }
+    onEventsChanged()
+  }
+
+  const handleDeleteShow = async (id) => {
+    if (confirmDeleteShow !== id) {
+      setConfirmDeleteShow(id)
+      return
+    }
+    setConfirmDeleteShow(null)
+    try {
+      await data.deleteShow(user.id, id)
+      toast(t('profile.showDeleted'), 'success')
+      refreshMyShows()
+    } catch {
+      toast(t('profile.deleteError'), 'error')
+    }
   }
 
   const handleDelete = async (id) => {
@@ -330,6 +387,78 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               </button>
             </div>
           ))}
+        </div>
+
+        <div className="my-6 border-t border-clay" />
+
+        <div className="flex items-center justify-between">
+          <h3 className="font-display text-xl font-black text-ink">{t('profile.showsTitle')}</h3>
+          {!showShowForm && (
+            <button
+              onClick={() => setShowShowForm(true)}
+              className="flex items-center gap-1.5 rounded-xl bg-up/15 px-4 py-2 text-sm font-extrabold text-up-light transition hover:bg-up/25"
+            >
+              <Plus size={16} />
+              {t('profile.newShow')}
+            </button>
+          )}
+        </div>
+        {showShowForm && (
+          <div className="mt-3">
+            <ShowForm
+              userId={user.id}
+              onCancel={() => setShowShowForm(false)}
+              onCreated={() => {
+                setShowShowForm(false)
+                refreshMyShows()
+              }}
+            />
+          </div>
+        )}
+
+        <h3 className="mt-6 font-display text-xl font-black text-ink">{t('profile.myShows')}</h3>
+        <div className="mt-3 space-y-2">
+          {loadingShows && <p className="text-sm text-muted">{t('profile.loading')}</p>}
+          {!loadingShows && myShows.length === 0 && (
+            <p className="rounded-xl border border-dashed border-clay px-4 py-5 text-center text-sm text-muted">
+              {t('profile.noShows')}
+            </p>
+          )}
+          {myShows.map((sh) => {
+            const d = localDateFromYmd(sh.show_date)
+            const fecha = d
+              ? d.toLocaleDateString(lang === 'en' ? 'en-US' : 'es-AR', {
+                  weekday: 'short',
+                  day: 'numeric',
+                  month: 'short',
+                })
+              : sh.show_date
+            return (
+              <div
+                key={sh.id}
+                className="flex items-center gap-3 rounded-xl border border-clay bg-night px-4 py-3"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold text-ink">{sh.title}</p>
+                  <p className="text-xs capitalize text-muted">
+                    {fecha}
+                    {sh.venue ? ` · ${sh.venue}` : ''}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleDeleteShow(sh.id)}
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold transition ${
+                    confirmDeleteShow === sh.id
+                      ? 'bg-red-500/20 text-red-300 hover:bg-red-500/30'
+                      : 'text-muted hover:bg-clay-soft hover:text-red-300'
+                  }`}
+                >
+                  <Trash2 size={15} />
+                  {confirmDeleteShow === sh.id ? t('profile.confirmDelete') : t('profile.delete')}
+                </button>
+              </div>
+            )
+          })}
         </div>
 
         <div className="mt-6 border-t border-clay pt-4">

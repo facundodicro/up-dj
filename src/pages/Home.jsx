@@ -6,6 +6,10 @@ import EventCard from '../components/EventCard'
 import DjProfileModal from '../components/DjProfileModal'
 import SmokeBackground from '../components/SmokeBackground'
 import TopDjs from '../components/TopDjs'
+import Dock from '../components/Dock'
+import ShowsSection from '../components/ShowsSection'
+import BiosSection from '../components/BiosSection'
+import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
 import * as data from '../lib/data'
 import { isDemoMode } from '../lib/data'
@@ -21,6 +25,8 @@ const FILTERS = [
 /** Página principal: hero simple en blanco + feed de eventos. */
 export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
   const { t } = useLang()
+  const [section, setSection] = useState('musica')
+  const { track } = usePlayer()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -58,6 +64,11 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
     }
     return list
   }, [events, query, filter, likeCounts, myFollows, user])
+
+  const handleSection = (id) => {
+    setSection(id)
+    window.scrollTo({ top: 0 })
+  }
 
   const handleFilter = (id) => {
     if (id === 'following' && !user) {
@@ -187,6 +198,8 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
 
   return (
     <>
+      {section === 'musica' && (
+        <>
       {/* Hero simple en blanco */}
       <SimpleHero
         user={user}
@@ -336,6 +349,18 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
         )}
       </section>
       </main>
+        </>
+      )}
+      {section === 'eventos' && (
+        <ShowsSection
+          user={user}
+          feedKey={feedKey}
+          onAuthClick={onAuthClick}
+          onProfileClick={onProfileClick}
+        />
+      )}
+      {section === 'bios' && <BiosSection />}
+      <Dock section={section} onChange={handleSection} raised={!!track} t={t} />
     </>
   )
 }

@@ -96,3 +96,10 @@ export function buildInstagramUrl(handle) {
   const target = sanitizeInstagram(handle)
   return target ? `https://instagram.com/${target}` : null
 }
+
+/** Parsea 'YYYY-MM-DD' como fecha LOCAL (sin corrimiento por zona horaria). */
+export function localDateFromYmd(ymd) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(ymd || ''))
+  if (!m) return null
+  return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+}

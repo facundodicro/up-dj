@@ -181,3 +181,12 @@ body {
   .hero-breathe { animation: none; }
   .hero-logo { animation: none; }
 }
+/* Estrellita de "evento nuevo" en la agenda de Eventos */
+@keyframes star-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.8); }
+}
+.star-blink { animation: star-blink 1.1s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .star-blink { animation: none; }
+}
