@@ -20,6 +20,13 @@ export default function ShowCard({ show }) {
   const year = d ? d.getFullYear() : ''
   const isNew = Date.now() - new Date(show.created_at).getTime() < NEW_WINDOW_MS
   const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s)
+  // Lugar visible: venue + ciudad (sin repetir si el venue ya la incluye).
+  const venueTxt = (show.venue || '').trim()
+  const cityTxt = (show.city || '').trim()
+  const placeLine =
+    venueTxt && cityTxt && !venueTxt.toLowerCase().includes(cityTxt.toLowerCase())
+      ? `${venueTxt} · ${cityTxt}`
+      : venueTxt || cityTxt
 
   return (
     <article className="overflow-hidden rounded-3xl border border-clay bg-night-card">
@@ -56,10 +63,10 @@ export default function ShowCard({ show }) {
         <h3 className="mt-1.5 font-display text-2xl font-black leading-tight text-ink">
           {show.title}
         </h3>
-        {show.venue && (
+        {placeLine && (
           <p className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-muted">
             <MapPin size={15} className="shrink-0" />
-            {show.venue}
+            {placeLine}
           </p>
         )}
         <p className="mt-3 text-xs font-bold text-muted">
