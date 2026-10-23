@@ -629,7 +629,7 @@ function todayYmd() {
 }
 
 const SHOW_SELECT =
-  'id, user_id, title, show_date, venue, flyer_url, created_at, profiles(username, avatar_url)'
+  'id, user_id, title, show_date, venue, city, flyer_url, created_at, profiles(username, avatar_url)'
 
 function mapShow(s) {
   return {
@@ -638,6 +638,7 @@ function mapShow(s) {
     title: s.title,
     show_date: s.show_date,
     venue: s.venue || '',
+    city: s.city || '',
     flyer_url: s.flyer_url || null,
     created_at: s.created_at,
     dj: s.profiles || { username: 'DJ', avatar_url: null },
@@ -661,7 +662,7 @@ export async function listShows() {
 export async function listShowsByUser(uid) {
   const { data, error } = await supabase
     .from('shows')
-    .select('id, user_id, title, show_date, venue, flyer_url, created_at')
+    .select('id, user_id, title, show_date, venue, city, flyer_url, created_at')
     .eq('user_id', uid)
     .order('show_date', { ascending: true })
     .limit(100)
@@ -670,9 +671,10 @@ export async function listShowsByUser(uid) {
 }
 
 /** Publica un evento de la agenda: flyer (comprimido) + fila en shows. */
-export async function createShow(uid, { title, showDate, venue, flyerFile }, onProgress) {
+export async function createShow(uid, { title, showDate, venue, city, flyerFile }, onProgress) {
   if (!(title || '').trim()) throw new Error(t('show.needTitle'))
   if (!showDate) throw new Error(t('show.needDate'))
+  if (!(city || '').trim()) throw new Error(t('show.needCity'))
   let flyer_url = null
   if (flyerFile) {
     if (!flyerFile.type.startsWith('image/')) throw new Error(t('demo.photoNotImage'))
@@ -689,6 +691,7 @@ export async function createShow(uid, { title, showDate, venue, flyerFile }, onP
       title: title.trim(),
       show_date: showDate,
       venue: (venue || '').trim(),
+      city: (city || '').trim(),
       flyer_url,
     })
     .select()

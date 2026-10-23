@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ImagePlus, Loader2, X } from 'lucide-react'
 import { useLang } from '../context/LanguageContext'
 import * as data from '../lib/data'
@@ -13,11 +13,33 @@ export default function ShowForm({ userId, onCancel, onCreated }) {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
   const [venue, setVenue] = useState('')
+  const [city, setCity] = useState('')
+  const [knownCities, setKnownCities] = useState([])
   const [flyerFile, setFlyerFile] = useState(null)
   const [flyerPreview, setFlyerPreview] = useState(null)
   const [error, setError] = useState('')
   const [publishing, setPublishing] = useState(false)
   const fileRef = useRef(null)
+
+  // Ciudades ya usadas en la agenda: se ofrecen como sugerencia (se puede escribir otra).
+  useEffect(() => {
+    let alive = true
+    data
+      .listShows()
+      .then((list) => {
+        if (!alive) return
+        const seen = []
+        for (const s of list) {
+          const c = (s.city || '').trim()
+          if (c && !seen.some((x) => x.toLowerCase() === c.toLowerCase())) seen.push(c)
+        }
+        setKnownCities(seen)
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [])
 
   const today = (() => {
     const d = new Date()
@@ -58,10 +80,14 @@ export default function ShowForm({ userId, onCancel, onCreated }) {
       setError(t('show.pastDate'))
       return
     }
+    if (!city.trim()) {
+      setError(t('show.needCity'))
+      return
+    }
     setPublishing(true)
     setError('')
     try {
-      await data.createShow(userId, { title, showDate: date, venue, flyerFile })
+      await data.createShow(userId, { title, showDate: date, venue, city, flyerFile })
       toast(t('show.published'), 'success')
       onCreated && onCreated()
     } catch (err) {
@@ -107,19 +133,40 @@ export default function ShowForm({ userId, onCancel, onCreated }) {
           />
         </div>
         <div>
-          <label htmlFor="sf-venue" className={labelCls}>
-            {t('show.venue')}
+          <label htmlFor="sf-city" className={labelCls}>
+            {t('show.city')}
           </label>
           <input
-            id="sf-venue"
+            id="sf-city"
             type="text"
-            value={venue}
-            onChange={(e) => setVenue(e.target.value)}
-            placeholder={t('show.venuePh')}
-            maxLength={80}
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder={t('show.cityPh')}
+            maxLength={60}
+            list="sf-city-list"
             className={inputCls}
           />
+          <datalist id="sf-city-list">
+            {knownCities.map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
         </div>
+      </div>
+
+      <div>
+        <label htmlFor="sf-venue" className={labelCls}>
+          {t('show.venue')}
+        </label>
+        <input
+          id="sf-venue"
+          type="text"
+          value={venue}
+          onChange={(e) => setVenue(e.target.value)}
+          placeholder={t('show.venuePh')}
+          maxLength={80}
+          className={inputCls}
+        />
       </div>
 
       <div>

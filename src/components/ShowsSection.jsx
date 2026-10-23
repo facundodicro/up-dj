@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { CalendarDays, Plus } from 'lucide-react'
 import ShowCard from './ShowCard'
 import { useLang } from '../context/LanguageContext'
@@ -10,6 +10,22 @@ export default function ShowsSection({ user, feedKey, onAuthClick, onProfileClic
   const [shows, setShows] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [city, setCity] = useState(null)
+
+  // Chips dinámicos: las ciudades salen de los eventos próximos cargados.
+  const cities = useMemo(() => {
+    const seen = []
+    for (const s of shows) {
+      const c = (s.city || '').trim()
+      if (c && !seen.some((x) => x.toLowerCase() === c.toLowerCase())) seen.push(c)
+    }
+    return seen
+  }, [shows])
+
+  const activeCity = city && cities.some((c) => c.toLowerCase() === city.toLowerCase()) ? city : null
+  const visible = activeCity
+    ? shows.filter((s) => (s.city || '').trim().toLowerCase() === activeCity.toLowerCase())
+    : shows
 
   useEffect(() => {
     let alive = true
@@ -52,6 +68,41 @@ export default function ShowsSection({ user, feedKey, onAuthClick, onProfileClic
           </button>
         </div>
 
+        {!loading && !error && cities.length > 0 && (
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-1" role="group" aria-label={t('show.city')}>
+            <button
+              type="button"
+              onClick={() => setCity(null)}
+              className={`relative min-h-[44px] py-2 text-sm transition ${
+                !activeCity ? 'font-extrabold text-ink' : 'font-semibold text-muted hover:text-ink'
+              }`}
+            >
+              {t('shows.allCities')}
+              {!activeCity && (
+                <span className="absolute -bottom-0.5 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-[#00E065]" />
+              )}
+            </button>
+            {cities.map((c) => {
+              const isActive = activeCity && c.toLowerCase() === activeCity.toLowerCase()
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setCity(c)}
+                  className={`relative min-h-[44px] py-2 text-sm transition ${
+                    isActive ? 'font-extrabold text-ink' : 'font-semibold text-muted hover:text-ink'
+                  }`}
+                >
+                  {c}
+                  {isActive && (
+                    <span className="absolute -bottom-0.5 left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-[#00E065]" />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
+
         {loading && (
           <div className="mt-6 grid gap-5 sm:grid-cols-2">
             {[0, 1].map((i) => (
@@ -82,9 +133,15 @@ export default function ShowsSection({ user, feedKey, onAuthClick, onProfileClic
           </div>
         )}
 
-        {!loading && !error && shows.length > 0 && (
+        {!loading && !error && shows.length > 0 && visible.length === 0 && (
+          <p className="mt-6 rounded-3xl border border-dashed border-clay px-6 py-10 text-center text-sm text-muted">
+            {t('shows.noneInCity')}
+          </p>
+        )}
+
+        {!loading && !error && visible.length > 0 && (
           <div className="mt-6 grid gap-5 sm:grid-cols-2">
-            {shows.map((s) => (
+            {visible.map((s) => (
               <ShowCard key={s.id} show={s} />
             ))}
           </div>
