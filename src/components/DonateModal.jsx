@@ -60,16 +60,16 @@ export default function DonateModal({ open, onClose }) {
                 <h3 className="font-display font-extrabold text-ink">{t('donate.mpTitle')}</h3>
               </div>
               <div className="mt-3 flex items-center gap-2">
-                <code className="min-w-0 flex-1 select-all truncate rounded-xl bg-black/40 px-4 py-2.5 font-mono text-sm font-bold text-[#00e065]">
+                <code className="min-w-0 flex-1 select-all truncate rounded-xl border border-black/10 bg-white px-4 py-2.5 font-mono text-sm font-bold text-ink">
                   {DONATE_MP_ALIAS}
                 </code>
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-extrabold text-ink transition ${
+                  className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-extrabold text-ink transition ${
                     copied
-                      ? 'bg-[#00e065] text-black'
-                      : 'bg-up hover:bg-up-dark shadow-[0_0_18px_rgba(139,92,246,0.45)]'
+                      ? 'border-transparent bg-[#00e065] text-black'
+                      : 'border-black/10 bg-white hover:bg-clay-soft'
                   }`}
                 >
                   {copied ? <Check size={15} /> : <Copy size={15} />}
