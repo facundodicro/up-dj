@@ -1,4 +1,5 @@
 import { useLang } from '../context/LanguageContext'
+import MailText from '../components/MailText'
 
 const ES = [
   {
@@ -23,7 +24,7 @@ const ES = [
   },
   {
     h: '6. Tus derechos',
-    p: 'Podés pedir en cualquier momento la eliminación de tu cuenta y de tus datos escribiendo a facundodicroce76@gmail.com.',
+    p: 'Podés pedir en cualquier momento la eliminación de tu cuenta y de tus datos escribiendo a [[MAIL]].',
   },
   {
     h: '7. Cambios en esta política',
@@ -31,7 +32,7 @@ const ES = [
   },
   {
     h: '8. Contacto',
-    p: 'Si tenés preguntas sobre esta política, escribinos a facundodicroce76@gmail.com.',
+    p: 'Si tenés preguntas sobre esta política, escribinos a [[MAIL]].',
   },
 ]
 
@@ -58,7 +59,7 @@ const EN = [
   },
   {
     h: '6. Your rights',
-    p: 'You may request deletion of your account and data at any time by writing to facundodicroce76@gmail.com.',
+    p: 'You may request deletion of your account and data at any time by writing to [[MAIL]].',
   },
   {
     h: '7. Changes to this policy',
@@ -66,7 +67,7 @@ const EN = [
   },
   {
     h: '8. Contact',
-    p: 'If you have questions about this policy, write to facundodicroce76@gmail.com.',
+    p: 'If you have questions about this policy, write to [[MAIL]].',
   },
 ]
 
@@ -87,7 +88,7 @@ export default function Privacy() {
           {sections.map((s) => (
             <div key={s.h}>
               <h2 className="text-base font-bold text-ink">{s.h}</h2>
-              <p className="mt-1 text-sm leading-relaxed text-muted">{s.p}</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted"><MailText text={s.p} /></p>
             </div>
           ))}
         </div>

@@ -8,6 +8,7 @@ import ProfileModal from './components/ProfileModal'
 import Toaster from './components/Toaster'
 import SmokeBackground from './components/SmokeBackground'
 import DonateButton from './components/DonateButton'
+import { MailIconLink } from './components/MailText'
 import Home from './pages/Home'
 import DjPage from './pages/DjPage'
 import SetPage from './pages/SetPage'
@@ -116,7 +117,8 @@ function Shell() {
           </p>
           <LiveTagline />
           <p className="mx-auto mt-3 max-w-md px-4 text-[11px] leading-relaxed text-muted/80">
-            {t('footer.rights')}
+            {t('footer.rights')} {t('footer.rightsContact')}
+            <MailIconLink small /> {t('footer.rightsTail')}
           </p>
           <p className="mt-3 text-xs">
             <Link to="/privacidad" className="text-muted underline-offset-4 hover:text-ink hover:underline">

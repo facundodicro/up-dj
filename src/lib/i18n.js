@@ -241,7 +241,10 @@ const STRINGS = {
     'app.tagline': 'La pista donde viven los sets.',
     'footer.privacy': 'Privacidad',
     'footer.terms': 'Términos',
-    'footer.rights': 'Los sets suenan desde las cuentas de los DJs en SoundCloud, YouTube y Mixcloud. ¿Sos titular de derechos sobre un tema? Escribinos a facundodicroce76@gmail.com y lo revisamos.',
+    'footer.rights': 'Los sets suenan desde las cuentas de los DJs en SoundCloud, YouTube y Mixcloud.',
+    'footer.rightsContact': '¿Sos titular de derechos sobre un tema? Escribinos',
+    'footer.rightsTail': 'y lo revisamos.',
+    'footer.emailUs': 'Escribinos por email',
 
     'djProfile.sets': 'Sus sets',
     'djProfile.noSets': 'Todavía no publicó ningún set.',
@@ -498,7 +501,10 @@ const STRINGS = {
     'app.tagline': 'The dancefloor where sets live.',
     'footer.privacy': 'Privacy',
     'footer.terms': 'Terms',
-    'footer.rights': 'Sets play from the DJs’ own accounts on SoundCloud, YouTube and Mixcloud. Do you hold rights to a track? Write to facundodicroce76@gmail.com and we will review it.',
+    'footer.rights': 'Sets play from the DJs’ own accounts on SoundCloud, YouTube and Mixcloud.',
+    'footer.rightsContact': 'Do you hold rights to a track? Write to us',
+    'footer.rightsTail': 'and we will review it.',
+    'footer.emailUs': 'Email us',
 
     'djProfile.sets': 'Their sets',
     'djProfile.noSets': 'No sets published yet.',
