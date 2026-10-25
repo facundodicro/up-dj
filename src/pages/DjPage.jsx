@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Play, Pause, Heart, MessageCircle } from 'lucide-react'
+import { Play, Heart, MessageCircle } from 'lucide-react'
 import InstagramIcon from '../components/InstagramIcon'
-import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
 import { formatRelative, buildWaUrl, buildInstagramUrl } from '../lib/format'
 import * as data from '../lib/data'
@@ -15,7 +14,6 @@ import ShareButton from '../components/ShareButton'
 export default function DjPage({ user, onAuthClick }) {
   const { username } = useParams()
   const { t } = useLang()
-  const { track, isPlaying, playTrack } = usePlayer()
   const [profile, setProfile] = useState(null)
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
@@ -139,16 +137,6 @@ export default function DjPage({ user, onAuthClick }) {
     }
   }
 
-  const handlePlay = (e) => {
-    playTrack({
-      id: e.id,
-      title: e.title,
-      djName: dj.username,
-      djAvatar: dj.avatar_url,
-      audioUrl: e.audio_url,
-    })
-  }
-
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pb-16 pt-8">
       <div className="flex flex-col items-center text-center">
@@ -228,24 +216,19 @@ export default function DjPage({ user, onAuthClick }) {
           {events.map((e) => {
             const liked = myLikes.has(e.id)
             const count = likeCounts[e.id] || 0
-            const playing = track?.id === e.id && isPlaying
             const setUrl = `${origin}/set/${e.id}`
             return (
               <li
                 key={e.id}
                 className="flex items-center gap-3 rounded-xl border border-clay bg-white/70 p-3"
               >
-                <button
-                  onClick={() => handlePlay(e)}
-                  aria-label={t(playing ? 'card.pauseTitle' : 'card.playTitle', { title: e.title })}
+                <Link
+                  to={`/set/${e.id}`}
+                  aria-label={t('card.playTitle', { title: e.title })}
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#00E065] text-night shadow-[0_0_18px_rgba(0,224,101,0.45)] transition hover:scale-105"
                 >
-                  {playing ? (
-                    <Pause size={18} fill="currentColor" />
-                  ) : (
-                    <Play size={18} fill="currentColor" className="ml-0.5" />
-                  )}
-                </button>
+                  <Play size={18} fill="currentColor" className="ml-0.5" />
+                </Link>
                 <Link to={`/set/${e.id}`} className="min-w-0 flex-1 text-left">
                   <p className="truncate text-sm font-semibold text-ink hover:text-up-light">
                     {e.title}

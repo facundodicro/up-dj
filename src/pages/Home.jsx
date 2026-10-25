@@ -9,7 +9,6 @@ import TopDjs from '../components/TopDjs'
 import Dock from '../components/Dock'
 import ShowsSection from '../components/ShowsSection'
 import BiosSection from '../components/BiosSection'
-import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
 import * as data from '../lib/data'
 import { isDemoMode } from '../lib/data'
@@ -26,7 +25,6 @@ const FILTERS = [
 export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
   const { t } = useLang()
   const [section, setSection] = useState('musica')
-  const { track } = usePlayer()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -360,7 +358,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
         />
       )}
       {section === 'bios' && <BiosSection />}
-      <Dock section={section} onChange={handleSection} raised={!!track} t={t} />
+      <Dock section={section} onChange={handleSection} t={t} />
     </>
   )
 }

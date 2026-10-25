@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Play, Pause, Heart, MessageCircle } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Play, Heart, MessageCircle } from 'lucide-react'
 import InstagramIcon from './InstagramIcon'
 import Modal from './Modal'
 import ShareButton from './ShareButton'
-import { usePlayer } from '../context/PlayerContext'
 import { useLang } from '../context/LanguageContext'
 import { formatRelative, buildWaUrl, buildInstagramUrl } from '../lib/format'
 import * as data from '../lib/data'
@@ -27,7 +27,6 @@ export default function DjProfileModal({
   onClose,
 }) {
   const { t } = useLang()
-  const { track, isPlaying, playTrack } = usePlayer()
   const [profile, setProfile] = useState(null)
   const [following, setFollowing] = useState(false)
   const [likingId, setLikingId] = useState(null)
@@ -89,16 +88,6 @@ export default function DjProfileModal({
     } finally {
       setLikingId(null)
     }
-  }
-
-  const handlePlay = (e) => {
-    playTrack({
-      id: e.id,
-      title: e.title,
-      djName: dj.username,
-      djAvatar: dj.avatar_url,
-      audioUrl: e.audio_url,
-    })
   }
 
   return (
@@ -181,23 +170,19 @@ export default function DjProfileModal({
             {sets.map((e) => {
               const liked = myLikes?.has(e.id)
               const count = likeCounts?.[e.id] || 0
-              const playing = track?.id === e.id && isPlaying
               return (
                 <li
                   key={e.id}
                   className="flex items-center gap-3 rounded-xl border border-clay bg-white/70 p-3"
                 >
-                  <button
-                    onClick={() => handlePlay(e)}
-                    aria-label={t(playing ? 'card.pauseTitle' : 'card.playTitle', { title: e.title })}
+                  <Link
+                    to={`/set/${e.id}`}
+                    onClick={onClose}
+                    aria-label={t('card.playTitle', { title: e.title })}
                     className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#00E065] text-night shadow-[0_0_18px_rgba(0,224,101,0.45)] transition hover:scale-105"
                   >
-                    {playing ? (
-                      <Pause size={18} fill="currentColor" />
-                    ) : (
-                      <Play size={18} fill="currentColor" className="ml-0.5" />
-                    )}
-                  </button>
+                    <Play size={18} fill="currentColor" className="ml-0.5" />
+                  </Link>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-ink">{e.title}</p>
                     <p className="mt-0.5 text-xs font-normal text-[#7A6A5E]">

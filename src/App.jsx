@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { AuthProvider, useAuth } from './hooks/useAuth'
-import { PlayerProvider, usePlayer } from './context/PlayerContext'
 import { LanguageProvider, useLang } from './context/LanguageContext'
 import Header from './components/Header'
 import AuthModal from './components/AuthModal'
 import ProfileModal from './components/ProfileModal'
-import PlayerBar from './components/PlayerBar'
 import Toaster from './components/Toaster'
 import SmokeBackground from './components/SmokeBackground'
 import DonateButton from './components/DonateButton'
@@ -20,7 +18,6 @@ import * as data from './lib/data'
 
 function Shell() {
   const { user, loading } = useAuth()
-  const { track } = usePlayer()
   const { t } = useLang()
   const [profile, setProfile] = useState(null)
   const [authModal, setAuthModal] = useState({ open: false, tab: 'login' })
@@ -112,15 +109,15 @@ function Shell() {
           </Routes>
         )}
 
-        {/* Compensa la altura de la barra flotante */}
-        {track && <div className="h-[104px]" aria-hidden="true" />}
-
-        <footer className={`border-t border-clay pt-8 text-center ${track ? 'pb-60' : 'pb-32'}`}>
+        <footer className="border-t border-clay pb-32 pt-8 text-center">
           <p className="font-display text-2xl font-black tracking-tight">
             <span className="text-ink">up</span>
             <span className="text-[#00C75C]">!</span>
           </p>
           <LiveTagline />
+          <p className="mx-auto mt-3 max-w-md px-4 text-[11px] leading-relaxed text-muted/80">
+            {t('footer.rights')}
+          </p>
           <p className="mt-3 text-xs">
             <Link to="/privacidad" className="text-muted underline-offset-4 hover:text-ink hover:underline">
               {t('footer.privacy')}
@@ -133,11 +130,10 @@ function Shell() {
           <div className="mt-4">
             <DonateButton />
           </div>
-          <p className="mt-4 text-[11px] font-medium text-muted/70">Hecha por Facundo Dicroce</p>
+          <p className="mt-4 text-[11px] font-medium text-muted/70">Hecha por Facundo Di Croce</p>
         </footer>
       </div>
 
-      <PlayerBar />
       <Toaster />
 
       <AuthModal
@@ -164,11 +160,9 @@ export default function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
-        <PlayerProvider>
-          <BrowserRouter>
-            <Shell />
-          </BrowserRouter>
-        </PlayerProvider>
+        <BrowserRouter>
+          <Shell />
+        </BrowserRouter>
       </AuthProvider>
     </LanguageProvider>
   )

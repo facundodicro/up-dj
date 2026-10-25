@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Play, Pause, Disc3, MessageCircle, Heart } from 'lucide-react'
-import { usePlayer } from '../context/PlayerContext'
+import { Play, X, Disc3, MessageCircle, Heart } from 'lucide-react'
+import SetEmbed from './SetEmbed'
 import { useLang } from '../context/LanguageContext'
 import { formatRelative, buildWaUrl } from '../lib/format'
 import ShareButton from './ShareButton'
@@ -8,27 +8,15 @@ import * as data from '../lib/data'
 
 /** Tarjeta de un evento en el feed: foto, play, DJ, descripción, like y WhatsApp. */
 export default function EventCard({ event, user, likeCount = 0, liked = false, onToggleLike, onAuthClick, followed = false, followerCount = 0, onToggleFollow, onDjClick }) {
-  const { track, isPlaying, playTrack } = usePlayer()
   const { t, lang } = useLang()
   const [expanded, setExpanded] = useState(false)
+  const [showPlayer, setShowPlayer] = useState(false)
   const [beating, setBeating] = useState(false)
   const [liking, setLiking] = useState(false)
   const [following, setFollowing] = useState(false)
 
-  const isCurrent = track?.id === event.id
-  const playing = isCurrent && isPlaying
   const dj = event.dj || { username: t('card.djFallback'), avatar_url: null, whatsapp: '' }
   const initial = (dj.username || 'D').trim().charAt(0).toUpperCase()
-
-  const handlePlay = () => {
-    playTrack({
-      id: event.id,
-      title: event.title,
-      djName: dj.username,
-      djAvatar: dj.avatar_url,
-      audioUrl: event.audio_url,
-    })
-  }
 
   const waUrl = buildWaUrl(dj.whatsapp, t('card.waMessage'))
 
@@ -87,21 +75,26 @@ export default function EventCard({ event, user, likeCount = 0, liked = false, o
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
         <button
-          onClick={handlePlay}
-          aria-label={t(playing ? 'card.pauseTitle' : 'card.playTitle', { title: event.title })}
+          onClick={() => setShowPlayer((v) => !v)}
+          aria-label={t(showPlayer ? 'embed.close' : 'card.playTitle', { title: event.title })}
+          aria-expanded={showPlayer}
           className={`absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#00E065] text-night transition duration-200 hover:scale-110 ${
-            playing
+            showPlayer
               ? 'shadow-[0_0_36px_rgba(0,224,101,0.75)]'
               : 'shadow-[0_0_26px_rgba(0,224,101,0.5)] hover:shadow-[0_0_36px_rgba(0,224,101,0.7)]'
           }`}
         >
-          {playing ? (
-            <Pause size={26} fill="currentColor" />
+          {showPlayer ? (
+            <X size={26} fill="currentColor" />
           ) : (
             <Play size={26} fill="currentColor" className="ml-1" />
           )}
         </button>
       </div>
+
+      {showPlayer && (
+        <SetEmbed url={event.audio_url} title={event.title} />
+      )}
 
       <div className="p-5">
         <h3 className="font-display text-xl font-extrabold leading-snug text-ink">
