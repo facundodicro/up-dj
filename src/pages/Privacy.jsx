@@ -23,7 +23,7 @@ const ES = [
   },
   {
     h: '6. Tus derechos',
-    p: 'Podés pedir en cualquier momento la eliminación de tu cuenta y de tus datos escribiendo a difacundo697@gmail.com.',
+    p: 'Podés pedir en cualquier momento la eliminación de tu cuenta y de tus datos escribiendo a facundodicroce76@gmail.com.',
   },
   {
     h: '7. Cambios en esta política',
@@ -31,7 +31,7 @@ const ES = [
   },
   {
     h: '8. Contacto',
-    p: 'Si tenés preguntas sobre esta política, escribinos a difacundo697@gmail.com.',
+    p: 'Si tenés preguntas sobre esta política, escribinos a facundodicroce76@gmail.com.',
   },
 ]
 
@@ -58,7 +58,7 @@ const EN = [
   },
   {
     h: '6. Your rights',
-    p: 'You may request deletion of your account and data at any time by writing to difacundo697@gmail.com.',
+    p: 'You may request deletion of your account and data at any time by writing to facundodicroce76@gmail.com.',
   },
   {
     h: '7. Changes to this policy',
@@ -66,7 +66,7 @@ const EN = [
   },
   {
     h: '8. Contact',
-    p: 'If you have questions about this policy, write to difacundo697@gmail.com.',
+    p: 'If you have questions about this policy, write to facundodicroce76@gmail.com.',
   },
 ]
 

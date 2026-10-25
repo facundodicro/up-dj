@@ -15,11 +15,11 @@ const ES = [
   },
   {
     h: '4. Derechos de autor y bajas',
-    p: 'Si sos titular de derechos sobre un tema incluido en un set y querés que se revise o retire un contenido, escribinos a difacundo697@gmail.com indicando el link del set y el tema: lo gestionamos con prioridad y, si corresponde, retiramos la publicación.',
+    p: 'Si sos titular de derechos sobre un tema incluido en un set y querés que se revise o retire un contenido, escribinos a facundodicroce76@gmail.com indicando el link del set y el tema: lo gestionamos con prioridad y, si corresponde, retiramos la publicación.',
   },
   {
     h: '5. Contacto',
-    p: 'Si tenés preguntas sobre estos términos, escribinos a difacundo697@gmail.com.',
+    p: 'Si tenés preguntas sobre estos términos, escribinos a facundodicroce76@gmail.com.',
   },
 ]
 
@@ -38,11 +38,11 @@ const EN = [
   },
   {
     h: '4. Copyright and takedowns',
-    p: 'If you hold rights to a track included in a set and want content reviewed or removed, write to difacundo697@gmail.com with the set link and the track: we handle it with priority and, where appropriate, remove the publication.',
+    p: 'If you hold rights to a track included in a set and want content reviewed or removed, write to facundodicroce76@gmail.com with the set link and the track: we handle it with priority and, where appropriate, remove the publication.',
   },
   {
     h: '5. Contact',
-    p: 'If you have questions about these terms, write to difacundo697@gmail.com.',
+    p: 'If you have questions about these terms, write to facundodicroce76@gmail.com.',
   },
 ]
 
