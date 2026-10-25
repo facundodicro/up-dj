@@ -6,11 +6,11 @@
 import { supabase } from './supabase'
 import { sanitizeWhatsapp, sanitizeInstagram } from './format'
 import { compressImage } from './image'
+import { parseSetUrl } from './setLink'
 import { t } from './i18n'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-const MAX_AUDIO_BYTES = 50 * 1024 * 1024
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
 function validateCredentials(email, password) {
@@ -444,21 +444,18 @@ export async function listEventsByUser(uid) {
   return (data || []).map(mapEvent)
 }
 
-export async function createEvent(uid, { title, description, audioFile, photoFile }, onProgress) {
-  if (!audioFile) throw new Error(t('event.needAudio'))
-  if (audioFile.size > MAX_AUDIO_BYTES)
-    throw new Error(t('demo.audioTooBig'))
+/**
+ * Publica un set por LINK externo: Up! no aloja audio. La columna audio_url
+ * guarda el link público del set en la plataforma del DJ (SoundCloud /
+ * YouTube / Mixcloud); la reproducción se incrusta desde esa plataforma.
+ */
+export async function createEvent(uid, { title, description, setUrl, photoFile }, onProgress) {
+  const parsed = parseSetUrl(setUrl)
+  if (!parsed) throw new Error(t('event.invalidLink'))
   if (photoFile) {
     if (!photoFile.type.startsWith('image/'))
       throw new Error(t('demo.photoNotImage'))
   }
-  const audioPath = `${uid}/${crypto.randomUUID()}-${safeName(audioFile.name)}`
-  const audio_url = await uploadWithProgress(
-    'sets',
-    audioPath,
-    audioFile,
-    (p) => onProgress && onProgress(photoFile ? p * 0.85 : p),
-  )
   let photo_url = null
   if (photoFile) {
     // Compresor de fotos: se achica antes de subir
@@ -467,18 +464,17 @@ export async function createEvent(uid, { title, description, audioFile, photoFil
       throw new Error(t('demo.photoTooBig'))
     const photoPath = `${uid}/${crypto.randomUUID()}.webp`
     photo_url = await uploadWithProgress('event-photos', photoPath, compressed, (p) =>
-      onProgress ? onProgress(0.85 + p * 0.15) : undefined,
+      onProgress ? onProgress(p) : undefined,
     )
   }
-  const cleanName = audioFile.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim()
   const { data, error } = await supabase
     .from('events')
     .insert({
       user_id: uid,
-      title: (title || '').trim() || cleanName || 'Set sin título',
+      title: (title || '').trim() || t('demo.untitled'),
       description: (description || '').trim(),
       photo_url,
-      audio_url,
+      audio_url: parsed.url,
     })
     .select()
     .single()
@@ -498,15 +494,22 @@ function pathFromPublicUrl(url, bucket) {
 }
 
 /**
- * Actualiza un evento ya publicado: título, descripción y foto.
- * El audio no se puede cambiar (se publica un set nuevo para eso).
+ * Actualiza un set ya publicado: título, descripción, foto y el link
+ * externo del set (con el sistema nuevo el link sí se puede cambiar:
+ * es la vía para migrar los sets del sistema viejo).
  */
 export async function updateEvent(
   uid,
   id,
-  { title, description, photoFile, removePhoto },
+  { title, description, setUrl, photoFile, removePhoto },
   onProgress,
 ) {
+  let audio_url
+  if (setUrl !== undefined) {
+    const parsed = parseSetUrl(setUrl)
+    if (!parsed) throw new Error(t('event.invalidLink'))
+    audio_url = parsed.url
+  }
   const { data: ev, error: fetchError } = await supabase
     .from('events')
     .select('photo_url')
@@ -550,6 +553,7 @@ export async function updateEvent(
       title: (title || '').trim(),
       description: (description || '').trim(),
       photo_url,
+      ...(audio_url ? { audio_url } : {}),
     })
     .eq('id', id)
     .eq('user_id', uid)

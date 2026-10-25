@@ -4,11 +4,11 @@
  * flujos antes de conectar el backend real.
  */
 import { sanitizeWhatsapp, sanitizeInstagram } from './format'
+import { parseSetUrl } from './setLink'
 import { t } from './i18n'
 
 const LS_DATA = 'up_demo_v1'
 const LS_SESSION = 'up_demo_session'
-const MAX_AUDIO_BYTES = 200 * 1024 * 1024
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
 function readData() {
@@ -195,38 +195,28 @@ export async function listEvents() {
     }))
 }
 
-export async function createEvent(uid, { title, description, audioFile, photoFile }, onProgress) {
-  if (!audioFile) throw new Error(t('event.needAudio'))
-  if (audioFile.size > MAX_AUDIO_BYTES)
-    throw new Error(t('demo.audioTooBig'))
+export async function createEvent(uid, { title, description, setUrl, photoFile }, onProgress) {
+  const parsed = parseSetUrl(setUrl)
+  if (!parsed) throw new Error(t('event.invalidLink'))
   if (photoFile) {
     if (!photoFile.type.startsWith('image/'))
       throw new Error(t('demo.photoNotImage'))
     if (photoFile.size > MAX_IMAGE_BYTES)
       throw new Error(t('demo.photoTooBig'))
   }
-  const total = 1
-  await fakeProgress(
-    (p) => onProgress && onProgress((p * 0.85) / total),
-    1600,
-  )
-  const audio_url = URL.createObjectURL(audioFile)
+  await fakeProgress((p) => onProgress && onProgress(p * 0.4), 500)
   let photo_url = null
   if (photoFile) {
-    await fakeProgress(
-      (p) => onProgress && onProgress(0.85 + (p * 0.15) / total),
-      700,
-    )
+    await fakeProgress((p) => onProgress && onProgress(0.4 + p * 0.6), 700)
     photo_url = URL.createObjectURL(photoFile)
   }
-  const cleanName = audioFile.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim()
   const event = {
     id: `ev-${Date.now().toString(36)}`,
     user_id: uid,
-    title: (title || '').trim() || cleanName || t('demo.untitled'),
+    title: (title || '').trim() || t('demo.untitled'),
     description: (description || '').trim(),
     photo_url,
-    audio_url,
+    audio_url: parsed.url,
     created_at: new Date().toISOString(),
   }
   const d = readData()

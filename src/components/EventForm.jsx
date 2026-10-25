@@ -1,20 +1,27 @@
 import { useRef, useState } from 'react'
-import { Loader2, Music2, ImagePlus, X } from 'lucide-react'
+import { Loader2, Link2, ImagePlus, X } from 'lucide-react'
 import * as data from '../lib/data'
 import { useLang } from '../context/LanguageContext'
-import { formatBytes } from '../lib/format'
+import { parseSetUrl, isLegacyAudioUrl } from '../lib/setLink'
 import { toast } from '../lib/toast'
 
-
-/** Formulario para publicar un evento: audio del set + descripción + foto.
- * Con `editingEvent` funciona en modo edición: cambia título, descripción y
- * foto de un set ya publicado (el audio no se puede cambiar). */
+/** Formulario para publicar un set: LINK a la plataforma donde vive el set
+ * (SoundCloud / YouTube / Mixcloud) + descripción + foto. Up! no aloja audio:
+ * el set suena con el reproductor oficial de la plataforma del DJ.
+ * Con `editingEvent` funciona en modo edición (título, descripción, foto y,
+ * desde el sistema nuevo, también el link). */
 export default function EventForm({ userId, editingEvent, onCreated, onUpdated, onCancel }) {
-  const { t, lang } = useLang()
+  const { t } = useLang()
   const isEditing = !!editingEvent
+  const legacyAudio = isEditing && isLegacyAudioUrl(editingEvent?.audio_url)
   const [title, setTitle] = useState(editingEvent?.title || '')
   const [description, setDescription] = useState(editingEvent?.description || '')
-  const [audioFile, setAudioFile] = useState(null)
+  const [setUrl, setSetUrl] = useState(
+    editingEvent?.audio_url && !isLegacyAudioUrl(editingEvent.audio_url)
+      ? editingEvent.audio_url
+      : '',
+  )
+  const [declared, setDeclared] = useState(false)
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(editingEvent?.photo_url || null)
   const [removePhoto, setRemovePhoto] = useState(false)
@@ -22,14 +29,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
   const [progress, setProgress] = useState(0)
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
-  const audioRef = useRef(null)
   const photoRef = useRef(null)
-
-  const pickAudio = (e) => {
-    const f = e.target.files?.[0]
-    setError('')
-    if (f) setAudioFile(f)
-  }
 
   const pickPhoto = (e) => {
     const f = e.target.files?.[0]
@@ -43,20 +43,34 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
 
   const clearPhoto = () => {
     if (photoFile) {
-      // Se descarta la foto nueva recién elegida y vuelve la publicada (si había).
       setPhotoFile(null)
       if (photoPreview?.startsWith('blob:')) URL.revokeObjectURL(photoPreview)
       setPhotoPreview(editingEvent?.photo_url || null)
       setRemovePhoto(false)
     } else {
-      // Se quita la foto publicada: se marca para borrarla al guardar.
       setRemovePhoto(true)
       setPhotoPreview(null)
     }
     if (photoRef.current) photoRef.current.value = ''
   }
 
+  /** Valida link + declaración. Devuelve la URL canónica o null (con error seteado). */
+  const validate = () => {
+    const parsed = parseSetUrl(setUrl)
+    if (!parsed) {
+      setError(setUrl.trim() ? t('event.invalidLink') : t('event.needLink'))
+      return null
+    }
+    if (!declared) {
+      setError(t('event.needDeclare'))
+      return null
+    }
+    return parsed
+  }
+
   const submitEdit = async () => {
+    const parsed = validate()
+    if (!parsed) return
     setUploading(true)
     setProgress(0)
     try {
@@ -64,7 +78,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
       await data.updateEvent(
         userId,
         editingEvent.id,
-        { title, description, photoFile, removePhoto },
+        { title, description, setUrl: parsed.url, photoFile, removePhoto },
         (p) => {
           setProgress(p)
           setStatus(t('event.uploadingPhoto'))
@@ -87,45 +101,18 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
       await submitEdit()
       return
     }
-    if (!audioFile) {
-      setError(t('event.needAudio'))
-      return
-    }
+    const parsed = validate()
+    if (!parsed) return
     setUploading(true)
     setProgress(0)
     try {
-      // Los sets suelen superar los 50 MB: se comprimen solos en el navegador.
-      // Import dinámico: lamejs solo se descarga cuando hace falta comprimir.
-      const { needsCompression, compressAudio } = await import('../lib/compressAudio')
-      let fileToUpload = audioFile
-      const compressed = needsCompression(audioFile)
-      if (compressed) {
-        try {
-          fileToUpload = await compressAudio(audioFile, (p) => {
-            setProgress(p * 0.5)
-            setStatus(`${t('event.compressing')} ${Math.round(p * 100)}%`)
-          })
-        } catch (err) {
-          if (err?.message === 'compress-decode' || err?.message === 'compress-unsupported') {
-            setError(t('event.compressFailed'))
-          } else if (err?.message === 'compress-too-big') {
-            setError(t('event.setTooLong'))
-          } else {
-            setError(err?.message || t('event.publishError'))
-          }
-          return
-        }
-      }
-      setStatus(t('event.uploadingAudio'))
-      const base = compressed ? 0.5 : 0
-      const span = compressed ? 0.5 : 1
+      setStatus(t('event.publishing'))
       await data.createEvent(
         userId,
-        { title, description, audioFile: fileToUpload, photoFile },
+        { title, description, setUrl: parsed.url, photoFile },
         (p) => {
-          const overall = base + p * span
-          setProgress(overall)
-          setStatus(overall < base + span * 0.85 || !photoFile ? t('event.uploadingAudio') : t('event.uploadingPhoto'))
+          setProgress(p)
+          setStatus(t('event.uploadingPhoto'))
         },
       )
       toast(t('event.published'), 'success')
@@ -161,34 +148,30 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
         />
       </div>
 
-      {!isEditing && (
       <div>
-        <span className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted">
-          {t('event.audio')}
-        </span>
-        <input ref={audioRef} type="file" accept="audio/*" onChange={pickAudio} className="hidden" disabled={uploading} />
-        <button
-          type="button"
-          onClick={() => audioRef.current?.click()}
-          disabled={uploading}
-          className="flex w-full items-center gap-3 rounded-xl border border-dashed border-clay-deep bg-night-card px-4 py-3.5 text-left transition hover:border-up/60 disabled:opacity-60"
-        >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-up/15 text-up-light">
-            <Music2 size={19} />
-          </span>
-          {audioFile ? (
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-bold text-ink">{audioFile.name}</span>
-              <span className="block text-xs text-muted">{formatBytes(audioFile.size, lang)} — {t('event.maxAudio')}</span>
-            </span>
-          ) : (
-            <span className="text-sm text-muted">
-              <span className="font-bold text-ink">{t('event.chooseSet')}</span> — {t('event.audioHint')}
-            </span>
-          )}
-        </button>
+        <label htmlFor="ev-link" className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted">
+          {t('event.link')}
+        </label>
+        <div className="relative">
+          <Link2 size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+          <input
+            id="ev-link"
+            type="url"
+            inputMode="url"
+            value={setUrl}
+            onChange={(e) => setSetUrl(e.target.value)}
+            placeholder={t('event.linkPh')}
+            disabled={uploading}
+            className="w-full rounded-xl border border-clay bg-night-card py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
+          />
+        </div>
+        <p className="mt-1.5 text-xs leading-relaxed text-muted">{t('event.linkHint')}</p>
+        {legacyAudio && (
+          <p className="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-semibold leading-relaxed text-amber-200">
+            {t('event.legacyHint')}
+          </p>
+        )}
       </div>
-      )}
 
       <div>
         <label htmlFor="ev-desc" className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted">
@@ -237,7 +220,18 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
         )}
       </div>
 
-      {uploading && (
+      <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-clay bg-night-card px-3.5 py-3">
+        <input
+          type="checkbox"
+          checked={declared}
+          onChange={(e) => setDeclared(e.target.checked)}
+          disabled={uploading}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[#00C75C]"
+        />
+        <span className="text-xs font-semibold leading-relaxed text-muted">{t('event.declare')}</span>
+      </label>
+
+      {uploading && photoFile && (
         <div>
           <div className="h-2 overflow-hidden rounded-full bg-clay-soft">
             <div
