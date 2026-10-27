@@ -110,7 +110,7 @@ function PrintSheet({ bio, links, waUrl, t }) {
             style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '12px', marginTop: '14px' }}
           />
         )}
-        <h1 style={{ fontSize: '38px', lineHeight: 1.05, margin: '16px 0 4px', fontWeight: 900 }}>
+        <h1 style={{ fontFamily: 'Archivo, sans-serif', fontSize: '38px', lineHeight: 1.05, margin: '16px 0 4px', fontWeight: 900 }}>
           {bio.nombre}
         </h1>
         {bio.ciudad && (
@@ -321,11 +321,11 @@ export default function BioPage({ user, onAuthClick }) {
 
       {/* Nombre + ciudad */}
       <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
-        <h1 className="font-display text-4xl font-black leading-none tracking-tight text-ink sm:text-5xl">
+        <h1 className="font-presskit text-4xl font-black leading-none tracking-tight text-ink sm:text-5xl">
           {bio.nombre}
         </h1>
         {bio.ciudad && (
-          <span className="rounded-full bg-[#00E065] px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wide text-night shadow-[0_0_18px_rgba(0,224,101,0.45)]">
+          <span className="rounded-full bg-[#00E065] px-4 py-2 font-presskit text-[13px] font-black uppercase tracking-wide text-night shadow-[0_0_18px_rgba(0,224,101,0.45)]">
             {bio.ciudad}
           </span>
         )}

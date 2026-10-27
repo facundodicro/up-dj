@@ -29,7 +29,7 @@ export default function BioSetCard({ bio }) {
           </span>
         )}
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-display text-lg font-extrabold leading-snug text-ink">
+          <h3 className="truncate font-presskit text-lg font-black leading-snug text-ink">
             {bio.set_titulo || bio.nombre}
           </h3>
           <p className="truncate text-sm font-bold text-[#1A1A1A]">

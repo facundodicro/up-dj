@@ -29,6 +29,7 @@ export default {
       fontFamily: {
         sans: ['Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        presskit: ['Archivo', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },
   },

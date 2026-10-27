@@ -70,7 +70,7 @@ export default function BiosSection() {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-end gap-x-3 gap-y-2 p-5 sm:p-6">
-                  <h3 className="font-display text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
+                  <h3 className="font-presskit text-3xl font-black leading-none tracking-tight text-white sm:text-4xl">
                     {featured.nombre}
                   </h3>
                   {featured.ciudad && (
