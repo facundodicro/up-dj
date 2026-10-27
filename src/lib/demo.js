@@ -334,3 +334,12 @@ export async function getTopDjs(limit = 10) {
       return { user_id: id, username: p.username || 'DJ', avatar_url: p.avatar_url || null, followers }
     })
 }
+
+/** Biografías: en modo demo no hay vitrina (las carga Facundo en la nube). */
+export async function listBios() {
+  return []
+}
+
+export async function getBioBySlug() {
+  return null
+}

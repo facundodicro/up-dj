@@ -832,3 +832,63 @@ export async function getTopDjs(limit = 10) {
       followers: counts[id],
     }))
 }
+
+const BIO_SELECT =
+  'id, slug, nombre, ciudad, bio, foto_url, fotos, set_url, set_titulo, instagram, soundcloud, youtube, mixcloud, web, rider, whatsapp, user_id, publicada, orden, created_at'
+
+function mapBio(b) {
+  const gallery = Array.isArray(b.fotos) ? b.fotos.filter(Boolean) : []
+  if (b.foto_url && !gallery.includes(b.foto_url)) gallery.unshift(b.foto_url)
+  return {
+    id: b.id,
+    slug: b.slug || '',
+    nombre: b.nombre || '',
+    ciudad: b.ciudad || '',
+    bio: b.bio || '',
+    foto_url: b.foto_url || gallery[0] || null,
+    fotos: gallery,
+    set_url: b.set_url || '',
+    set_titulo: b.set_titulo || '',
+    instagram: b.instagram || '',
+    soundcloud: b.soundcloud || '',
+    youtube: b.youtube || '',
+    mixcloud: b.mixcloud || '',
+    web: b.web || '',
+    rider: b.rider || '',
+    whatsapp: b.whatsapp || '',
+    user_id: b.user_id || null,
+    publicada: !!b.publicada,
+    orden: b.orden ?? 0,
+    created_at: b.created_at,
+  }
+}
+
+/**
+ * Biografías publicadas (la "enciclopedia de la escena"): la lectura pública
+ * ya viene filtrada por RLS (solo publicada = true). El orden manual
+ * (`orden`) manda; a igual orden, la más reciente primero.
+ */
+export async function listBios() {
+  const { data, error } = await supabase
+    .from('bios')
+    .select(BIO_SELECT)
+    .eq('publicada', true)
+    .order('orden', { ascending: true })
+    .order('created_at', { ascending: false })
+    .limit(100)
+  if (error) throw new Error(t('bios.loadError'))
+  return (data || []).map(mapBio)
+}
+
+/** Una biografía publicada por su slug (URL propia y permanente). */
+export async function getBioBySlug(slug) {
+  if (!slug) return null
+  const { data, error } = await supabase
+    .from('bios')
+    .select(BIO_SELECT)
+    .eq('slug', slug)
+    .eq('publicada', true)
+    .maybeSingle()
+  if (error) throw new Error(t('bios.loadError'))
+  return data ? mapBio(data) : null
+}

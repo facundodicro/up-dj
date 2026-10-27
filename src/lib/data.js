@@ -53,3 +53,7 @@ export const deleteShow = (...args) => {
 export const getEvent = (...args) => db.getEvent(...args)
 export const getProfileByUsername = (...args) => db.getProfileByUsername(...args)
 export const listEventsByUser = (...args) => db.listEventsByUser(...args)
+export const listBios = (...args) =>
+  typeof db.listBios === 'function' ? db.listBios(...args) : Promise.resolve([])
+export const getBioBySlug = (...args) =>
+  typeof db.getBioBySlug === 'function' ? db.getBioBySlug(...args) : Promise.resolve(null)
