@@ -7,11 +7,10 @@ import {
   Disc3,
   Download,
   Globe,
-  MessageCircle,
   SlidersHorizontal,
 } from 'lucide-react'
 import InstagramIcon from '../components/InstagramIcon'
-import { SoundCloudIcon, YouTubeIcon, MixcloudIcon } from '../components/BrandIcons'
+import { SoundCloudIcon, YouTubeIcon, MixcloudIcon, WhatsAppIcon } from '../components/BrandIcons'
 import SetEmbed from '../components/SetEmbed'
 import ShareButton from '../components/ShareButton'
 import { useLang } from '../context/LanguageContext'
@@ -368,44 +367,44 @@ export default function BioPage({ user, onAuthClick }) {
         </section>
       )}
 
-      {/* Redes en sus colores originales de marca */}
-      {links.length > 0 && (
-        <div className="mt-7 flex flex-wrap gap-2.5">
-          {links.map(({ id, label, href, color, border, Icon }) => (
-            <a
-              key={id}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex min-h-[44px] items-center gap-2 rounded-full border bg-night-card px-4 py-2 text-sm font-bold transition ${border} ${color}`}
-            >
-              <Icon size={18} />
-              {label}
-            </a>
-          ))}
-        </div>
-      )}
-
-      {/* Utilidades del press kit: contrataciones + descargar ficha */}
-      <div className="mt-6 flex flex-wrap gap-2.5">
+      {/* Redes y utilidades del press kit: SOLO íconos, en los colores
+          originales de cada marca (decisión de Facundo, 2026-10-27: los
+          íconos ocupan menos y todo el mundo los conoce). El nombre queda
+          como aria-label/title para accesibilidad. */}
+      <div className="mt-7 flex flex-wrap items-center gap-3">
+        {links.map(({ id, label, href, color, border, Icon }) => (
+          <a
+            key={id}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={label}
+            title={label}
+            className={`flex h-12 w-12 items-center justify-center rounded-full border bg-night-card transition ${border} ${color}`}
+          >
+            <Icon size={21} />
+          </a>
+        ))}
         {waUrl && (
           <a
             href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-[44px] items-center gap-2 rounded-full border border-[#00E065]/40 px-4 py-2 text-sm font-bold text-[#00884D] transition hover:bg-[#00E065]/10"
+            aria-label={t('bios.booking')}
+            title={t('bios.booking')}
+            className="flex h-12 w-12 items-center justify-center rounded-full border border-[#25D366]/50 bg-night-card text-[#25D366] transition hover:bg-[#25D366]/10"
           >
-            <MessageCircle size={16} />
-            {t('bios.booking')}
+            <WhatsAppIcon size={22} />
           </a>
         )}
         <button
           type="button"
           onClick={() => window.print()}
-          className="flex min-h-[44px] items-center gap-2 rounded-full border border-clay-deep/60 bg-night-card px-4 py-2 text-sm font-bold text-ink transition hover:bg-clay-soft"
+          aria-label={t('bios.download')}
+          title={t('bios.download')}
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-clay-deep/60 bg-night-card text-ink transition hover:bg-clay-soft"
         >
-          <Download size={16} />
-          {t('bios.download')}
+          <Download size={20} />
         </button>
       </div>
 
