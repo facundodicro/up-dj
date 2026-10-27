@@ -263,7 +263,7 @@ export default function BioPage({ user, onAuthClick }) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-4 pb-20 pt-8">
+    <main className="mx-auto w-full max-w-2xl px-4 pb-20 pt-24">
       {/* Encabezado press kit: etiqueta + compartir prominente */}
       <div className="flex items-center justify-between gap-3">
         <p className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.22em] text-muted">
