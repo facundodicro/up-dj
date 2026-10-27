@@ -12,6 +12,7 @@ import { MailIconLink } from './components/MailText'
 import Home from './pages/Home'
 import DjPage from './pages/DjPage'
 import SetPage from './pages/SetPage'
+import BioPage from './pages/BioPage'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import LiveTagline from './components/LiveTagline'
@@ -95,6 +96,10 @@ function Shell() {
             <Route
               path="/set/:id"
               element={<SetPage user={user} onAuthClick={openAuth} />}
+            />
+            <Route
+              path="/bio/:slug"
+              element={<BioPage user={user} onAuthClick={openAuth} />}
             />
             <Route
               path="*"

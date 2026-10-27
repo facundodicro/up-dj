@@ -9,6 +9,7 @@ import TopDjs from '../components/TopDjs'
 import Dock from '../components/Dock'
 import ShowsSection from '../components/ShowsSection'
 import BiosSection from '../components/BiosSection'
+import BioSetCard from '../components/BioSetCard'
 import { useLang } from '../context/LanguageContext'
 import * as data from '../lib/data'
 import { isDemoMode } from '../lib/data'
@@ -36,6 +37,7 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
   const [filter, setFilter] = useState('all')
   const [topDjs, setTopDjs] = useState([])
   const [djModalUserId, setDjModalUserId] = useState(null)
+  const [biosWithSet, setBiosWithSet] = useState([])
 
   const filteredEvents = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -194,6 +196,21 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
     }
   }, [feedKey])
 
+  // Espejo de Biografías: el set destacado de cada ficha publicada también
+  // suena en el feed de Música, marcado "desde su Biografía".
+  useEffect(() => {
+    let alive = true
+    data
+      .listBios()
+      .then((list) => {
+        if (alive) setBiosWithSet(list.filter((b) => b.set_url))
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [feedKey])
+
   return (
     <>
       {section === 'musica' && (
@@ -326,6 +343,14 @@ export default function Home({ user, feedKey, onAuthClick, onProfileClick }) {
                 onToggleFollow={handleToggleFollow}
                 onDjClick={setDjModalUserId}
               />
+            ))}
+          </div>
+        )}
+
+        {!loading && !error && filter === 'all' && !query.trim() && biosWithSet.length > 0 && (
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            {biosWithSet.map((b) => (
+              <BioSetCard key={b.id} bio={b} />
             ))}
           </div>
         )}

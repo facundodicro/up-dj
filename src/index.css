@@ -190,3 +190,24 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .star-blink { animation: none; }
 }
+
+/* ---- Biografías: hoja de prensa imprimible (press kit en papel/PDF) ----
+   La hoja vive en un portal fuera de #root y en pantalla no se ve.
+   Al imprimir desde la ficha (/bio/:slug), la app se oculta y queda
+   solo la hoja de una página. El body lleva .bio-printing únicamente
+   mientras la ficha está montada, así el resto de la app imprime normal. */
+.bio-print-sheet {
+  display: none;
+}
+
+@media print {
+  body.bio-printing #root {
+    display: none !important;
+  }
+  body.bio-printing .bio-print-sheet {
+    display: block;
+  }
+  @page {
+    margin: 14mm;
+  }
+}
