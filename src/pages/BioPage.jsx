@@ -325,7 +325,7 @@ export default function BioPage({ user, onAuthClick }) {
           {bio.nombre}
         </h1>
         {bio.ciudad && (
-          <span className="rounded-full bg-[#00E065] px-4 py-2 font-presskit text-[13px] font-black uppercase tracking-wide text-[#0A0A0E] shadow-[0_0_18px_rgba(0,224,101,0.45)]">
+          <span className="rounded-full bg-[#00E065] px-4 py-2 font-presskit text-[13px] font-black uppercase tracking-wide text-night shadow-[0_0_18px_rgba(0,224,101,0.45)]">
             {bio.ciudad}
           </span>
         )}

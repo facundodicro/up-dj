@@ -74,7 +74,7 @@ export default function BiosSection() {
                     {featured.nombre}
                   </h3>
                   {featured.ciudad && (
-                    <span className="rounded-full bg-[#00E065] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-[#0A0A0E]">
+                    <span className="rounded-full bg-[#00E065] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-night">
                       {featured.ciudad}
                     </span>
                   )}
