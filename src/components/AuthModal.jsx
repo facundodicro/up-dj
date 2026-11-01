@@ -111,7 +111,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
         setInfo('')
       }}
       className={`flex-1 rounded-lg px-3 py-2 text-sm font-extrabold transition ${
-        tab === key ? 'bg-up text-ink shadow-[0_0_18px_rgba(139,92,246,0.45)]' : 'text-muted hover:text-ink'
+        tab === key ? 'bg-[#00E065] text-white shadow-[0_0_18px_rgba(0,224,101,0.45)]' : 'bg-white text-muted hover:text-ink'
       }`}
     >
       {label}
@@ -119,7 +119,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
   )
 
   const inputCls =
-    'w-full rounded-xl border border-clay bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70 focus:shadow-[0_0_0_3px_rgba(139,92,246,0.2)]'
+    'w-full rounded-xl border border-clay bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-[#00E065] focus:shadow-[0_0_0_3px_rgba(0,224,101,0.2)]'
   const labelCls = 'mb-1 block text-xs font-bold uppercase tracking-wide text-muted'
 
   return (
@@ -167,7 +167,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-ink transition hover:bg-up-dark disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#00E065] px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#00B856] disabled:opacity-60"
               >
                 {loading && <Loader2 size={17} className="animate-spin" />}
                 {t('auth.savePassword')}
@@ -206,7 +206,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-ink transition hover:bg-up-dark disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#00E065] px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#00B856] disabled:opacity-60"
               >
                 {loading && <Loader2 size={17} className="animate-spin" />}
                 {t('auth.sendLink')}
@@ -275,7 +275,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
                       setError('')
                       setInfo('')
                     }}
-                    className="text-xs font-bold text-up-light transition hover:text-ink"
+                    className="text-xs font-bold text-[#00884D] transition hover:text-ink"
                   >
                     {t('auth.forgot')}
                   </button>
@@ -296,7 +296,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-up px-4 py-3 text-sm font-extrabold text-ink transition hover:bg-up-dark disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#00E065] px-4 py-3 text-sm font-extrabold text-white transition hover:bg-[#00B856] disabled:opacity-60"
               >
                 {loading && <Loader2 size={17} className="animate-spin" />}
                 {tab === 'register' ? t('auth.submitRegister') : t('auth.submitLogin')}
