@@ -370,7 +370,9 @@ export default function BioPage({ user, onAuthClick }) {
       {/* Redes y utilidades del press kit: SOLO íconos, en los colores
           originales de cada marca (decisión de Facundo, 2026-10-27: los
           íconos ocupan menos y todo el mundo los conoce). El nombre queda
-          como aria-label/title para accesibilidad. */}
+          como aria-label/title para accesibilidad. Actualización
+          2026-11-01: sin círculo — ni fondo ni borde; el ícono va directo
+          sobre el fondo de la página, el área táctil de 48px se mantiene. */}
       <div className="mt-7 flex flex-wrap items-center gap-3">
         {links.map(({ id, label, href, color, border, Icon }) => (
           <a
@@ -380,7 +382,7 @@ export default function BioPage({ user, onAuthClick }) {
             rel="noopener noreferrer"
             aria-label={label}
             title={label}
-            className={`flex h-12 w-12 items-center justify-center rounded-full border bg-night-card transition ${border} ${color}`}
+            className={`flex h-12 w-12 items-center justify-center rounded-full transition hover:bg-black/5 ${color}`}
           >
             <Icon size={21} />
           </a>
@@ -392,7 +394,7 @@ export default function BioPage({ user, onAuthClick }) {
             rel="noopener noreferrer"
             aria-label={t('bios.booking')}
             title={t('bios.booking')}
-            className="flex h-12 w-12 items-center justify-center rounded-full border border-[#25D366]/50 bg-night-card text-[#25D366] transition hover:bg-[#25D366]/10"
+            className="flex h-12 w-12 items-center justify-center rounded-full text-[#25D366] transition hover:bg-[#25D366]/10"
           >
             <WhatsAppIcon size={22} />
           </a>
@@ -402,7 +404,7 @@ export default function BioPage({ user, onAuthClick }) {
           onClick={() => window.print()}
           aria-label={t('bios.download')}
           title={t('bios.download')}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-clay-deep/60 bg-night-card text-ink transition hover:bg-clay-soft"
+          className="flex h-12 w-12 items-center justify-center rounded-full text-ink transition hover:bg-clay-soft"
         >
           <Download size={20} />
         </button>
