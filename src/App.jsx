@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import { LanguageProvider, useLang } from './context/LanguageContext'
 import Header from './components/Header'
@@ -169,6 +170,7 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <Shell />
+          <Analytics />
         </BrowserRouter>
       </AuthProvider>
     </LanguageProvider>
