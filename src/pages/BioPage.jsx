@@ -203,6 +203,17 @@ export default function BioPage({ user, onAuthClick }) {
     return () => document.body.classList.remove('bio-printing')
   }, [])
 
+  // Link personalizado (?v=etiqueta): registra la visita una sola vez.
+  const visitaRef = useRef(false)
+  useEffect(() => {
+    if (visitaRef.current) return
+    const v = new URLSearchParams(window.location.search).get('v')
+    if (v) {
+      visitaRef.current = true
+      data.registrarVisita(v, `bio/${slug}`)
+    }
+  }, [slug])
+
   if (loading) {
     return (
       <main className="mx-auto w-full max-w-2xl px-4 py-16 text-center">

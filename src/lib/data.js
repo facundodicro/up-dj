@@ -57,3 +57,5 @@ export const listBios = (...args) =>
   typeof db.listBios === 'function' ? db.listBios(...args) : Promise.resolve([])
 export const getBioBySlug = (...args) =>
   typeof db.getBioBySlug === 'function' ? db.getBioBySlug(...args) : Promise.resolve(null)
+export const registrarVisita = (...args) =>
+  typeof db.registrarVisita === 'function' ? db.registrarVisita(...args) : Promise.resolve()

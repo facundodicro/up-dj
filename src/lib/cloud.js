@@ -880,6 +880,16 @@ export async function listBios() {
   return (data || []).map(mapBio)
 }
 
+/** Registra una visita con etiqueta (links personalizados ?v=...). Silencioso: nunca rompe la página. */
+export async function registrarVisita(etiqueta, pagina) {
+  if (!supabase || !etiqueta) return
+  try {
+    await supabase.from('visitas').insert({ etiqueta, pagina })
+  } catch {
+    /* noop */
+  }
+}
+
 /** Una biografía publicada por su slug (URL propia y permanente). */
 export async function getBioBySlug(slug) {
   if (!slug) return null
