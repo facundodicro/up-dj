@@ -14,6 +14,7 @@ const STORAGE_KEY = 'up-lang'
 const STRINGS = {
   es: {
     'common.close': 'Cerrar',
+    'splash.welcome': 'Bienvenidos',
 
     'header.home': 'Up! — inicio',
     'header.openProfile': 'Abrir mi perfil',
@@ -291,6 +292,7 @@ const STRINGS = {
   },
   en: {
     'common.close': 'Close',
+    'splash.welcome': 'Welcome',
 
     'header.home': 'Up! — home',
     'header.openProfile': 'Open my profile',

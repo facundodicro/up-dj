@@ -17,6 +17,7 @@ import BioPage from './pages/BioPage'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import LiveTagline from './components/LiveTagline'
+import WelcomeSplash from './components/WelcomeSplash'
 import * as data from './lib/data'
 
 function Shell() {
@@ -61,6 +62,7 @@ function Shell() {
 
   return (
     <div className="min-h-screen">
+      <WelcomeSplash />
       {/* Humo ambiente general, muy tenue */}
       <div className="fixed inset-0 z-0">
         <SmokeBackground density="ambient" />
