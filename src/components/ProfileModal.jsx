@@ -267,8 +267,9 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
             </label>
             <input
               id="pf-wa"
-              type="text"
-              inputMode="text"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, '').slice(0, 20))}
               placeholder={t('profile.whatsappPh')}

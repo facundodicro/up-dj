@@ -145,6 +145,7 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
                   placeholder={t('auth.passwordHint')}
                   className={inputCls}
                 />
+                <p className="mt-1 text-xs text-muted">{t('auth.passwordHint')}</p>
               </div>
               <div>
                 <label htmlFor="auth-confirmpass" className={labelCls}>
@@ -158,6 +159,9 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
                   placeholder={t('auth.passwordHint')}
                   className={inputCls}
                 />
+                {password && confirm && password !== confirm && (
+                  <p className="mt-1 text-xs font-semibold text-red-300">{t('auth.mismatch')}</p>
+                )}
               </div>
               {error && (
                 <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-sm font-semibold text-red-300">
@@ -264,6 +268,9 @@ export default function AuthModal({ open, initialTab = 'login', onClose }) {
                   placeholder={t('auth.passwordHint')}
                   className={inputCls}
                 />
+                {tab === 'register' && (
+                  <p className="mt-1 text-xs text-muted">{t('auth.passwordHint')}</p>
+                )}
               </div>
 
               {tab === 'login' && (

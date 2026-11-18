@@ -29,7 +29,31 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
   const [progress, setProgress] = useState(0)
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
+  const [linkError, setLinkError] = useState('')
   const photoRef = useRef(null)
+
+  /** Aviso temprano junto al campo: si el link ya parece una URL completa y
+   * no es de una plataforma aceptada, se dice en el momento (no recién al
+   * publicar). Al salir del campo se valida cualquier texto no vacío. */
+  const checkLinkLive = (value) => {
+    const v = value.trim()
+    if (!v) {
+      setLinkError('')
+      return
+    }
+    if (/^https?:\/\/\S+$/i.test(v)) {
+      setLinkError(parseSetUrl(v) ? '' : t('event.invalidLink'))
+    }
+  }
+
+  const checkLinkBlur = () => {
+    const v = setUrl.trim()
+    if (!v) {
+      setLinkError('')
+      return
+    }
+    setLinkError(parseSetUrl(v) ? '' : t('event.invalidLink'))
+  }
 
   const pickPhoto = (e) => {
     const f = e.target.files?.[0]
@@ -150,7 +174,7 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
 
       <div>
         <label htmlFor="ev-link" className="mb-1 block text-xs font-bold uppercase tracking-wide text-muted">
-          {t('event.link')}
+          {t('event.link')} <span className="font-semibold text-red-300">*</span>
         </label>
         <div className="relative">
           <Link2 size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
@@ -159,12 +183,19 @@ export default function EventForm({ userId, editingEvent, onCreated, onUpdated, 
             type="url"
             inputMode="url"
             value={setUrl}
-            onChange={(e) => setSetUrl(e.target.value)}
+            onChange={(e) => {
+              setSetUrl(e.target.value)
+              checkLinkLive(e.target.value)
+            }}
+            onBlur={checkLinkBlur}
             placeholder={t('event.linkPh')}
             disabled={uploading}
             className="w-full rounded-xl border border-clay bg-night-card py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
           />
         </div>
+        {linkError && (
+          <p className="mt-1.5 text-xs font-semibold leading-relaxed text-red-300">{linkError}</p>
+        )}
         <p className="mt-1.5 text-xs leading-relaxed text-muted">{t('event.linkHint')}</p>
         {legacyAudio && (
           <p className="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-semibold leading-relaxed text-amber-200">

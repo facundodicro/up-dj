@@ -18,6 +18,7 @@ export default function ShowForm({ userId, onCancel, onCreated }) {
   const [flyerFile, setFlyerFile] = useState(null)
   const [flyerPreview, setFlyerPreview] = useState(null)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState({})
   const [publishing, setPublishing] = useState(false)
   const fileRef = useRef(null)
 
@@ -48,6 +49,22 @@ export default function ShowForm({ userId, onCancel, onCreated }) {
     return `${d.getFullYear()}-${m}-${day}`
   })()
 
+  /** Validación por campo: cada mensaje va bajo su input (al salir del
+   * campo y al enviar), no en un único cartel al final. */
+  const validateField = (name, value) => {
+    if (name === 'title') return value.trim() ? '' : t('show.needTitle')
+    if (name === 'date') {
+      if (!value) return t('show.needDate')
+      if (value < today) return t('show.pastDate')
+      return ''
+    }
+    if (name === 'city') return value.trim() ? '' : t('show.needCity')
+    return ''
+  }
+
+  const applyFieldError = (name, value) =>
+    setFieldErrors((prev) => ({ ...prev, [name]: validateField(name, value) }))
+
   const pickFlyer = (e) => {
     const f = e.target.files?.[0]
     if (!f) return
@@ -68,22 +85,13 @@ export default function ShowForm({ userId, onCancel, onCreated }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!title.trim()) {
-      setError(t('show.needTitle'))
-      return
+    const errs = {
+      title: validateField('title', title),
+      date: validateField('date', date),
+      city: validateField('city', city),
     }
-    if (!date) {
-      setError(t('show.needDate'))
-      return
-    }
-    if (date < today) {
-      setError(t('show.pastDate'))
-      return
-    }
-    if (!city.trim()) {
-      setError(t('show.needCity'))
-      return
-    }
+    setFieldErrors(errs)
+    if (errs.title || errs.date || errs.city) return
     setPublishing(true)
     setError('')
     try {
@@ -105,42 +113,60 @@ export default function ShowForm({ userId, onCancel, onCreated }) {
     <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-clay bg-night-card p-4">
       <div>
         <label htmlFor="sf-title" className={labelCls}>
-          {t('show.title')}
+          {t('show.title')} <span className="font-semibold text-red-300">*</span>
         </label>
         <input
           id="sf-title"
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => {
+            setTitle(e.target.value)
+            if (fieldErrors.title) applyFieldError('title', e.target.value)
+          }}
+          onBlur={(e) => applyFieldError('title', e.target.value)}
           placeholder={t('show.titlePh')}
           maxLength={80}
           className={inputCls}
         />
+        {fieldErrors.title && (
+          <p className="mt-1.5 text-xs font-semibold text-red-300">{fieldErrors.title}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label htmlFor="sf-date" className={labelCls}>
-            {t('show.date')}
+            {t('show.date')} <span className="font-semibold text-red-300">*</span>
           </label>
           <input
             id="sf-date"
             type="date"
             value={date}
             min={today}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={(e) => {
+              setDate(e.target.value)
+              if (fieldErrors.date) applyFieldError('date', e.target.value)
+            }}
+            onBlur={(e) => applyFieldError('date', e.target.value)}
             className={inputCls}
           />
+          {fieldErrors.date && (
+            <p className="mt-1.5 text-xs font-semibold text-red-300">{fieldErrors.date}</p>
+          )}
         </div>
         <div>
           <label htmlFor="sf-city" className={labelCls}>
-            {t('show.city')}
+            {t('show.city')} <span className="font-semibold text-red-300">*</span>
           </label>
           <input
             id="sf-city"
             type="text"
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={(e) => {
+              setCity(e.target.value)
+              if (fieldErrors.city) applyFieldError('city', e.target.value)
+            }}
+            onBlur={(e) => applyFieldError('city', e.target.value)}
             placeholder={t('show.cityPh')}
             maxLength={60}
             list="sf-city-list"
@@ -151,12 +177,15 @@ export default function ShowForm({ userId, onCancel, onCreated }) {
               <option key={c} value={c} />
             ))}
           </datalist>
+          {fieldErrors.city && (
+            <p className="mt-1.5 text-xs font-semibold text-red-300">{fieldErrors.city}</p>
+          )}
         </div>
       </div>
 
       <div>
         <label htmlFor="sf-venue" className={labelCls}>
-          {t('show.venue')}
+          {t('show.venue')} <span className="font-semibold normal-case">{t('event.optional')}</span>
         </label>
         <input
           id="sf-venue"
