@@ -890,6 +890,34 @@ export async function registrarVisita(etiqueta, pagina) {
   }
 }
 
+/** Estado de likes de una bio para este dispositivo (anónimo, sin registro). */
+export async function getBioLikeState(slug, deviceId) {
+  if (!supabase || !slug || !deviceId) return { total: 0, liked: false }
+  try {
+    const { data, error } = await supabase.rpc('bio_like_state', {
+      p_slug: slug,
+      p_device: deviceId,
+    })
+    if (error) return { total: 0, liked: false }
+    const row = Array.isArray(data) ? data[0] : data
+    return { total: Number(row?.total || 0), liked: !!row?.liked }
+  } catch {
+    return { total: 0, liked: false }
+  }
+}
+
+/** Alterna el like de este dispositivo en una bio; devuelve el estado nuevo. */
+export async function toggleBioLike(slug, deviceId) {
+  if (!supabase || !slug || !deviceId) return { total: 0, liked: false }
+  const { data, error } = await supabase.rpc('toggle_bio_like', {
+    p_slug: slug,
+    p_device: deviceId,
+  })
+  if (error) throw error
+  const row = Array.isArray(data) ? data[0] : data
+  return { total: Number(row?.total || 0), liked: !!row?.liked }
+}
+
 /** Una biografía publicada por su slug (URL propia y permanente). */
 export async function getBioBySlug(slug) {
   if (!slug) return null

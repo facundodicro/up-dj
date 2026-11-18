@@ -7,6 +7,7 @@ import {
   Disc3,
   Download,
   Globe,
+  Heart,
   SlidersHorizontal,
 } from 'lucide-react'
 import InstagramIcon from '../components/InstagramIcon'
@@ -16,6 +17,23 @@ import ShareButton from '../components/ShareButton'
 import { useLang } from '../context/LanguageContext'
 import { buildWaUrl, buildInstagramUrl, sanitizeInstagram } from '../lib/format'
 import * as data from '../lib/data'
+
+/** Identidad anónima del dispositivo: un like por aparato, sin registro. */
+function getDeviceId() {
+  try {
+    let id = localStorage.getItem('up-device-id')
+    if (!id) {
+      id =
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `dev-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+      localStorage.setItem('up-device-id', id)
+    }
+    return id
+  } catch {
+    return 'anon-device'
+  }
+}
 
 /** URL de plataforma: acepta URL completa o usuario/handle suelto. */
 function platformUrl(base, value) {
@@ -161,6 +179,9 @@ export default function BioPage({ user, onAuthClick }) {
   const [followed, setFollowed] = useState(false)
   const [followerCount, setFollowerCount] = useState(0)
   const [following, setFollowing] = useState(false)
+  const [likeTotal, setLikeTotal] = useState(0)
+  const [likeActive, setLikeActive] = useState(false)
+  const [likeBusy, setLikeBusy] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -176,6 +197,14 @@ export default function BioPage({ user, onAuthClick }) {
           return
         }
         setBio(b)
+        data
+          .getBioLikeState(b.slug, getDeviceId())
+          .then((s) => {
+            if (!alive) return
+            setLikeTotal(s.total)
+            setLikeActive(s.liked)
+          })
+          .catch(() => {})
         if (b.user_id) {
           const [countsMap, follows] = await Promise.all([
             data.getFollowerCounts([b.user_id]).catch(() => ({})),
@@ -253,6 +282,25 @@ export default function BioPage({ user, onAuthClick }) {
     if (!el) return
     el.scrollTo({ left: idx * el.clientWidth, behavior: 'smooth' })
     setPhotoIdx(idx)
+  }
+
+  const handleLike = async () => {
+    if (likeBusy || !bio) return
+    setLikeBusy(true)
+    const prevActive = likeActive
+    const prevTotal = likeTotal
+    setLikeActive(!prevActive)
+    setLikeTotal(Math.max(0, prevTotal + (prevActive ? -1 : 1)))
+    try {
+      const s = await data.toggleBioLike(bio.slug, getDeviceId())
+      setLikeTotal(s.total)
+      setLikeActive(s.liked)
+    } catch {
+      setLikeActive(prevActive)
+      setLikeTotal(prevTotal)
+    } finally {
+      setLikeBusy(false)
+    }
   }
 
   const handleFollow = async () => {
@@ -421,22 +469,46 @@ export default function BioPage({ user, onAuthClick }) {
         </button>
       </div>
 
-      {/* Seguir, al final (solo si el DJ está registrado en Up!) */}
-      {bio.user_id && !isOwn && (
-        <div className="mt-10 flex items-center justify-between border-t border-clay pt-5">
-          <p className="text-sm font-semibold text-muted">{t('bios.curatedBy')}</p>
+      {/* Cierre: like anónimo (uno por dispositivo) y Seguir si el DJ
+          está registrado en Up!. La fila va siempre: las bios curadas
+          sin usuario (ej. la de Ceratti) no tienen Seguir. */}
+      <div className="mt-10 flex items-center justify-between border-t border-clay pt-5">
+        <p className="text-sm font-semibold text-muted">{t('bios.curatedBy')}</p>
+        <div className="flex items-center gap-2">
           <button
-            onClick={handleFollow}
-            className={`min-h-[44px] rounded-full px-5 py-2 text-sm font-bold transition active:scale-95 ${
-              followed
+            type="button"
+            onClick={handleLike}
+            disabled={likeBusy}
+            aria-pressed={likeActive}
+            aria-label={t(likeActive ? 'card.unlike' : 'card.like')}
+            title={t(likeActive ? 'card.unlike' : 'card.like')}
+            className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold transition active:scale-95 ${
+              likeActive
                 ? 'border border-[#00E065]/40 bg-[#00E065]/10 text-[#00884D]'
-                : 'bg-ink text-white shadow-[0_2px_12px_rgba(0,0,0,0.25)] hover:opacity-90'
+                : 'border border-clay bg-night-card text-ink hover:bg-clay-soft'
             }`}
           >
-            {followed ? t('card.following') : t('card.follow')}
+            <Heart
+              size={16}
+              className={likeActive ? 'text-[#00884D]' : 'text-muted'}
+              fill={likeActive ? '#00E065' : 'none'}
+            />
+            {likeTotal}
           </button>
+          {bio.user_id && !isOwn && (
+            <button
+              onClick={handleFollow}
+              className={`min-h-[44px] rounded-full px-5 py-2 text-sm font-bold transition active:scale-95 ${
+                followed
+                  ? 'border border-[#00E065]/40 bg-[#00E065]/10 text-[#00884D]'
+                  : 'bg-ink text-white shadow-[0_2px_12px_rgba(0,0,0,0.25)] hover:opacity-90'
+              }`}
+            >
+              {followed ? t('card.following') : t('card.follow')}
+            </button>
+          )}
         </div>
-      )}
+      </div>
 
       <Link
         to="/"

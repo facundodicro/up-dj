@@ -59,3 +59,11 @@ export const getBioBySlug = (...args) =>
   typeof db.getBioBySlug === 'function' ? db.getBioBySlug(...args) : Promise.resolve(null)
 export const registrarVisita = (...args) =>
   typeof db.registrarVisita === 'function' ? db.registrarVisita(...args) : Promise.resolve()
+export const getBioLikeState = (...args) =>
+  typeof db.getBioLikeState === 'function'
+    ? db.getBioLikeState(...args)
+    : Promise.resolve({ total: 0, liked: false })
+export const toggleBioLike = (...args) =>
+  typeof db.toggleBioLike === 'function'
+    ? db.toggleBioLike(...args)
+    : Promise.resolve({ total: 0, liked: false })
