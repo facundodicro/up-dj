@@ -105,6 +105,11 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
   const save = async (e) => {
     e.preventDefault()
     setError('')
+    // WhatsApp válido: entre 10 y 15 dígitos (si cargó uno). Nada se guarda en silencio.
+    if (whatsapp && (whatsapp.length < 10 || whatsapp.length > 15)) {
+      setError(t('profile.whatsappError'))
+      return
+    }
     setSaving(true)
     try {
       const updated = await data.saveProfile(user.id, {
@@ -276,6 +281,9 @@ export default function ProfileModal({ open, user, profile, onClose, onSaved, on
               className="w-full rounded-xl border border-clay bg-night px-4 py-2.5 text-sm text-ink placeholder:text-muted/60 outline-none transition focus:border-up/70"
             />
             <p className="mt-1 text-xs text-muted">{t('profile.whatsappHint')}</p>
+            {whatsapp.length > 15 && (
+              <p className="mt-1 text-xs font-semibold text-red-400">{t('profile.whatsappError')}</p>
+            )}
           </div>
 
           <div>
